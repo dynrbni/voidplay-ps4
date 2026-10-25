@@ -42,3 +42,5 @@
 - Added storage/network/download/install interfaces, clearly labeled mock storage and install/cleanup gates; real console transfers remain unavailable.
 - Researched pinned OpenOrbis sources, built native diagnostic ELF/eboot/PKG and validated local package structure. Host sanitizer tests pass; FTP package accepted but read-back integrity and all console runtime probes are unverified.
 - Available validation: 23 unit tests, independent builds, public-artifact checks, 4 store + 2 admin/publication browser scenarios, subpath hosting check and owner-dashboard/Settings accessibility checks. Final remote handoff follows.
+
+Remote handoff: PR #4 opened/attached against PR #3; implementation commits 40a70f7 and da882b0 pushed with matching remote SHA. GitHub CI did not start because of an account billing lock. Local checks pass; console runtime and full FTP read-back hash remain unverified.

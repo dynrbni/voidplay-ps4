@@ -53,3 +53,5 @@ Owner admin/publication and platform interfaces implemented and locally verified
 cross-built and packaged; console-side integrity/launch/storage/controller/HTTPS/file-I/O evidence
 remains unavailable. FTP and the owner's Internal Package Installer/file-manager path are recorded
 as transport/setup facts only. No console compatibility claim or automatic installation.
+
+Remote handoff: PR #4 opened/attached against PR #3; implementation commits 40a70f7 and da882b0 pushed with matching remote SHA. GitHub CI did not start because of an account billing lock. Local checks pass; console runtime and full FTP read-back hash remain unverified.
