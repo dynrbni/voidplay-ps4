@@ -4,7 +4,7 @@
 Establish audited, tested desktop store preview without asserting PS4 compatibility.
 
 ## Current Phase
-Store foundation implemented and verified; reviewing and publishing feature branch.
+Store foundation implemented, verified, committed and pushed. PR #1 open for review; no merge performed.
 
 ## Phases
 ### Phase 0: Audit
@@ -26,12 +26,12 @@ Store foundation implemented and verified; reviewing and publishing feature bran
 - Build approved slice, meaningful tests, onboarding, and capability status.
 
 ### Phase 3: Verification and publication
-**Status:** in_progress
+**Status:** complete
 - Type check, lint, tests, production build, rendered UI and keyboard checks.
 - Review diff and secrets; commit coherent units, push intended remote, open PR if permitted.
 
 ## Next Step
-Review and commit the verified feature, push feature/store-foundation, then open a PR.
+Review PR #1; next engineering slice is an isolated OpenOrbis host-tool/hello_world feasibility test once prerequisites and console access are available.
 
 ## Errors Encountered
 | Command | Result | Resolution |

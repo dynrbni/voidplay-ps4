@@ -20,7 +20,7 @@ Desktop preview is not PS4 verification. All fixtures visibly mock. No invented 
 - [x] Implement React home, browse, search, category filters, detail dialog and source/capability notice. Native controls only; no dead navigation.
 - [x] Implement pure spatial candidate selection and document-level arrow handling outside text/select controls. Test direction boundaries and closest candidates.
 - [x] Verify 1920x1080 and mobile rendering, all controls, dialog focus restoration, loading, empty, malformed/network failure and offline states. Capture screenshot outside tracked source.
-- [ ] Update onboarding and capability docs with actual results, run `npm run check`, review diff, commit/push feature, open PR. Merge only if policy permits and checks pass, then verify integrated main.
+- [x] Update onboarding and capability docs with actual results, run `npm run check`, review diff, commit/push feature, open PR. PR #1 is open; merge deferred for review, so integrated-main verification is not applicable yet.
 
 ## Verification commands
 
