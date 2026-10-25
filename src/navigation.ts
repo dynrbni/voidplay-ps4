@@ -29,7 +29,7 @@ export function installKeyboardNavigation(): () => void {
       const cards = Array.from(row.querySelectorAll<HTMLElement>('.app-card'));
       const next = cards.indexOf(active) + (event.key === 'ArrowRight' ? 1 : -1);
       event.preventDefault();
-      cards[next]?.focus();
+      cards[next]?.focus({ preventScroll: true });
       return;
     }
     const root = document.querySelector('dialog[open]') ?? document;

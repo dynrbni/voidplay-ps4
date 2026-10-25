@@ -1,11 +1,14 @@
-export function AppNavigation({ page, onNavigate, onSearch }: {
-  page: 'home' | 'browse'; onNavigate: (page: 'home' | 'browse') => void; onSearch: () => void;
-}) {
-  return <header className="header">
-    <a className="wordmark" href="#" onClick={event => { event.preventDefault(); onNavigate('home'); }} aria-label="Voidplay home">void<span>play</span><i aria-hidden="true">.</i></a>
-    <nav aria-label="Store"><button aria-current={page === 'home' ? 'page' : undefined} onClick={() => onNavigate('home')}>Discover</button>
-      <button aria-current={page === 'browse' ? 'page' : undefined} onClick={() => onNavigate('browse')}>Browse</button>
-      <button onClick={onSearch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>Search</button></nav>
-    <span className="preview-label">Local preview <span aria-hidden="true">/</span> Mock catalog</span>
+import type { Page } from './routes.ts';
+import { Icon } from './Icon.tsx';
+
+export function AppNavigation({ page, onNavigate }: { page: string; onNavigate: (page: Page) => void }) {
+  return <header className={`header ${page === 'discover' || page === 'item' ? 'header-cinematic' : ''}`}>
+    <a className="wordmark" href="#/discover" onClick={event => { event.preventDefault(); onNavigate('discover'); }} aria-label="Voidplay home">voidplay<span>.</span></a>
+    <nav className="main-nav" aria-label="Store">
+      {(['discover', 'browse', 'favorites', 'library'] as const).map(destination => <button key={destination} aria-current={page === destination ? 'page' : undefined} onClick={() => onNavigate(destination)}>{destination.charAt(0).toUpperCase() + destination.slice(1)}</button>)}
+    </nav>
+    <nav className="utility-nav" aria-label="Tools">
+      {(['search', 'downloads', 'settings'] as const).map(destination => <button key={destination} className="icon-button" aria-label={destination.charAt(0).toUpperCase() + destination.slice(1)} title={destination.charAt(0).toUpperCase() + destination.slice(1)} aria-current={page === destination ? 'page' : undefined} onClick={() => onNavigate(destination)}><Icon name={destination === 'downloads' ? 'download' : destination}/></button>)}
+    </nav>
   </header>;
 }

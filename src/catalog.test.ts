@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { filterCatalog, parseCatalog, loadCatalog, sortCatalog } from './catalog.ts';
 
 const entry = {
@@ -37,7 +37,22 @@ test('sorts titles without changing curated order or mutating input', () => {
 
 test('checked-in fixture conforms to the same input contract', async () => {
   const data: unknown = JSON.parse(await readFile(new URL('../public/catalog.mock.json', import.meta.url), 'utf8'));
-  assert.ok(parseCatalog(data).length > 0);
+  const entries = parseCatalog(data);
+  assert.ok(entries.length > 0);
+  await Promise.all(entries.flatMap(item => [item.coverUrl, item.heroUrl].filter((url): url is string => Boolean(url)))
+    .map(path => access(new URL(`../public${path}`, import.meta.url))));
+});
+
+test('detail artwork and optional metadata stay inside the validated catalog boundary', () => {
+  const detail = { ...entry, heroUrl: '/art/sample-tool.webp', summary: 'A concise concept summary.',
+    author: 'Fixture author', version: 'Fixture version', license: 'Fixture license', releaseNotes: 'Fixture notes',
+    screenshots: [{ url: '/art/sample-tool.png', description: 'Test-only fixture image' }] };
+  assert.equal(parseCatalog([detail])[0]?.screenshots?.length, 1);
+  for (const patch of [ { heroUrl: 'https://example.com/image.webp' }, { heroUrl: '/art/../secret.webp' },
+    { summary: '' }, { screenshots: [{ url: 'javascript:alert(1)', description: 'Unsafe' }] },
+    { screenshots: [{ url: '/art/sample-tool.webp', description: '' }] } ]) {
+    assert.throws(() => parseCatalog([{ ...detail, ...patch }]));
+  }
 });
 
 test('loader handles HTTP errors, malformed JSON and aborted transfers', async () => {

@@ -33,3 +33,13 @@
 - OpenOrbis latest release v0.5.4 lists one toolchain-llvm-18.tar.gz asset; host suitability not proven. Upstream sample hardcodes Intel Homebrew paths on Darwin.
 - No OpenOrbis build attempted. No console connection or PS4 runtime verified. Sources and next experiment in docs/ps4-status.md.
 - React desktop preview does not establish PS4 compatibility.
+
+## V2 redesign audit (2026-10-25)
+- Clean working tree on feature/homepage-cinematic-redesign; existing PR #2 targets feature/store-foundation, PR #1 targets main. V2 will stack on PR #2's branch.
+- Six fictional mock entries; no authorized packages, live metadata or screenshot gallery. Existing details are a small text dialog; Favorites/Library/Downloads/Settings absent.
+- Local Manrope already included. Existing artwork is original SVG. UI has amber selection and an oversized metadata/disclosure emphasis that V2 removes.
+- Reference screenshots were not attached to this session. Written design brief is the available reference.
+- V2 image generation used only for original visual references and concept artwork; no proprietary assets or application screenshots copied. Six WebP assets total approximately 1.7 MB.
+- Screenshot QA must await image decode and paint: complete/naturalWidth alone can precede asynchronous decoding.
+- Native Chrome/agent-browser locators support select via snapshot refs; `find ... select` is not a supported action. Gallery interception requires a reload after installing the test route.
+- Final axe incomplete contrast checks are gradient-covered header text and intentionally clipped shelf items. Opaque palette contrast and stronger header coverage provide manual evidence; no full certification claimed.

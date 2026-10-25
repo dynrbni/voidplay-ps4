@@ -12,3 +12,12 @@
 - No console compatibility or installation claims.
 - Reviewed diff/whitespace; committed bc45cba and pushed feature/homepage-cinematic-redesign to intended origin.
 - Opened stacked PR https://github.com/dynrbni/voidplay-ps4/pull/2 against feature/store-foundation. Not merged; foundation PR #1 must land first, then redesign can retarget main.
+
+## V2 redesign
+- Audited catalog, components, keyboard manager, tests, documentation and remote PR stack.
+- Created codex/fluid-store-redesign after fetch; no user changes present.
+- Implementation plan: docs/superpowers/plans/2026-10-25-fluid-store-redesign.md.
+- Implemented monochrome cinematic UI, six original local WebP concepts, complete store screens and full-page data-driven details.
+- Added validated local Favorites/Library/reduced-motion storage, hash history and focus restoration, optional gallery and related content.
+- Production verification PASS: lint/types/11 pure tests/build; all three E2E scenarios; eight axe audits with zero violations. Gradient/clipped-shelf contrast items manually reviewed.
+- Inspected desktop/laptop/mobile screenshots and corrected header legibility, Search focus and About ARIA labeling.

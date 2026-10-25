@@ -1,12 +1,20 @@
 import { z } from 'zod';
 
+const artworkPath = z.string().regex(/^\/art\/[a-z0-9-]+\.(?:svg|webp|png|jpg)$/);
 const entrySchema = z.strictObject({
   id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
   title: z.string().trim().min(1).max(100),
   description: z.string().trim().min(1).max(2000),
   category: z.enum(['Utilities', 'Games', 'Media']),
   mock: z.literal(true),
-  coverUrl: z.string().regex(/^\/art\/[a-z0-9-]+\.svg$/).optional(),
+  coverUrl: artworkPath.optional(),
+  heroUrl: artworkPath.optional(),
+  summary: z.string().trim().min(1).max(240).optional(),
+  author: z.string().trim().min(1).max(120).optional(),
+  version: z.string().trim().min(1).max(80).optional(),
+  license: z.string().trim().min(1).max(500).optional(),
+  releaseNotes: z.string().trim().min(1).max(5000).optional(),
+  screenshots: z.array(z.strictObject({ url: artworkPath, description: z.string().trim().min(1).max(300) })).max(12).optional(),
   compatibilityNotes: z.string().trim().min(1).max(1000)
 });
 

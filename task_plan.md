@@ -36,3 +36,7 @@ Review stacked PR #2 (feature/store-foundation base). Merge foundation PR #1 bef
 
 ## Errors
 Browser regressions found Escape/back and Search focus failures; corrected document-level back handling and already-mounted Search focus, then full dev/production E2E passed. Axe found prohibited aria-label on generic div; added group role. Caption contrast ambiguity resolved with opaque background. Browser bridge remains disconnected; local agent-browser/Chrome used.
+
+## V2 redesign continuation
+
+Implementation, visual inspection, production check and three E2E scenarios complete. See docs/superpowers/plans/2026-10-25-fluid-store-redesign.md for the V2 checklist. Commit, push and stacked PR handoff remain.

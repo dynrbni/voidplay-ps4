@@ -1,60 +1,72 @@
-# Cinematic redesign verification
+# V2 redesign verification — 2026-10-25
 
-## Baseline and scope
+## Environment and scope
 
-macOS Apple Silicon, Node 26.7.0, local Google Chrome via agent-browser 0.39.2.
-Foundation baseline passed lint/types/six tests/build before changes. No backend or
-console changes. Branch is stacked on unmerged foundation PR #1.
+macOS Apple Silicon, Node 26.7.0, Chrome through agent-browser 0.39.2. The working tree was
+clean before changes. Branch `codex/fluid-store-redesign` starts at the previous homepage
+branch (`a3be6c5`), with a PR targeting `feature/homepage-cinematic-redesign` while the earlier
+PR stack remains open. No console runtime, backend or package distribution was added.
 
-## Results
+## Automated checks
 
-- `npm run check`: PASS, ESLint zero warnings, strict TypeScript, seven Node tests,
-  production Vite build. Tests cover catalog validation (including art URL restrictions),
-  filter intersection, immutable title sort, fixture validity, fetch failures and spatial candidates.
-- `npm run test:e2e`: PASS against development preview, then production preview using
-  `VOIDPLAY_URL=http://127.0.0.1:4173`. One full browser regression per run.
-- Browser coverage: hero sizing and real actions; horizontally overflowing shelf;
-  left/right row boundaries, up/down movement, focus outline, scrolled-card dialog and
-  focus/scroll restoration; shelf buttons; Browse/category/search/sort; all six details;
-  Search focus; Escape back; mobile overflow; offline hint; failed hero/poster artwork;
-  loading/empty/invalid metadata/network failure and retry. Final page errors: none.
-- Rendered screenshots inspected at 1920x1080 (Discover and Browse) and 390x844
-  (Discover and Browse). The hero dominates, first shelf begins beneath it; Browse is
-  a distinct dense poster grid. No horizontal document overflow. Home has intentional
-  lateral shelf overflow only. `docs/images/` holds desktop evidence.
-- Axe 4.12.1 WCAG 2 A/AA: Discover zero violations / zero incomplete; Browse zero /
-  zero. Fixed an invalid accessible label role and replaced translucent concept-art
-  captions with opaque backgrounds to remove contrast ambiguity.
-- Manrope font self-hosted with OFL notice; concept SVGs locally authored and labeled.
-  No runtime dependency added; no remote image/font dependency.
+- `npm run check`: PASS. ESLint zero warnings; strict TypeScript; 11 Node tests;
+  Vite production build. Production JS approximately 330 kB / 100 kB gzip, CSS 18.4 kB.
+- Pure tests verify unique/strict catalog records, unsafe paths and remote assets rejected,
+  optional detail/gallery metadata, physical fixture asset existence, combined search/filter,
+  immutable sorting, loader failures, spatial navigation, collection separation/storage parsing,
+  bounded IDs and deep-link routes.
+- `AGENT_BROWSER_BIN=<local-binary> VOIDPLAY_URL=http://127.0.0.1:4175 npm run test:e2e`:
+  PASS, three isolated browser scenarios against the production build.
+- Main browser flow: manual feature changes; all six details; native Back affordance/Escape;
+  related item routes; Browse search/category/sort/clear; independent Search and no results;
+  result focus restoration; Favorites/Library add/remove and persistence; true empty Downloads;
+  Settings/reduced motion persistence; shelf boundaries, vertical movement, white focus, shelf
+  arrows, prior scroll and focus restoration; direct links, reload and missing-item handling.
+- Recovery flow: offline hint, unavailable hero/poster art, empty catalog, malformed metadata,
+  network abort, loading, retry, storage write failure with session retention, corrupted storage
+  and recovery. Final browser page errors: none.
+- Optional gallery flow uses **test-only** intercepted metadata: next/previous images, missing
+  image recovery, selected-item context and gallery omission on another item. The shipped catalog
+  has no screenshots. Test imagery is not presented as genuine application screenshots.
+- `git diff --check`: PASS.
 
-## Issues found and fixed
+## Rendered inspection
 
-- Escape attached only to the React shell missed cases where focus fell to the
-  document after route changes. Document-level handler now restores Discover context.
-- Search while already in Browse could lose focus to pointer timing. Existing-page
-  Search now focuses the mounted native input directly; cross-page focus waits for render.
-- Hidden mounted screens preserve shelf offset and input state; hidden controls are
-  excluded from directional navigation and the accessibility tree.
+Actually inspected screenshots at 1920×1080 for Discover, Browse and detail, 1366×768 for
+Discover, and 390×844 for Discover, Browse and multiple details. Other screens also had
+responsive overflow assertions and captured evidence. The final poster grid shows locally
+stored original artwork; the hero blends into the first shelf; copy remains readable and
+metadata stays secondary. Checked cropping, header spacing, title scale, neutral selection,
+missing art, lower detail sections and small-screen actions. No document-level horizontal
+overflow; lateral shelf scrolling is intentional. `docs/images/` contains final examples.
 
-## Design gate
+A correction pass increased header darkening for bright artwork, fixed Search-result focus
+restoration, removed an inappropriate About ARIA label, and made screenshot capture wait for
+image decode/paint rather than treating an image's completed request as rendered evidence.
+Generated reference images and final browser captures were reviewed separately.
 
-- Hard gates PASS for desktop preview scope: honest mock/concept disclosures, no
-  invented metrics or compatibility, real destinations/actions, recovery/fallback
-  states, keyboard focus, responsive layout and rendered-browser evidence.
-- Purpose gates PASS: hero overlays protect text; poster layout serves shelf scanning;
-  Manrope unifies TV hierarchy; amber indicates selection. Rationale in design.md.
-- Liveliness PASS: ENERGY 2 / RHYTHM 2 / MOTION 1; cinematic focal feature contrasts
-  with compact shelves and dense Browse, with restrained focus transitions.
-- Craftsmanship PASS within implemented mock store scope; no unbuilt nav destinations,
-  decorative controller hints or download/install controls.
+Axe 4.12.1 WCAG 2 A/AA audit: zero violations on Discover, Browse, detail, Search, Favorites,
+Library, Downloads and Settings. Browse/Search/Favorites/Library/Downloads/Settings have zero
+incomplete rules. Discover/detail each retain a contrast review item: axe cannot determine
+backgrounds behind gradient-covered header text, and the detail shelf includes partially clipped
+cards. These were manually inspected. Navigation text #b8b8b8 over even a white image covered
+by the minimum header opacity (#050505c7) has >5:1 contrast; shelf text #a3a3a3 over #050505
+has >8:1 contrast. This is not a claim of a full manual accessibility certification.
 
-## Limitations
+## Design and integrity gates
 
-The requested two screenshot attachments were not available to this session; visual
-review follows the written specification, not a direct reference-image comparison.
-Only listed Chrome desktop/mobile viewports were tested, not physical TV viewing,
-manual screen-reader usage, PS4 execution or controller hardware. Real versions,
-file sizes, ratings, popularity, release dates and compatibility are absent rather
-than invented. Font subset covers Latin; system fallback handles other scripts.
-No install/download/library/admin/backend capabilities are added by this redesign.
+PASS within the desktop preview scope: no fabricated metrics, testimonials, releases,
+compatibility or transfers; all visible controls and destinations function; loading/error/empty/
+missing-image states exist; keyboard focus is visible; responsive layouts were rendered;
+no runtime library was added; font and concept art are served locally. Favorites and Library
+are distinct, typed and versioned. Current download/install capabilities remain unavailable.
+Artwork prompt set and provenance are in artwork.md.
+
+## Limits
+
+The referenced Netflix/Overdrive screenshots were not attached to this session; design review
+uses the supplied written principles, not direct screenshot matching. No physical TV,
+screen-reader, PS4 firmware, controller, console networking/storage, actual file transfer,
+resume, SHA-256 verification or installation was tested. The six concepts remain fictional;
+unknown metadata is omitted. Local collections do not sync across devices and can be removed
+by clearing site data. Offline reload is not guaranteed; there is no service worker/cache layer.
