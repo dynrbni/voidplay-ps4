@@ -70,3 +70,11 @@ screen-reader, PS4 firmware, controller, console networking/storage, actual file
 resume, SHA-256 verification or installation was tested. The six concepts remain fictional;
 unknown metadata is omitted. Local collections do not sync across devices and can be removed
 by clearing site data. Offline reload is not guaranteed; there is no service worker/cache layer.
+
+## Git handoff
+
+Implementation commit: `9a88442d76d9289acc6f2d6b8df6da27ee564cc5`. Pushed to
+`origin/codex/fluid-store-redesign`; remote branch SHA matched the local commit.
+[PR #3](https://github.com/dynrbni/voidplay-ps4/pull/3) targets
+`feature/homepage-cinematic-redesign` (PR #2). No merge or force push was performed.
+The subsequent documentation commit records this handoff without changing the tested app.

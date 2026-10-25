@@ -17,4 +17,4 @@ Constraints: all current entries are fictional fixtures; no authorized packages 
 - [x] Replace Details with data-driven full-page art/metadata/actions, optional genuine gallery and related entries; support browser/Escape back and focus restoration.
 - [x] Verify pure catalog/storage/routing logic and browser flows including all detail entries, filters, related entries, persistence, failure recovery, keyboard and responsive behavior.
 - [x] Inspect rendered 1920x1080 and small-screen screenshots; correct visual defects and run production checks.
-- [ ] Update docs with actual evidence, review diff, commit conventionally, push, verify remote commit and open stacked PR.
+- [x] Update docs with actual evidence, review diff, commit conventionally, push, verify remote commit and open stacked PR.
