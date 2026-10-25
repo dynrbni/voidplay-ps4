@@ -21,7 +21,7 @@ const initialFilters = { query: '', category: 'All', sort: 'curated' };
 export function App() {
   const [catalog, setCatalog] = useState<CatalogState>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
-  const [featuredId, setFeaturedId] = useState('orbit-workshop');
+  const [featuredId, setFeaturedId] = useState('');
   const [browseFilters, setBrowseFilters] = useState(initialFilters);
   const [searchFilters, setSearchFilters] = useState(initialFilters);
   const [online, setOnline] = useState(navigator.onLine);
@@ -67,13 +67,14 @@ export function App() {
   function select(entry: CatalogEntry) { navigate({ page: 'item', id: entry.id }); }
   function toggleFavorite(id: string) { collections.toggle('favorites', id); }
   function download(entry: CatalogEntry) {
+    if (!entry.mock) return;
     transfers.start(entry.id);
     navigatePage('downloads');
   }
 
   const entries = catalog.status === 'ready' ? catalog.entries : [];
   const featured = entries.find(entry => entry.id === featuredId) ?? entries[0];
-  const spotlight = [...entries].sort((a, b) => Number(b.id === 'orbit-workshop') - Number(a.id === 'orbit-workshop'));
+  const spotlight = entries;
   const selected = route.page === 'item' ? entries.find(entry => entry.id === route.id) : undefined;
   const page = route.page;
   const label = page === 'item' ? selected?.title ?? 'Application details' : page.charAt(0).toUpperCase() + page.slice(1);
@@ -81,11 +82,11 @@ export function App() {
   return <div className="shell" data-reduce-motion={collections.data.reduceMotion}>
     <a className="skip-link" href="#content" onClick={event => { event.preventDefault(); focusHeading.current?.focus(); }}>Skip to content</a>
     <AppNavigation page={page} onNavigate={navigatePage} transferCount={transfers.jobs.filter(job => job.status === 'downloading' || job.status === 'queued').length}/>
-    {!online && <p className="offline" role="status">You’re offline. Already loaded concepts remain available. Reconnect before reloading the catalog.</p>}
+    {!online && <p className="offline" role="status">You’re offline. Already loaded entries remain available. Reconnect before reloading the catalog.</p>}
     {transfers.warning && <p className="storage-warning" role="status">{transfers.warning}</p>}
     {collections.warning && <p className="storage-warning" role="status">{collections.warning}</p>}
     <main id="content"><div ref={focusHeading} tabIndex={-1} className="page-focus" role="group" aria-label={label}>
-      {catalog.status === 'loading' ? <section className="loading-state" role="status"><div className="loading-line"/><p className="eyebrow">A little space for discovery</p><h1>Loading local catalog…</h1><p>Reading the concept collection.</p></section>
+      {catalog.status === 'loading' ? <section className="loading-state" role="status"><div className="loading-line"/><p className="eyebrow">A little space for discovery</p><h1>Loading local catalog…</h1><p>Reading the published catalog.</p></section>
         : catalog.status === 'error' ? <section className="message page-message" role="alert"><h1>Catalog unavailable</h1><p>The local catalog could not be loaded or its metadata is invalid.</p><button className="primary" onClick={retry}>Retry catalog</button></section>
         : <>
           <div hidden={page !== 'discover'}>
@@ -102,11 +103,11 @@ export function App() {
           <div hidden={page !== 'favorites'}><CollectionView kind="favorites" entries={entries.filter(entry => collections.data.favorites.includes(entry.id))} onSelect={select} onBrowse={() => browseCategory('All')} favorites={collections.data.favorites} onFavorite={toggleFavorite}/></div>
           <div hidden={page !== 'library'}><CollectionView kind="library" entries={entries.filter(entry => collections.data.library.includes(entry.id))} onSelect={select} onBrowse={() => browseCategory('All')} favorites={collections.data.favorites} onFavorite={toggleFavorite}/></div>
           <div hidden={page !== 'downloads'}><Downloads entries={entries} jobs={transfers.jobs} onCommand={transfers.command} onClear={transfers.clearFinished} onBrowse={() => browseCategory('All')} onSelect={select}/></div>
-          <div hidden={page !== 'settings'}><Settings count={entries.length} reduceMotion={collections.data.reduceMotion} onReduceMotion={collections.setReduceMotion} onReload={retry}/></div>
+          <div hidden={page !== 'settings'}><Settings previewMode={entries.every(entry => entry.mock)} count={entries.length} reduceMotion={collections.data.reduceMotion} onReduceMotion={collections.setReduceMotion} onReload={retry}/></div>
           {selected && <Details key={selected.id} entry={selected} entries={entries} favorites={collections.data.favorites} transfer={transfers.jobs.find(job => job.entryId === selected.id)} tracked={collections.data.library.includes(selected.id)} onClose={back} onSelect={select} onFavorite={toggleFavorite} onDownload={() => download(selected)} onTrack={() => collections.toggle('library', selected.id)}/>}
           {(page === 'missing' || page === 'item' && !selected) && <section className="message page-message"><h1>That discovery isn’t here.</h1><p>This address doesn’t match a listing in the current catalog.</p><button className="primary" onClick={() => navigatePage('discover')}>Back to Discover</button></section>}
         </>}
     </div></main>
-    <footer><div className="footer-identity"><span className="footer-brand">voidplay.</span><p>Independent by nature. Open to possibility.</p></div><div className="footer-info"><p>Beta preview · Original concepts · Demo downloads</p><p><kbd>Arrows</kbd> Navigate <kbd>Enter</kbd> Select <kbd>Esc</kbd> Back<span>PS4 runtime unverified</span></p></div></footer>
+    <footer><div className="footer-identity"><span className="footer-brand">voidplay.</span><p>Independent by nature. Open to possibility.</p></div><div className="footer-info"><p>{entries.some(entry => !entry.mock) ? 'Beta · Authorized catalog · Console transfer unavailable' : 'Beta preview · Original concepts · Demo downloads'}</p><p><kbd>Arrows</kbd> Navigate <kbd>Enter</kbd> Select <kbd>Esc</kbd> Back<span>PS4 runtime unverified</span></p></div></footer>
   </div>;
 }

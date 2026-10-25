@@ -57,8 +57,21 @@ test('detail artwork and optional metadata stay inside the validated catalog bou
 
 test('loader handles HTTP errors, malformed JSON and aborted transfers', async () => {
   const signal = new AbortController().signal;
-  assert.equal((await loadCatalog(signal, async () => new Response(JSON.stringify([entry])))).length, 1);
+  assert.equal((await loadCatalog(signal, async url => new Response(JSON.stringify(String(url).endsWith('catalog.mock.json') ? [entry] : { schemaVersion: 1, revision: 0, publishedAt: '2026-10-25T00:00:00.000Z', previewMode: true, entries: [] })))).length, 1);
   await assert.rejects(loadCatalog(signal, async () => new Response('', { status: 503 })), /503/);
   await assert.rejects(loadCatalog(signal, async () => new Response('{')), SyntaxError);
   await assert.rejects(loadCatalog(signal, async () => { throw new DOMException('Aborted', 'AbortError'); }), /Aborted/);
+});
+
+ test('a published manifest drives the store and empty publication never falls back to concepts', async () => {
+  const { metadataSchema, exportManifest, emptyWorkspace, updateWorkspace } = await import('../shared/catalog.ts');
+  const { testEntry } = await import('../shared/fixtures.ts');
+  const manifest = exportManifest(updateWorkspace(emptyWorkspace(), 0, testEntry(), 'publish'));
+  const requests: string[] = [];
+  const entries = await loadCatalog(new AbortController().signal, async url => { requests.push(String(url)); return new Response(JSON.stringify(manifest)); });
+  assert.equal(entries[0]?.mock, false);
+  assert.equal(entries[0]?.title, metadataSchema.parse(testEntry()).title);
+  assert.equal(requests.length, 1);
+  assert.deepEqual(await loadCatalog(new AbortController().signal, async () => new Response(JSON.stringify({ ...manifest, entries: [] }))), []);
+  await assert.rejects(loadCatalog(new AbortController().signal, async () => new Response(JSON.stringify({ ...manifest, entries: [{ ...testEntry(), redistribution: { authorized: false } }] }))));
 });

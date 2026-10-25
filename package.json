@@ -12,9 +12,16 @@
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
-    "test": "node --test src/*.test.ts",
+    "test": "node --test src/*.test.ts shared/*.test.ts",
     "test:e2e": "node --test e2e/store.test.mjs",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run catalog:validate && npm run build && npm run admin:build",
+    "admin:dev": "vite --config admin/vite.config.ts",
+    "admin:build": "tsc --noEmit && vite build --config admin/vite.config.ts",
+    "admin:preview": "vite preview --config admin/vite.config.ts",
+    "catalog:validate": "node scripts/catalog-cli.ts validate",
+    "catalog:import": "node scripts/catalog-cli.ts import",
+    "test:admin": "node --test e2e/admin.test.mjs",
+    "verify:public": "node scripts/verify-public.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

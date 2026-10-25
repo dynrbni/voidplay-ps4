@@ -182,7 +182,7 @@ test('catalog, missing artwork, offline and local storage failures recover hones
     waitFor('document.body.textContent.includes("Catalog unavailable")');
     screenshot('catalog-error-1080');
     browser('network', 'unroute', '**/catalog.mock.json');
-    evaluate('window.originalFetch = window.fetch; window.fetch = (...args) => new Promise(resolve => { window.releaseCatalog = () => resolve(window.originalFetch(...args)); }); true');
+    evaluate('window.originalFetch = window.fetch; window.fetch = (...args) => String(args[0]).includes("catalog.json") ? new Promise(resolve => { window.releaseCatalog = () => resolve(window.originalFetch(...args)); }) : window.originalFetch(...args); true');
     click('Retry catalog');
     waitFor('document.body.textContent.includes("Loading local catalog")');
     evaluate('window.fetch = window.originalFetch; window.releaseCatalog(); true');
@@ -217,7 +217,7 @@ test('catalog, missing artwork, offline and local storage failures recover hones
 test('optional screenshot gallery uses selected data and handles missing images', { timeout: 120000 }, () => {
   session = `voidplay-v2-gallery-${process.pid}`;
   const fixture = JSON.parse(readFileSync(new URL('../public/catalog.mock.json', import.meta.url), 'utf8'));
-  fixture[0].screenshots = [
+  fixture.find(entry => entry.id === 'save-shelf').screenshots = [
     { url: '/art/save-shelf-concept.webp', description: 'Test-only fixture image one' },
     { url: '/art/missing-test-image.webp', description: 'Test-only missing image two' }
   ];

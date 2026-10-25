@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { manifestSchema } from '../shared/catalog.ts';
+import type { PublishedEntry } from '../shared/catalog.ts';
+import { publicAsset } from './assets.ts';
+import { httpCatalog } from './platform/adapters.ts';
 
 const artworkPath = z.string().regex(/^\/art\/[a-z0-9-]+\.(?:svg|webp|png|jpg)$/);
 const entrySchema = z.strictObject({
@@ -18,7 +22,7 @@ const entrySchema = z.strictObject({
   compatibilityNotes: z.string().trim().min(1).max(1000)
 });
 
-export type CatalogEntry = z.infer<typeof entrySchema>;
+export type CatalogEntry = z.infer<typeof entrySchema> | (PublishedEntry & { mock: false; compatibilityNotes: string });
 
 export function parseCatalog(value: unknown): CatalogEntry[] {
   const entries = z.array(entrySchema).max(500).parse(value);
@@ -41,7 +45,9 @@ export function sortCatalog(entries: CatalogEntry[], order: string): CatalogEntr
 }
 
 export async function loadCatalog(signal: AbortSignal, request: typeof fetch = fetch): Promise<CatalogEntry[]> {
-  const response = await request('/catalog.mock.json', { signal });
-  if (!response.ok) throw new Error(`Catalog request failed (${response.status}).`);
-  return parseCatalog(await response.json());
+  const manifest = manifestSchema.parse(await httpCatalog(publicAsset('/catalog.json'), request).fetchCatalog(signal));
+  if (!manifest.previewMode) return manifest.entries.map(entry => ({ ...entry, mock: false, compatibilityNotes: entry.compatibility.notes }));
+  const fixture = await request(publicAsset('/catalog.mock.json'), { signal, credentials: 'omit' });
+  if (!fixture.ok) throw new Error(`Preview catalog request failed (${fixture.status}).`);
+  return parseCatalog(await fixture.json());
 }
