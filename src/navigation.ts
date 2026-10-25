@@ -24,6 +24,14 @@ export function installKeyboardNavigation(): () => void {
       event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented) return;
     const active = document.activeElement;
     if (!(active instanceof HTMLElement) || active.matches('input, textarea, select, [contenteditable]')) return;
+    const row = active.closest('[data-focus-row]');
+    if (row && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+      const cards = Array.from(row.querySelectorAll<HTMLElement>('.app-card'));
+      const next = cards.indexOf(active) + (event.key === 'ArrowRight' ? 1 : -1);
+      event.preventDefault();
+      cards[next]?.focus();
+      return;
+    }
     const root = document.querySelector('dialog[open]') ?? document;
     const controls = Array.from(root.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled)'))
       .filter(element => element.getClientRects().length > 0);
@@ -34,6 +42,7 @@ export function installKeyboardNavigation(): () => void {
     const next = findNext(center(active), controls.map(center), event.key as Direction);
     event.preventDefault();
     controls[next]?.focus();
+    controls[next]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
   }
   document.addEventListener('keydown', onKeyDown);
   return () => document.removeEventListener('keydown', onKeyDown);

@@ -13,6 +13,14 @@
 - `gh repo view dynrbni/voidplay-ps4 --json nameWithOwner,url,isEmpty,defaultBranchRef,viewerPermission`: correct repository, `isEmpty: true`, blank default branch, `viewerPermission: ADMIN`.
 - Read access confirmed; push authorization not tested. Local origin not configured because Git not initialized yet.
 
+## Cinematic redesign findings
+- Existing Home and Browse shared a flat layout and serif type; redesigned presentation without replacing data loading or runtime boundaries.
+- Original concept artwork and local Manrope replace repeated text covers; font OFL retained, no package dependency added.
+- Homepage uses curated subsets rather than unsupported popularity/ratings/recency. Only implemented navigation destinations shown.
+- Updated dev/production browser regression passed; seven Node checks plus lint/type/build pass. Discover and Browse axe scans each zero violations/incomplete.
+- Two reference screenshot attachments were not available; inspected rendered 1080p/mobile against written specification instead.
+- Current main is still initial baseline; redesign branch stacks on feature/store-foundation to preserve unmerged app history.
+
 ## Implementation findings
 - React/TypeScript/Vite first slice is now present. Clean install and quality gates pass; see docs/verification.md.
 - Correct origin configured after one Git initialization; baseline 722faee pushed on main.

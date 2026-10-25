@@ -1,21 +1,14 @@
-# Progress
+# Cinematic redesign progress
 
-## Initial audit
-- Confirmed initially empty workspace and empty intended GitHub repository.
-- No existing application checks were possible.
-- User approved continuing proposed first slice; anti-slop applied during work without repository skill installation.
-
-## Foundation implementation
-- Initialized main once, configured correct origin, committed/pushed baseline `722faee`.
-- Fetched origin and created `feature/store-foundation`.
-- Added React/TypeScript/Vite preview, strict Zod fixture validation, Home/Browse/search/category, metadata dialog, spatial keyboard navigation and recovery states.
-- No executable files, console integration, installation, admin or backend claimed.
-- Clean `npm ci` succeeded; `npm run check` passes lint, types, six Node tests and production build.
-- Browser regression passes on dev and production preview. Screenshots inspected at 1080p and mobile; no horizontal overflow. Found/fixed modal lifecycle regression.
-- Axe Home/Browse: zero WCAG A/AA violations/incomplete; dialog zero violations, one contrast ambiguity resolved by direct 7.89:1 calculation.
-- Inspected direct dependency licenses; no Overdrive code/assets reused (no declared upstream license found).
-- Early OpenOrbis investigation: LLVM and toolchain configuration missing; latest-release archive/platform suitability not verified. No console build/run attempted. See docs/ps4-status.md.
-- Reviewed staged diff and whitespace; feature commit `7f17274` pushed to `feature/store-foundation`.
-- PR https://github.com/dynrbni/voidplay-ps4/pull/1 opened against main with verification, screenshot, setup and limitations.
-- Main remains at audited baseline `722faee`; PR not merged. No integrated-main checks claimed.
-- Keeping feature branch/workspace for review. Next engineering work: isolated OpenOrbis host-tool/build experiment, then owner-observed console launch; prerequisites and runtime access remain blockers.
+- Audited clean df34c23 foundation, fetched intended origin, confirmed main still baseline and PR #1 open.
+- Created feature/homepage-cinematic-redesign from existing app; will open stacked PR against feature/store-foundation.
+- Baseline npm run check passed; no existing failures.
+- Replaced boxed hero/serif cards with full-width cinematic hero, local Manrope and poster shelves. Browse retains grid/filter layout with real title sorting.
+- Added six original local SVG concept artworks and retained SIL OFL 1.1 notice for vendored Manrope. No dependency added, no commercial assets copied.
+- Reused loader/filter/dialog; split presentation into navigation/hero/shelf/poster components. Optional art paths validated; missing-image fallback tested.
+- Browser regression initially caught Escape routing and Search-focus issues; fixed and reran successfully on dev and production previews.
+- npm run check passes lint/types/seven tests/build. Axe Discover/Browse both zero WCAG A/AA violations and zero incomplete after fixes.
+- Inspected actual 1080p Home/Browse and mobile screenshots. Reference attachments unavailable; no direct-match claim.
+- No console compatibility or installation claims.
+- Reviewed diff/whitespace; committed bc45cba and pushed feature/homepage-cinematic-redesign to intended origin.
+- Opened stacked PR https://github.com/dynrbni/voidplay-ps4/pull/2 against feature/store-foundation. Not merged; foundation PR #1 must land first, then redesign can retarget main.
