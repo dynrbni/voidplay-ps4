@@ -68,6 +68,8 @@ The preview reports raster time for this Mac, not PS4 performance. Services
 including storage, HTTP, downloads and installation are unavailable. It is not
 a PS4 emulator. The diagnostic bitmap font is temporary test typography.
 
+![Shared native C++ display-test frame captured on Mac](docs/mac-display-test.png)
+
 ## PS4 startup build and verification
 
 ```sh

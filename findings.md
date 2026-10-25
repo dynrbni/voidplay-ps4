@@ -65,3 +65,13 @@
 
 ### Owner launch failure follow-up
 Owner reports package 01.00 fails with “cannot continue using this application” on firmware 12.00/GoldHEN, no CE code. Found missing OpenOrbis sample modules and 4 KiB/overlapping ELF LOAD layout. Corrected 01.01 builds with package/ELF/source-receipt guards and six Python regression checks. PKG/extracted runtime hashes verified locally; corrected FTP transfer is blocked by connection timeout. Console root cause and corrected launch remain unverified.
+
+# C++ migration continuation, 2026-10-26
+
+- Direct request selects C++ over the attachment's JSX goal; retain its hardware-first audit and validation sequence. Owner admin remains web-only.
+- Source audit pins Overdrive framework 264f78e6b92e5eed1415490b003944eb97ed4f8b and JVK3R continuation 65691ac70c814edd01b6f7174ad208748b503a17; no code/assets imported. See framework/voidplay-native/docs/architecture.md and NOTICE.
+- Prior diagnostic was already native C. Owner reports CE-34878-0/no initial dialog, without installed hash or trace. Neither pre-main failure nor an API cause is established.
+- LLVM/LLD 18.1.8 installed as versioned tools; default LLVM/shell unchanged. Eight critical SDK files match the hashed v0.5.4 archive. Mac uses Apple Clang 21 because LLVM-18 ASan spun before main on macOS 27.
+- Native Mac test exercises a shared C++ surface and SDL window/input. It is a display test, not a migrated store or PS4 emulator. Existing catalog/admin/browser client remains intact.
+- Final PS4 boot package at runtime commit 9db3eb2: SHA256 03be335c4aaffae155e3524b7bfdf6d44f74b3f722d2908e90ad048c71ddfe90, 6,619,136 bytes, VPLY00002 01.00. Cross-build/structural/extracted-content checks passed; hardware unverified.
+- Owner deferred FTP/Klog activation. No replacement transfer/install/launch. Full store migration remains gated on console startup/presentation, not complete.
