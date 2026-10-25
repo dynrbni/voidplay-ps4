@@ -34,6 +34,7 @@ test('compact store: transparent sticky header, shared hearts, details and respo
   mkdirSync('artifacts', { recursive: true });
   try {
     browser('open', url);
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ schemaVersion: 1, revision: 0, publishedAt: '2026-10-25T00:00:00.000Z', previewMode: true, entries: [] })); browser('reload');
     browser('set', 'viewport', '1920', '1080');
     readyHome();
     noOverflow();
@@ -159,6 +160,7 @@ test('catalog, missing artwork, offline and local storage failures recover hones
   session = `voidplay-v2-recovery-${process.pid}`;
   try {
     browser('open', url);
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ schemaVersion: 1, revision: 0, publishedAt: '2026-10-25T00:00:00.000Z', previewMode: true, entries: [] })); browser('reload');
     browser('set', 'viewport', '1920', '1080');
     readyHome();
     browser('set', 'offline', 'on');
@@ -223,6 +225,7 @@ test('optional screenshot gallery uses selected data and handles missing images'
   ];
   try {
     browser('open', url);
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ schemaVersion: 1, revision: 0, publishedAt: '2026-10-25T00:00:00.000Z', previewMode: true, entries: [] })); browser('reload');
     browser('network', 'route', '**/catalog.mock.json', '--body', JSON.stringify(fixture));
     browser('network', 'route', '**/art/missing-test-image.webp', '--abort');
     browser('open', `${url}/#/item/save-shelf`);
@@ -245,6 +248,7 @@ test('dummy Download to PS4 shares a persistent, controllable demo queue', { tim
   const transfer = id => `JSON.parse(localStorage.getItem('voidplay.demo-transfers.v1')).jobs.find(j=>j.entryId==='${id}')`;
   try {
     browser('open', url);
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ schemaVersion: 1, revision: 0, publishedAt: '2026-10-25T00:00:00.000Z', previewMode: true, entries: [] })); browser('reload');
     browser('set','viewport','1920','1080');
     readyHome();
     evaluate('window.demoFetches=[]; window.originalDemoFetch=window.fetch; window.fetch=(...args)=>{window.demoFetches.push(String(args[0]));return window.originalDemoFetch(...args)};true');

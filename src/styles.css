@@ -363,3 +363,9 @@ h1, .detail-information p, .item-metadata dd, .hero-description, .detail-summary
 
 .featured .hero-disclosure { margin-top: 10px; }
 .detail-description { -webkit-line-clamp: 2; }
+
+.trailer { max-width: 960px; margin: 32px 0; }
+.trailer iframe { display: block; width: 100%; min-height: 200px; aspect-ratio: 16 / 9; border: 0; background: #111; }
+.trailer-placeholder { padding: 28px; background: #171717; }
+.trailer a { color: #f4f4f4; text-decoration: underline; text-underline-offset: 3px; }
+.trailer p { color: #b8b8b8; font-size: 14px; }

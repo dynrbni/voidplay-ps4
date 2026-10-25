@@ -1,3 +1,7 @@
+> The current owner workflow uses a password-protected Mac backend and Pages publication.
+> Start with [Owner catalog: GitHub Pages + this Mac](owner-pages.md).
+> The export/import contract below remains supported for manual Git review.
+
 # Owner catalog workflow
 
 The owner dashboard is a separate local React/TypeScript application. Run `npm run admin:dev`

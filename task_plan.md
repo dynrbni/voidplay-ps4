@@ -63,3 +63,7 @@ Current plan: `docs/superpowers/plans/2026-10-26-cpp-runtime.md`.
 Clean branch `codex/cpp-runtime-foundation` starts at db6e545, stacked on PR #4.
 Direct C++ choice takes precedence over the attached brief's JSX goal; retain its hardware-first gates.
 Do not port the full store before isolating native startup and validating PS4 presentation.
+
+## Owner Pages catalog, 2026-10-26
+
+User redirected focus to a real owner-edited catalog and password login. They selected a Mac backend because no cloud account exists. Current branch codex/pages-owner-catalog, based on d368c6a / PR #5. See docs/superpowers/plans/2026-10-26-pages-owner-catalog.md. The Mac backend protects private workspace/actions; Pages hosts public metadata and the login shell. Native console testing remains deferred.

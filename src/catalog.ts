@@ -36,7 +36,7 @@ export function filterCatalog(entries: CatalogEntry[], query: string, category: 
   const term = query.trim().toLowerCase();
   return entries.filter(entry =>
     (category === 'All' || entry.category === category) &&
-    `${entry.title} ${entry.description} ${entry.category}`.toLowerCase().includes(term)
+    `${entry.title} ${entry.description} ${entry.category} ${entry.mock ? '' : entry.genres.join(' ')}`.toLowerCase().includes(term)
   );
 }
 

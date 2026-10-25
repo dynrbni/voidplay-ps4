@@ -28,6 +28,7 @@
     "shared",
     "admin",
     "scripts",
+    "server",
     "vite.config.ts",
     "eslint.config.js"
   ]

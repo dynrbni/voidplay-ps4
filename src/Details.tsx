@@ -6,6 +6,7 @@ import { ContentShelf } from './ContentShelf.tsx';
 import { Icon } from './Icon.tsx';
 import { ScreenshotGallery } from './ScreenshotGallery.tsx';
 import { FavoriteButton } from './FavoriteButton.tsx';
+import { Trailer } from './Trailer.tsx';
 
 export function Details({ entry, entries, favorites, tracked, transfer, onClose, onSelect, onFavorite, onTrack, onDownload }: {
   entry: CatalogEntry; entries: CatalogEntry[]; favorites: string[]; tracked: boolean; transfer?: DemoTransfer;
@@ -30,12 +31,13 @@ export function Details({ entry, entries, favorites, tracked, transfer, onClose,
       {entry.releaseNotes && <><h2>Release notes</h2><p className="release-notes">{entry.releaseNotes}</p></>}
     </section><section aria-label="Application information"><dl className="item-metadata">
       <div className="metadata-wide"><dt>Title</dt><dd>{entry.title}</dd></div><div><dt>Category</dt><dd>{entry.category}</dd></div>{entry.author && <div><dt>Author</dt><dd>{entry.author}</dd></div>}{entry.version && <div><dt>Version</dt><dd>{entry.version}</dd></div>}
-      <div><dt>Availability</dt><dd>{entry.mock ? 'Concept preview' : 'Published · Transfer unavailable'}</dd></div><div className="metadata-wide"><dt>Compatibility · {entry.mock ? 'Unverified' : entry.compatibility.status}</dt><dd>{entry.compatibilityNotes}</dd></div>
+      {!entry.mock && entry.genres.length > 0 && <div><dt>Genres</dt><dd>{entry.genres.join(' · ')}</dd></div>}<div><dt>Availability</dt><dd>{entry.mock ? 'Concept preview' : 'Published · Transfer unavailable'}</dd></div><div className="metadata-wide"><dt>Compatibility · {entry.mock ? 'Unverified' : entry.compatibility.status}</dt><dd>{entry.compatibilityNotes}</dd></div>
       {entry.license && <div className="metadata-wide"><dt>License & redistribution</dt><dd>{entry.license}</dd></div>}
       {!entry.mock && <><div><dt>Released</dt><dd>{entry.releaseDate}</dd></div><div><dt>File</dt><dd>{entry.fileSize.toLocaleString()} bytes · {entry.fileFormat}</dd></div>{(['interface', 'audio', 'subtitles'] as const).map(kind => <div key={kind}><dt>{kind} languages</dt><dd>{entry.languages[kind].join(', ') || 'None'}</dd></div>)}<div className="metadata-wide"><dt>Redistribution authorization</dt><dd>{entry.redistribution.statement}</dd></div>{entry.compatibility.evidence && <div className="metadata-wide"><dt>Compatibility evidence</dt><dd>{entry.compatibility.firmwares.join(', ')} · {entry.compatibility.evidence}</dd></div>}</>}
     </dl></section></div>
       {!entry.mock && <section className="download-sources"><h2>Download sources</h2><p>Authorized download sources. Opening a source does not transfer to or install on a PS4.</p>{entry.sources.map(source => <div key={source.id}><h3>{source.provider}</h3><a href={source.url} target="_blank" rel="noreferrer">Open source ↗</a><p>{source.expectedSize.toLocaleString()} bytes · {source.authentication.required ? `Authentication required: ${source.authentication.instructions}` : 'No authentication required'}</p><p className="checksum">SHA-256: {source.sha256}</p></div>)}</section>}
       {entry.screenshots?.length ? <ScreenshotGallery screenshots={entry.screenshots}/> : null}
+      {!entry.mock && entry.trailerUrl && <Trailer key={entry.trailerUrl} url={entry.trailerUrl} title={entry.title}/>}
       <ContentShelf title={sameCategory.length ? `More in ${entry.category.toLowerCase()}` : 'More to explore'} entries={related} onSelect={onSelect} favorites={favorites} onFavorite={onFavorite} format="landscape"/>
     </div>
   </article>;

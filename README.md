@@ -11,12 +11,27 @@ Header links are Discover, Browse, Downloads and Library, followed by Favorites,
 
 ![Voidplay Discover desktop preview with original concept artwork](docs/images/store-preview.png)
 
-The checked-in catalog uses six explicitly fictional preview concepts. Original generated artwork is stored locally;
-no executable packages are published. The separate admin supports authorized real metadata and sources through validated export.
+The public catalog starts in real mode with no entries. The password-protected owner studio
+uses a private Mac backend to author and publish real metadata to GitHub Pages. Six fictional
+concepts remain explicit test fixtures; no executable packages are published automatically.
 Downloads provides an explicitly labeled dummy transfer flow. **This is not a PS4 release.** Console rendering,
 controller input, network/storage behavior and installation remain unverified.
 See [capability status](docs/ps4-status.md), [design](docs/design-v2.md),
 [artwork provenance and prompts](docs/artwork.md) and [verification](docs/verification.md).
+
+## Owner studio and live catalog
+
+Run `npm run owner:serve` and open **http://127.0.0.1:5186/** on this Mac.
+The requested owner password is configured privately; no plaintext password or
+publishing credential is included in Git or static assets. The Pages front door
+is `https://dynrbni.github.io/voidplay-ps4/admin/` and still needs this Mac backend.
+
+Create an entry, fill metadata/genres/artwork and optional YouTube trailer,
+configure 1–3 authorized sources, save/validate/preview, stage a published
+snapshot, then choose **Publish to Pages**. **Check deployment** confirms the
+public catalog revision; reload the application to fetch it. Drafts stay private.
+See [the complete owner workflow](docs/owner-pages.md), including setup,
+backups, integrity fields and the distinction between the web client and native PoC.
 
 ## Development
 
@@ -102,8 +117,9 @@ the public build. No catalog records are duplicated in React components.
 
 See [owner editing and safe Git publishing](docs/catalog-publishing.md) for field requirements,
 backup/export/import commands, validation and the manual GitHub Pages workflow. The admin
-build is local-only and separate from `dist/`; no browser GitHub tokens or direct publishing
-backend are included. Pages has not been enabled or deployed by this change.
+build is separate from `dist/`; the combined Pages build includes its public login shell.
+The local owner backend protects workspace and publishing actions; no browser GitHub tokens
+are used. See the owner workflow and verification report for actual Pages deployment status.
 
 Storage, networking, real downloads and installation expose interfaces in `src/platform/`.
 Settings shows an explicitly labeled desktop storage mock. Mock figures never authorize

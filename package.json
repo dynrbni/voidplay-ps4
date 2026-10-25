@@ -12,7 +12,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
-    "test": "node --test src/*.test.ts shared/*.test.ts",
+    "test": "node --test src/*.test.ts shared/*.test.ts server/*.test.ts",
     "test:e2e": "node --test e2e/store.test.mjs",
     "check": "npm run lint && npm run typecheck && npm test && npm run catalog:validate && npm run build && npm run admin:build",
     "admin:dev": "vite --config admin/vite.config.ts",
@@ -29,7 +29,12 @@
     "native:runtime:test": "sh framework/voidplay-native/tools/test-portable.sh",
     "native:mac:smoke": "python3 -B framework/voidplay-native/tools/cli.py mac-smoke",
     "native:ps4:build": "python3 -B framework/voidplay-native/tools/cli.py ps4-build",
-    "native:ps4:verify": "python3 -B framework/voidplay-native/tools/cli.py ps4-verify"
+    "native:ps4:verify": "python3 -B framework/voidplay-native/tools/cli.py ps4-verify",
+    "owner:setup": "node scripts/setup-owner.ts",
+    "owner:serve": "npm run admin:build && node server/owner.ts",
+    "pages:build": "node scripts/pages.ts build",
+    "pages:deploy": "node scripts/pages.ts deploy",
+    "test:owner": "node --test server/*.test.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

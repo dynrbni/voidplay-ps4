@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { youtubeWatchUrl } from './youtube.ts';
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 export const idSchema = text(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -27,9 +28,16 @@ export const sourceSchema = z.strictObject({
   if (source.authentication.required && !source.authentication.instructions) ctx.addIssue({ code: 'custom', path: ['authentication', 'instructions'], message: 'Describe how the user obtains access; never include credentials.' });
 });
 const languageList = z.array(text(80)).max(100);
+const genres = z.array(text(60)).max(12).refine(values => new Set(values.map(value => value.toLowerCase())).size === values.length, 'Genres must be unique.');
+const trailerUrl = text(2000).transform((value, ctx) => {
+  const url = youtubeWatchUrl(value);
+  if (!url) { ctx.addIssue({ code: 'custom', message: 'Use an HTTPS YouTube video URL.' }); return z.NEVER; }
+  return url;
+});
 export const metadataSchema = z.strictObject({
   id: idSchema, title: text(100), summary: text(240), description: text(10000),
   category: z.enum(categories), author: text(120), version: text(80),
+  genres: genres.default([]), trailerUrl: trailerUrl.optional(),
   releaseDate: z.iso.date(), coverUrl: artworkUrl, heroUrl: artworkUrl,
   screenshots: z.array(z.strictObject({ url: artworkUrl, description: text(300) })).max(12),
   languages: z.strictObject({ interface: languageList.min(1), audio: languageList, subtitles: languageList }),
@@ -48,6 +56,7 @@ export type PublishedEntry = z.infer<typeof metadataSchema>;
 export const draftSchema = z.strictObject({
   id: idSchema, title: z.string().max(100), summary: z.string().max(240), description: z.string().max(10000), category: z.enum(categories),
   author: z.string().max(120), version: z.string().max(80), releaseDate: z.string().max(20), coverUrl: z.string().max(2000), heroUrl: z.string().max(2000),
+  genres: z.array(z.string().max(60)).max(12).default([]), trailerUrl: z.string().max(2000).optional(),
   screenshots: z.array(z.strictObject({ url: z.string().max(2000), description: z.string().max(300) })).max(12),
   languages: z.strictObject({ interface: languageList, audio: languageList, subtitles: languageList }),
   fileSize: z.number().nonnegative().max(Number.MAX_SAFE_INTEGER), fileFormat: z.string().max(40),
@@ -73,7 +82,7 @@ export const manifestSchema = z.strictObject({ schemaVersion: z.literal(1), revi
 });
 export type Manifest = z.infer<typeof manifestSchema>;
 export const emptyWorkspace = (): Workspace => ({ schemaVersion: 1, revision: 0, updatedAt: new Date().toISOString(), records: [] });
-export const newDraft = (id: string): Draft => ({ id, title: '', summary: '', description: '', category: 'Utilities', author: '', version: '', releaseDate: '', coverUrl: '', heroUrl: '', screenshots: [], languages: { interface: [], audio: [], subtitles: [] }, fileSize: 0, fileFormat: '', compatibility: { status: 'unverified', firmwares: [], notes: '', evidence: '' }, releaseNotes: '', license: '', redistribution: { authorized: false, statement: '' }, sources: [] });
+export const newDraft = (id: string): Draft => ({ id, title: '', summary: '', description: '', category: 'Utilities', author: '', version: '', releaseDate: '', coverUrl: '', heroUrl: '', genres: [], screenshots: [], languages: { interface: [], audio: [], subtitles: [] }, fileSize: 0, fileFormat: '', compatibility: { status: 'unverified', firmwares: [], notes: '', evidence: '' }, releaseNotes: '', license: '', redistribution: { authorized: false, statement: '' }, sources: [] });
 
 export function updateWorkspace(value: Workspace, expectedRevision: number, draft: Draft, action: 'save' | 'publish' | 'unpublish'): Workspace {
   const workspace = workspaceSchema.parse(value);
