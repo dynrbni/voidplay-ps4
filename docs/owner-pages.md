@@ -18,6 +18,7 @@ Mac. Other visitors cannot use their localhost to reach your workspace.
    password configured privately on this Mac; no username is needed. Browsers
    may ask to allow the Pages site to reach the local network. If a browser
    blocks HTTPS-to-loopback requests, use the local URL directly.
+   The Pages front door provides **Open studio on this Mac** for that case.
 3. Enter a permanent slug such as `my-homebrew` under **New entry ID**, then
    choose **Create**. Add title, category, genres, developer, release/version,
    descriptions, cover/hero image URLs and optional screenshots. Image URLs

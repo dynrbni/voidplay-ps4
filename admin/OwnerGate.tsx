@@ -51,6 +51,7 @@ export function OwnerGate() {
 
   if (session) return <Admin initialWorkspace={session.workspace} api={session.api} onLogout={async () => { try { await session.api.logout(); } finally { setSession(null); setPassword(''); } }}/>;
   return <main className="owner-login"><a className="brand" href="#">voidplay.<span>BETA</span></a><p className="overline">OWNER ACCESS</p><h1>Catalog Studio</h1><p>Sign in to manage games and apps. The private workspace stays on your Mac; published catalog data is public.</p>
+    {base && base !== location.origin && <p className="local-studio-link"><a href={`${base}/`} target="_blank" rel="noreferrer">Open studio on this Mac ↗</a><br/>Use the local studio if your browser blocks the connection from GitHub Pages.</p>}
     <form onSubmit={event => { void login(event); }}><label htmlFor="owner-password">Password<input id="owner-password" type="password" autoComplete="current-password" required maxLength={128} value={password} onChange={event => setPassword(event.target.value)}/></label><button className="primary" disabled={busy || base === null}>{busy ? 'Signing in…' : 'Sign in'}</button></form>
     {message && <p role="alert">{message}</p>}<p className="login-help">Run <code>npm run owner:serve</code> on your Mac before signing in. No username is required. Passwords and session tokens are not saved in browser storage.</p>
   </main>;
