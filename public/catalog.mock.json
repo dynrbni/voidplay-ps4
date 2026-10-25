@@ -1,0 +1,34 @@
+[
+  {
+    "id": "save-shelf",
+    "title": "Save Shelf",
+    "description": "A fictional save-file organizer used to preview the Voidplay catalog. No executable or save data is included.",
+    "category": "Utilities",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. PS4 firmware 12.00 compatibility has not been tested."
+  },
+  {
+    "id": "orbit-workshop",
+    "title": "Orbit Workshop",
+    "description": "A fictional homebrew puzzle game for testing browsing and search. No game package is available.",
+    "category": "Games",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. No console build exists."
+  },
+  {
+    "id": "local-player",
+    "title": "Local Player",
+    "description": "A fictional media player listing for previewing application details. Playback is not implemented.",
+    "category": "Media",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. Media APIs and PS4 runtime support are unverified."
+  },
+  {
+    "id": "file-desk",
+    "title": "File Desk",
+    "description": "A fictional file browser listing. It does not access the console filesystem or distribute any files.",
+    "category": "Utilities",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. Console filesystem access is unverified."
+  }
+]

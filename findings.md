@@ -13,7 +13,15 @@
 - `gh repo view dynrbni/voidplay-ps4 --json nameWithOwner,url,isEmpty,defaultBranchRef,viewerPermission`: correct repository, `isEmpty: true`, blank default branch, `viewerPermission: ADMIN`.
 - Read access confirmed; push authorization not tested. Local origin not configured because Git not initialized yet.
 
-## Boundaries
-- No Overdrive code or assets inspected or reused yet. License review required before reuse.
-- No OpenOrbis build attempted. No console connection or PS4 runtime verified.
+## Implementation findings
+- React/TypeScript/Vite first slice is now present. Clean install and quality gates pass; see docs/verification.md.
+- Correct origin configured after one Git initialization; baseline 722faee pushed on main.
+- Direct dependencies use MIT/Apache-2.0; npm install/ci report zero known vulnerabilities.
+- Optional fsevents install-script warning did not prevent checks; no override added.
+
+## Upstream boundaries
+- Overdrive GitHub metadata: license null; root listing has no LICENSE. No code/assets reused.
+- OpenOrbis README requires non-Apple LLVM; current Mac has no configured OO_PS4_TOOLCHAIN and no Homebrew LLVM binaries at checked path.
+- OpenOrbis latest release v0.5.4 lists one toolchain-llvm-18.tar.gz asset; host suitability not proven. Upstream sample hardcodes Intel Homebrew paths on Darwin.
+- No OpenOrbis build attempted. No console connection or PS4 runtime verified. Sources and next experiment in docs/ps4-status.md.
 - React desktop preview does not establish PS4 compatibility.

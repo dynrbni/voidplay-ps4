@@ -4,7 +4,7 @@
 Establish audited, tested desktop store preview without asserting PS4 compatibility.
 
 ## Current Phase
-User approved continuing the proposed slice. Establishing baseline and implementation branch.
+Store foundation implemented and verified; reviewing and publishing feature branch.
 
 ## Phases
 ### Phase 0: Audit
@@ -21,19 +21,26 @@ User approved continuing the proposed slice. Establishing baseline and implement
 - Obtain required design and anti-slop usage-mode approval before implementation.
 
 ### Phase 2: Foundation and store slice
-**Status:** pending
+**Status:** complete
 - Establish initial main baseline and dedicated feature branch.
 - Build approved slice, meaningful tests, onboarding, and capability status.
 
 ### Phase 3: Verification and publication
-**Status:** pending
+**Status:** in_progress
 - Type check, lint, tests, production build, rendered UI and keyboard checks.
 - Review diff and secrets; commit coherent units, push intended remote, open PR if permitted.
 
 ## Next Step
-Establish audited baseline on main, then implement on feature/store-foundation.
+Review and commit the verified feature, push feature/store-foundation, then open a PR.
 
 ## Errors Encountered
 | Command | Result | Resolution |
 | --- | --- | --- |
-| git status --short --branch | fatal: not a git repository (or any of the parent directories): .git | Expected for empty workspace; initialize only as new project, not existing repository. |
+| git status --short --branch | fatal: not a git repository (or any of the parent directories): .git | Expected for empty workspace; initialized only after empty remote verification. |
+| agent-browser skills get core | command not found | Used npm tool cache and installed local Chrome; no project runtime dependency added. |
+| browser.tabs.open | desktop bridge disconnected | Switched to isolated local agent-browser session. |
+| Initial Node tests | missing catalog/navigation modules | Expected red tests; implemented and all six pass. |
+| Screenshot save | artifacts directory absent | Created ignored artifacts directory and reran. |
+| Initial browser checks | dialog closed during Strict Mode replay; close state not unmounted | Explicit show/close/cancel lifecycle; full dev/production regression passes. |
+| Browser test harness | native Tab includes browser chrome; unsupported semantic focus/select actions | Adjusted Tab-cycle expectation and used supported focus/select calls. |
+| Branch protection API | 404 Branch not protected | Informational policy check, no protections bypassed. |
