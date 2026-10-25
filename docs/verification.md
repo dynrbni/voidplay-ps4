@@ -88,3 +88,13 @@ The header now changes from clear to a blurred translucent surface above 24px of
 - GitHub Pages remains disabled; the manual main-only deployment workflow has not been run. No credential-bearing publishing endpoint is present.
 
 Remote handoff: PR #4 (`codex/catalog-admin-storage-poc` → `codex/fluid-store-redesign`), implementation commits `40a70f7` and `da882b0`. GitHub Actions run [40210738627](https://github.com/dynrbni/voidplay-ps4/actions/runs/40210738627) did not start any job steps: GitHub reported the account is locked due to a billing issue. Remote CI is therefore unavailable, not passing; no account billing changes or repeated reruns were attempted.
+
+## Native launch failure follow-up
+
+Owner reports package 01.00 cannot continue on firmware 12.00/GoldHEN, without CE code.
+The package lacked three files included by the pinned OpenOrbis sample; its ELF also used a
+4 KiB RO LOAD sharing a 16 KiB executable page. Added package-input and ELF structural guards,
+checked build receipts and corrected packaging/link flags in version 01.01. Original artifacts
+fail the new guards. Six Python regression tests and host sanitizer checks pass; corrected
+native build, PKG hash/signature validation and extracted-payload hash comparisons pass.
+Console-side cause and corrected launch remain unverified; no automatic install was attempted.

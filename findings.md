@@ -62,3 +62,6 @@
 - OpenOrbis v0.5.4 release archive was downloaded and inspected. Source-only clone lacks built libc; release sysroot plus non-Apple LLVM/lld successfully built ELF/eboot/test PKG. Host tools ran on Apple Silicon. Dependencies installed: LLVM/lld, z3, xz update; no shell profile/default compiler changes.
 - OpenOrbis musl PS4 statvfs conversion is omitted; diagnostic uses declared libc fstatfs, validates arithmetic/results and reports candidate/unverified mount-scoped figures. Never infer PS4 disk capacity from browser quota.
 - Owner supplied FTP and Internal Package Installer/file-manager launch path. FTP connected and accepted the diagnostic under its owned directory; matching size observed, read-back hash incomplete due timeouts. No install/launch performed; firmware 12.00 remains unverified. Private endpoint is intentionally absent from tracked configuration.
+
+### Owner launch failure follow-up
+Owner reports package 01.00 fails with “cannot continue using this application” on firmware 12.00/GoldHEN, no CE code. Found missing OpenOrbis sample modules and 4 KiB/overlapping ELF LOAD layout. Corrected 01.01 builds with package/ELF/source-receipt guards and six Python regression checks. PKG/extracted runtime hashes verified locally; corrected FTP transfer is blocked by connection timeout. Console root cause and corrected launch remain unverified.

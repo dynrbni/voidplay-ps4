@@ -76,3 +76,21 @@ The diagnostic source is GPL-3.0-only; see `LICENSE`. It links the GPL-licensed 
 and its separately licensed runtime components. SDK binaries are not vendored; rebuilding
 requires the linked upstream release and source. This is an experimental owner test artifact,
 not a production console release.
+
+## Launch correction 01.01
+
+The owner reported a 01.00 launch failure on firmware 12.00. Use package **01.01** for the
+next controlled test; it includes the pinned OpenOrbis runtime/sample modules, checked
+16 KiB LOAD layout, and an earlier startup dialog. Do not infer that this fixes the console
+error before testing. See [the correction evidence](../../docs/ps4-diagnostic.md#owner-launch-failure-and-corrected-package-0101).
+
+`build.py` now produces `build-receipt.json`; `package.py` refuses stale/failed builds and
+produces `package-receipt.json` containing version, size and input/package hashes. An SDK
+without `samples/dialogs/sce_sys/about/right.sprx` and the two sample `sce_module/*.prx`
+files fails instead of silently producing an incomplete package. On non-macOS hosts supply
+`build/sce_sys/icon0.png` before packaging; macOS derives it from repository artwork.
+
+For the standalone **0x199 IPI**, put the package directly in `/data/`, as its
+[upstream instructions](https://github.com/0x199/ps4-ipi#usage) specify. The diagnostic still
+writes its own reports/probes under `/data/voidplay-diagnostic`; retain that directory.
+A source archive build and a PKG digest check do not establish runtime compatibility.

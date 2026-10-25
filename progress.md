@@ -44,3 +44,13 @@
 - Available validation: 23 unit tests, independent builds, public-artifact checks, 4 store + 2 admin/publication browser scenarios, subpath hosting check and owner-dashboard/Settings accessibility checks. Final remote handoff follows.
 
 Remote handoff: PR #4 opened/attached against PR #3; implementation commits 40a70f7 and da882b0 pushed with matching remote SHA. GitHub CI did not start because of an account billing lock. Local checks pass; console runtime and full FTP read-back hash remain unverified.
+
+## Native launch failure investigation
+- Owner reports “cannot continue using this application” on firmware 12.00/GoldHEN, no CE code.
+- FTP directory has no diagnostic report; this does not prove the failure stage.
+- Found omitted OpenOrbis sample runtime files and a 4 KiB/overlapping LOAD layout in 01.00.
+- Corrected package 01.01 includes the three SDK files, explicit 16 KiB link layout, early
+  startup dialog, GP4/ELF guards, successful-build/source hashes and package hash receipt.
+- Original GP4/ELF fail the new guards. Host sanitizer tests, six Python regression tests,
+  native build, PKG digest/signature checks and extracted runtime-byte comparisons pass.
+- Firmware 12.00 success is not claimed; owner needs to test the corrected package.

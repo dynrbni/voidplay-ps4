@@ -87,3 +87,42 @@ FTP stage contains only the diagnostic's package under its owned directory. No c
 application was installed or launched by this work. Do not treat the presence of a package,
 matching size or a host validation result as successful console testing. Follow the
 [native owner procedure](../native/diagnostic/README.md) to collect actual reports.
+
+## Owner launch failure and corrected package 01.01
+
+The owner attempted to launch package 01.00 on firmware 12.00 with GoldHEN and reported
+“cannot continue using this application”, without a CE code. FTP inspection of the diagnostic's
+owned directory found only the staged package/checksum, with no diagnostic report. This does
+not identify the console-side root cause or prove whether `main` was reached.
+
+Two build defects were found independently of that report:
+
+- The original GP4 omitted `sce_sys/about/right.sprx`, `sce_module/libc.prx` and
+  `sce_module/libSceFios2.prx`. The pinned [dialogs sample Makefile](https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/blob/v0.5.4/samples/dialogs/Makefile)
+  includes these runtime/sample files, supplied by the SDK's module build-and-copy step.
+  `right.sprx` supplies shell About information; its absence alone is not established as the
+  launch failure. The corrected packager copies all three OpenOrbis-built files from the
+  complete release sysroot, rejects missing/empty inputs and validates the GP4 manifest.
+- LLD 23 emitted a separate read-only LOAD with 4 KiB alignment, sharing a 16 KiB page with
+  executable content. The corrected link uses 16 KiB max/common page sizes and `--no-rosegment`.
+  The structural guard checks LOAD alignment, bounds, entry coverage and incompatible page
+  permission overlap before SELF conversion. These checks reject the preserved original ELF.
+
+A successful build writes hashes of the ELF, eboot, configuration and source inputs. Packaging
+requires that matching receipt, so a failed or stale build cannot accidentally package an old
+eboot. Package 01.01 retains title ID `VPLY00001`, increments both SFO versions and attempts its
+first “01.01 reached main” dialog before storage or file-I/O probes.
+
+Validation: host sanitizer checks and six Python regression tests passed. The original GP4
+and ELF were explicitly rejected by the new checks. Corrected ELF/SELF/PKG built; PkgTool's
+hash/signature checks passed. Extracting the actual PKG and hashing eboot plus all three
+runtime files matched the exact build inputs. SDK runtime binaries remain untracked; the
+release archive/source provenance and GPL notice above apply to the bundled modules.
+
+Corrected package: 6,619,136 bytes, SHA-256
+`34d83751ff53754fa28c3f5c02901c7a8ed4b7c9cd1ab63faeac27c2bb63a32f`.
+It is a correction candidate, not evidence that launch on firmware 12.00 now works. Owner
+reinstallation and the first dialog/report must be observed separately; no automatic package
+installation, license changes, firmware changes or cleanup was performed.
+
+Transfer attempt for corrected 01.01: FTP connection timed out before upload. The new package is available locally; its presence on the console is not claimed. The owner has been asked to re-enable FTP.

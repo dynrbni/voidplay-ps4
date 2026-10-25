@@ -7,9 +7,11 @@ import platform
 import re
 import subprocess
 from urllib.parse import urlparse
+from artifact_contract import validate_elf, build_hashes
 
 root = Path(__file__).resolve().parent
 build = root / 'build'
+(build / 'build-receipt.json').unlink(missing_ok=True)
 sdk = Path(os.environ.get('OO_PS4_TOOLCHAIN', ''))
 llvm = Path(os.environ.get('LLVM_BIN', '/opt/homebrew/opt/llvm/bin'))
 lld = Path(os.environ.get('LLD', '/opt/homebrew/opt/lld/bin/ld.lld'))
@@ -36,10 +38,12 @@ build.mkdir(exist_ok=True)
 flags = ['--target=x86_64-pc-freebsd12-elf', '-std=c11', '-D_GNU_SOURCE', '-fPIC', '-funwind-tables', '-fno-stack-protector', '-Wall', '-Wextra', '-Werror', '-isysroot', str(sdk), '-isystem', str(sdk / 'include'), '-I', str(build), '-c']
 for source in ['common', 'main']:
     subprocess.run([str(llvm / 'clang'), *flags, str(root / f'{source}.c'), '-o', str(build / f'{source}.o')], check=True)
-subprocess.run([str(lld), '-m', 'elf_x86_64', '-pie', '--script', str(sdk / 'link.x'), '--eh-frame-hdr', '-L', str(sdk / 'lib'), str(sdk / 'lib/crt1.o'), str(build / 'main.o'), str(build / 'common.o'), '-lc', '-lkernel', '-lSceSysmodule', '-lScePad', '-lSceUserService', '-lSceHttp', '-lSceSsl', '-lSceNet', '-lSceCommonDialog', '-lSceMsgDialog', '-o', str(build / 'diagnostic.elf')], check=True)
+subprocess.run([str(lld), '-m', 'elf_x86_64', '-pie', '--no-rosegment', '-z', 'max-page-size=0x4000', '-z', 'common-page-size=0x4000', '--script', str(sdk / 'link.x'), '--eh-frame-hdr', '-L', str(sdk / 'lib'), str(sdk / 'lib/crt1.o'), str(build / 'main.o'), str(build / 'common.o'), '-lc', '-lkernel', '-lSceSysmodule', '-lScePad', '-lSceUserService', '-lSceHttp', '-lSceSsl', '-lSceNet', '-lSceCommonDialog', '-lSceMsgDialog', '-o', str(build / 'diagnostic.elf')], check=True)
+validate_elf(build / 'diagnostic.elf')
 subdir = 'macos' if platform.system() == 'Darwin' else 'linux'
 converter = sdk / 'bin' / subdir / ('create-fself-macos' if subdir == 'macos' else 'create-fself')
 if not converter.exists():
     raise SystemExit(f'ELF built, but SELF converter is missing: {converter}')
 subprocess.run([str(converter), '-in=' + str(build / 'diagnostic.elf'), '-out=' + str(build / 'diagnostic.oelf'), '--eboot', str(build / 'eboot.bin'), '--paid', '0x3800000000000011'], check=True)
+(build / 'build-receipt.json').write_text(json.dumps(build_hashes(build, root), indent=2) + '\n')
 print('ELF and eboot built. No firmware or console capability verified. Run package.py to create a test PKG.')

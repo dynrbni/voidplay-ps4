@@ -135,6 +135,7 @@ static void show_result(const char *text) {
 }
 
 int main(void) {
+    show_result("Voidplay diagnostic 01.01 reached main. Press OK to test storage, then press controller buttons for 15 seconds. Firmware compatibility remains unverified.");
     setvbuf(stdout, NULL, _IONBF, 0);
     char report_path[512], probe_name[80];
     const unsigned long long run = (unsigned long long)time(NULL);
@@ -146,12 +147,11 @@ int main(void) {
         if (fd >= 0) { report = fdopen(fd, "w"); if (!report) close(fd); }
     }
     if (!report) report = stdout;
-    fprintf(report, "Voidplay diagnostic v0.1\nlaunch=main_reached\nbuild_toolchain=OpenOrbis-v0.5.4\nfirmware_12_00=unverified\n"); fflush(report);
+    fprintf(report, "Voidplay diagnostic 01.01\nlaunch=main_reached\nbuild_toolchain=OpenOrbis-v0.5.4\nfirmware_12_00=unverified\n"); fflush(report);
     storage_probe(report); fflush(report);
     if (VP_APP_DIRECTORY[0]) vp_file_roundtrip(VP_APP_DIRECTORY, probe_name, report);
     else fprintf(report, "file_io=not_configured (no directory authorized at build time)\n");
     fflush(report);
-    show_result("Voidplay diagnostic launched. After pressing OK, press controller buttons for 15 seconds. Results are experimental, not firmware compatibility certification.");
     controller_probe(report); fflush(report);
     fprintf(report, "https_note=20 second abort watchdog; runtime abort behavior unverified; close the app if stalled\n"); fflush(report);
     https_probe(report); fflush(report);
