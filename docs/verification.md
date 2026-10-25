@@ -1,80 +1,68 @@
-# V2 redesign verification — 2026-10-25
+# Compact beta store verification — 2026-10-25
 
-## Environment and scope
+## Scope
 
-macOS Apple Silicon, Node 26.7.0, Chrome through agent-browser 0.39.2. The working tree was
-clean before changes. Branch `codex/fluid-store-redesign` starts at the previous homepage
-branch (`a3be6c5`), with a PR targeting `feature/homepage-cinematic-redesign` while the earlier
-PR stack remains open. No console runtime, backend or package distribution was added.
+User-requested correction to PR #3: transparent sticky header, smaller typography/spacing,
+revised navigation and white BETA, homepage/detail layouts following two supplied screenshots,
+solid-white saved hearts, and a connected dummy download flow. The user explicitly deferred
+source URLs/admin publishing and asked to focus on dummy transfers. No real package transfer,
+PS4 receiver or install capability is implied by the demo.
 
 ## Automated checks
 
-- `npm run check`: PASS. ESLint zero warnings; strict TypeScript; 11 Node tests;
-  Vite production build. Production JS approximately 330 kB / 100 kB gzip, CSS 18.4 kB.
-- Pure tests verify unique/strict catalog records, unsafe paths and remote assets rejected,
-  optional detail/gallery metadata, physical fixture asset existence, combined search/filter,
-  immutable sorting, loader failures, spatial navigation, collection separation/storage parsing,
-  bounded IDs and deep-link routes.
+- `npm run check`: PASS, ESLint zero warnings, strict TypeScript, 15 pure-logic tests and Vite
+  production build. JS approximately 345 kB / 104 kB gzip, CSS approximately 22.4 kB.
 - `AGENT_BROWSER_BIN=<local-binary> VOIDPLAY_URL=http://127.0.0.1:4175 npm run test:e2e`:
-  PASS, three isolated browser scenarios against the production build.
-- Main browser flow: manual feature changes; all six details; native Back affordance/Escape;
-  related item routes; Browse search/category/sort/clear; independent Search and no results;
-  result focus restoration; Favorites/Library add/remove and persistence; true empty Downloads;
-  Settings/reduced motion persistence; shelf boundaries, vertical movement, white focus, shelf
-  arrows, prior scroll and focus restoration; direct links, reload and missing-item handling.
-- Recovery flow: offline hint, unavailable hero/poster art, empty catalog, malformed metadata,
-  network abort, loading, retry, storage write failure with session retention, corrupted storage
-  and recovery. Final browser page errors: none.
-- Optional gallery flow uses **test-only** intercepted metadata: next/previous images, missing
-  image recovery, selected-item context and gallery omission on another item. The shipped catalog
-  has no screenshots. Test imagery is not presented as genuine application screenshots.
-- `git diff --check`: PASS.
+  PASS, all four isolated browser scenarios on the production build.
+- Main scenario asserts exact header labels/icons, transparent computed background, sticky
+  position/top after scroll, white BETA and first-cover height within 1080p. It tests focus-driven
+  hero updates, keyboard/filled-heart synchronization, Favorites inline removal/focus fallback,
+  separate tracked Library persistence, six detail routes, related routes, filters/sorting,
+  independent Search/result focus, shelf/focus/scroll restoration and responsive overflow.
+- Recovery scenario covers offline, missing art, empty/malformed catalog, loading, network abort,
+  retry, collection write failures/corruption and recovery. Gallery scenario uses only test-local
+  intercepted metadata to cover next/previous/missing images and selected-item context.
+- New demo scenario covers detail→Downloads, live-updating simulated progress, pause stability
+  across timer ticks, queueing multiple items, duplicate prevention, automatic promotion of the
+  next demo, resume, progress continuing across pages, reload→paused restoration, no automatic
+  Library entry, cancel/retry, completion bounds, clearing finished entries, demo storage failure
+  and corruption. Instrumented fetch observed no request initiated by the dummy transfer flow.
+- Pure tests cover the strict catalog/artwork contract and physical assets, filtering/sorting,
+  loader errors, routes/collections/spatial selection, plus simulator transitions, single active
+  demo, paused state stability, restart, completion, bounded/corrupt storage and `mode: demo`.
+- `git diff --check`: PASS. No new runtime dependency or executable/package asset.
 
-## Rendered inspection
+Environment: macOS Apple Silicon, Node 26.7.0, local Chrome through agent-browser 0.39.2.
 
-Actually inspected screenshots at 1920×1080 for Discover, Browse and detail, 1366×768 for
-Discover, and 390×844 for Discover, Browse and multiple details. Other screens also had
-responsive overflow assertions and captured evidence. The final poster grid shows locally
-stored original artwork; the hero blends into the first shelf; copy remains readable and
-metadata stays secondary. Checked cropping, header spacing, title scale, neutral selection,
-missing art, lower detail sections and small-screen actions. No document-level horizontal
-overflow; lateral shelf scrolling is intentional. `docs/images/` contains final examples.
+## Visual inspection
 
-A correction pass increased header darkening for bright artwork, fixed Search-result focus
-restoration, removed an inappropriate About ARIA label, and made screenshot capture wait for
-image decode/paint rather than treating an image's completed request as rendered evidence.
-Generated reference images and final browser captures were reviewed separately.
+Actually inspected rendered 1920×1080 Discover/detail/Downloads and scrolled header, 1366×768
+Discover, and 390×844 Discover/detail/Downloads; Browse and other destinations also have
+responsive browser assertions and captures. Compared actual page hierarchy with both supplied
+reference images: transparent overlaid navigation, compact square covers, first shelf within
+the screen, left-aligned editorial copy and full-backdrop details with bottom actions.
+No proprietary reference artwork was added to the project.
 
-Axe 4.12.1 WCAG 2 A/AA audit: zero violations on Discover, Browse, detail, Search, Favorites,
-Library, Downloads and Settings. Browse/Search/Favorites/Library/Downloads/Settings have zero
-incomplete rules. Discover/detail each retain a contrast review item: axe cannot determine
-backgrounds behind gradient-covered header text, and the detail shelf includes partially clipped
-cards. These were manually inspected. Navigation text #b8b8b8 over even a white image covered
-by the minimum header opacity (#050505c7) has >5:1 contrast; shelf text #a3a3a3 over #050505
-has >8:1 contrast. This is not a claim of a full manual accessibility certification.
+A correction pass fixed mobile Downloads controls shrinking title/progress into a narrow column;
+controls now wrap under a full-width content area. Header text shadows and dark icon circles
+preserve the transparent header while helping legibility over artwork. All cards keep a visible
+favorite action and keyboard focus state. Screenshots wait for image decode/paint.
 
-## Design and integrity gates
+Axe 4.12.1 WCAG 2 A/AA: zero violations on all eight screens plus an active Downloads state.
+Browse/detail/Search/Favorites/Library/Downloads/Settings and active Downloads have zero
+incomplete rules. Discover has one incomplete contrast rule for the first shelf heading/action
+overlapping the backdrop. Its rendered contrast was inspected manually. This is a targeted
+browser audit, not a full physical-TV/screen-reader accessibility certification.
 
-PASS within the desktop preview scope: no fabricated metrics, testimonials, releases,
-compatibility or transfers; all visible controls and destinations function; loading/error/empty/
-missing-image states exist; keyboard focus is visible; responsive layouts were rendered;
-no runtime library was added; font and concept art are served locally. Favorites and Library
-are distinct, typed and versioned. Current download/install capabilities remain unavailable.
-Artwork prompt set and provenance are in artwork.md.
+## Evidence and limitations
 
-## Limits
+`docs/images/` contains the current Discover, Browse, detail, mobile and demo-Downloads examples.
+Original concept art/font are local. Local collection persistence remains separate from dummy
+queue persistence. No actual source/admin endpoint, internet-speed measurement, file write,
+resume protocol, checksum, install, physical PS4 controller/runtime or console compatibility was
+tested. Demo values are labeled in the UI; a completed simulation means no file was transferred.
+The queue is intended for one active app tab; cross-tab ownership is deferred. Offline reload
+is not guaranteed because no service worker/cache layer is implemented.
 
-The referenced Netflix/Overdrive screenshots were not attached to this session; design review
-uses the supplied written principles, not direct screenshot matching. No physical TV,
-screen-reader, PS4 firmware, controller, console networking/storage, actual file transfer,
-resume, SHA-256 verification or installation was tested. The six concepts remain fictional;
-unknown metadata is omitted. Local collections do not sync across devices and can be removed
-by clearing site data. Offline reload is not guaranteed; there is no service worker/cache layer.
-
-## Git handoff
-
-Implementation commit: `9a88442d76d9289acc6f2d6b8df6da27ee564cc5`. Pushed to
-`origin/codex/fluid-store-redesign`; remote branch SHA matched the local commit.
-[PR #3](https://github.com/dynrbni/voidplay-ps4/pull/3) targets
-`feature/homepage-cinematic-redesign` (PR #2). No merge or force push was performed.
-The subsequent documentation commit records this handoff without changing the tested app.
+Branch: `codex/fluid-store-redesign`, updating [PR #3](https://github.com/dynrbni/voidplay-ps4/pull/3)
+against `feature/homepage-cinematic-redesign`. Earlier foundation/homepage PRs remain separate.

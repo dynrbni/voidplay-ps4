@@ -43,3 +43,10 @@
 - Screenshot QA must await image decode and paint: complete/naturalWidth alone can precede asynchronous decoding.
 - Native Chrome/agent-browser locators support select via snapshot refs; `find ... select` is not a supported action. Gallery interception requires a reload after installing the test route.
 - Final axe incomplete contrast checks are gradient-covered header text and intentionally clipped shelf items. Opaque palette contrast and stronger header coverage provide manual evidence; no full certification claimed.
+
+## Compact beta correction
+- User supplied both visual references and clarified real sources/admin publishing are deferred. Dummy download simulation is explicitly authorized and labeled in the UI.
+- Header computed background is transparent, position sticky, top remains zero after scroll. Square first shelf fits vertically in the 1080p opening view.
+- Favorites now need sibling buttons rather than nesting a heart inside a card button; row navigation preserves whether the user is traversing cards or hearts.
+- Active/queued demo records restore paused. Demo progress is separate from catalog metadata and tracked Library; no real transfer request occurs.
+- Mobile transfer controls initially shrank the title/progress; explicit wrapping fixed the content width.

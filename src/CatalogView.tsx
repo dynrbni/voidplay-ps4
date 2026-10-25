@@ -4,8 +4,8 @@ import type { CatalogEntry } from './catalog.ts';
 import { ContentPoster } from './ContentPoster.tsx';
 import { Icon } from './Icon.tsx';
 
-export function CatalogView({ entries, mode, query, category, sort, onQuery, onCategory, onSort, onSelect, searchRef }: {
-  entries: CatalogEntry[]; mode: 'browse' | 'search'; query: string; category: string; sort: string;
+export function CatalogView({ entries, mode, query, category, sort, onQuery, onCategory, onSort, onSelect, searchRef, favorites, onFavorite }: {
+  favorites: string[]; onFavorite: (id: string) => void; entries: CatalogEntry[]; mode: 'browse' | 'search'; query: string; category: string; sort: string;
   onQuery: (value: string) => void; onCategory: (value: string) => void; onSort: (value: string) => void;
   onSelect: (entry: CatalogEntry) => void; searchRef: Ref<HTMLInputElement>;
 }) {
@@ -20,9 +20,9 @@ export function CatalogView({ entries, mode, query, category, sort, onQuery, onC
     </form>
     <div className="category-bar"><div className="category-tabs" role="group" aria-label="Filter by category">{categories.map(item => <button key={item} aria-pressed={category === item} onClick={() => onCategory(item)}>{item === 'All' ? 'All applications' : item}</button>)}</div>{query || category !== 'All' || sort !== 'curated' ? <button className="text-button" onClick={clear}>Clear filters</button> : null}</div>
     <section className="catalog" aria-label="Application catalog">
-      {visible.length ? <ul className="app-grid">{visible.map(entry => <ContentPoster key={entry.id} entry={entry} onSelect={onSelect}/>)}</ul>
+      {visible.length ? <ul className="app-grid">{visible.map(entry => <ContentPoster key={entry.id} entry={entry} onSelect={onSelect} favorite={favorites.includes(entry.id)} onFavorite={onFavorite}/>)}</ul>
         : <div className="message"><Icon name="search"/><h2>No matching applications</h2><p>Try a different title or explore another category.</p><button onClick={clear}>Clear filters</button></div>}
     </section>
-    <p className="catalog-note">Original concept listings, made for the Voidplay preview. No downloads or installation.</p>
+    <p className="catalog-note">Original concepts for the beta preview. Demo downloads only; no real packages or installation.</p>
   </div>;
 }

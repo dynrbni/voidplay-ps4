@@ -1,51 +1,59 @@
-# Voidplay V2 design
+# Compact Voidplay beta store
 
-The supplied brief replaces the previous amber focus and small text dialog with a neutral,
-artwork-first store. The existing catalog loader, error boundary, keyboard manager and component
-boundaries remain. No runtime dependency is added.
+The supplied homepage and detail screenshots now guide the actual composition. Their artwork,
+branding, proprietary application data and PS5-specific capabilities are not copied. The user's
+later clarification explicitly requests dummy transfers until an admin catalog/source exists.
 
-## Composition
+## Header and compact scale
 
-Discover opens directly into an edge-to-edge orbital landscape. A quiet overlaid header sits
-above a lower-left, widely tracked title. The image supplies color; controls, focus, surfaces and
-text are neutral. A white primary action and subdued favorite action lead into a portrait shelf.
-Utility/media shelves use wider landscape images for a different rhythm. Selection changes only
-on explicit input, never autoplay. Artwork is separate from text and controls.
+The header is sticky at top:0 with an actually transparent background, including after scrolling.
+It overlaps the artwork without reserving a colored bar. The desktop height is 76px (68px on
+smaller desktops); narrow screens use two compact rows. A small solid-white BETA badge sits
+beside the Voidplay wordmark. Main labels are Discover, Browse, Downloads and Library; the
+right-hand icons are Favorites, Search and Settings. Text shadow and local control surfaces
+help the header remain readable without an opaque full-width background.
 
-Browse uses a five-column desktop poster grid, dropping to four and two columns at smaller
-widths. Categories, count, search and supported sort are actual catalog operations. Search is
-its own destination and keeps independent query/filter state. Favorites and Library have
-separate local collections and useful empty states. Downloads has no fabricated transfer UI.
-Settings is a simple reading layout with a real reduced-motion checkbox and reload action.
+Manrope remains self-hosted. Central tokens reduce display titles to at most 56px, body text
+to 15px, navigation to 15px, shelf headings to 19–23px and item titles to 16px. Primary actions
+are compact white capsules; favorite/actions use circles; cover corners use 7px radii.
+The palette remains black/white/grayscale. Existing original concept artwork supplies color.
 
-Detail routes use the selected item's large background, portrait cover, full title and actions.
-About text and available metadata live in two open columns; related entries open their own
-routes. Optional screenshot galleries preserve page context. Current data has no screenshots,
-so the gallery is absent. No version, author, license, package size or checksum is fabricated.
+## Discover and details
 
-## Tokens and interaction
+Discover puts its copy high-left and brings the first shelf into the initial viewport. Square
+covers replace tall posters on this shelf; the whole row is visible vertically at 1920×1080.
+Focusing/hovering a first-shelf item updates the hero and the selected white cover outline;
+there is no autoplay. Utility/media shelves retain a wider landscape format. Browse uses six
+compact columns on large screens and reduces columns responsively.
 
-- Background #050505, surface #171717, raised surface #242424, white foreground/focus.
-- Secondary #a3a3a3; #737373 is restricted to decorative separators.
-- Local variable Manrope; centralized display/page/heading/item/body/caption/navigation sizes.
-- 80px desktop gutters at 1920px, 24px mobile gutters, 4px image/control corners.
-- Three-pixel white keyboard outline, modest poster lift/scale, fast art fade and shelf movement.
-- System reduced motion and a local override stop decorative transitions and smooth scrolling.
-- Header gradients retain enough black coverage for neutral navigation text over bright art.
+Details use an uninterrupted full-viewport backdrop, high-left title/summary/description and
+lower-left Download to PS4, favorite and information actions. The information control scrolls
+to the real About section, where separate Library tracking remains available. Available
+metadata, optional genuine screenshots and related entries remain data-driven. Unknown release
+metadata and genuine screenshots are still omitted from current fictional fixtures.
 
-Hash routing works on static hosts. Mounted background store screens retain filters and shelf
-offsets. History navigation restores connected trigger elements and scroll position, falling
-back to the page focus group when an element disappeared. Search entry focuses the input;
-returning from Search details restores the result. Arrow keys leave native inputs/selects alone.
+A shared FavoriteButton appears beside each listing, in the hero and on detail pages. A saved
+heart fills solid white. Header Favorites opens the persisted collection; inline removal works
+there too. No nested button markup or hover-only action is introduced. Keyboard arrows move
+between shelf cards and between corresponding favorite controls; Tab reaches both.
 
-Favorites and tracked Library IDs are stored separately with a versioned, bounded schema.
-Storage errors are surfaced and changes remain in memory; no download/install claim is attached
-to either collection. Console Gamepad or PS5-specific APIs are not imported.
+## Demo download boundary
 
-## References and limits
+Download to PS4 opens the same queue shown by header Downloads. Explicit DEMO labeling explains
+that size/progress/speed/ETA are simulated and no file is fetched, sent or installed. Each entry
+has at most one queue record; one simulator advances at a time. Pause/resume/cancel/retry and
+clear-finished controls work. State persists independently from Favorites/Library and restores
+unfinished entries paused. Completion does not imply an installed app or alter Library.
 
-The written Netflix/Overdrive principles guide composition. Their screenshot attachments were
-not available in this session, so a direct pixel comparison was not possible. Original generated
-home/detail references were inspected before the visual translation. Final rendered desktop,
-laptop and mobile screens were inspected separately; see verification.md and docs/images/.
-All current entries are fictional development concepts, clearly identified in the interface.
+`demoTransfers.ts` owns the bounded schema, pure transitions and formatting; `useDemoTransfers.ts`
+owns timers and browser persistence; Downloads presents those values. No live download URL is
+added to the mock catalog, no PS4/PS5 API is assumed, and there is no fabricated executable file.
+A future live adapter requires an admin/source contract and verified PS4 receiver independently.
+
+## Navigation and resilience
+
+Hash routes, browser/Escape back, mounted store views, scroll restoration and result focus are
+preserved. Focus falls back to the page group if inline removal deletes the active element.
+System/local reduced-motion settings remain supported. Loading/error/empty/offline/missing-art
+and corrupted/unavailable storage states are tested. Final rendered screenshots and actual
+verification results are recorded in verification.md.

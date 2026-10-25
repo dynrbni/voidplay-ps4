@@ -40,3 +40,7 @@ Browser regressions found Escape/back and Search focus failures; corrected docum
 ## V2 redesign continuation
 
 Implementation, visual inspection, production check and three E2E scenarios complete. See docs/superpowers/plans/2026-10-25-fluid-store-redesign.md for the V2 checklist. Implementation commit 9a88442 was pushed and verified on origin/codex/fluid-store-redesign. PR #3 targets feature/homepage-cinematic-redesign; final documentation handoff follows.
+
+## Compact beta correction
+
+User-supplied references and dummy transfer clarification implemented. Transparent/sticky header, compact layout, filled-heart favorites and connected demo queue are verified. See docs/superpowers/plans/2026-10-25-compact-store.md. Commit/push and PR refresh remain.

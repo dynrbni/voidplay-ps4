@@ -3,16 +3,17 @@
 An independent PS4 homebrew store project, currently a React/TypeScript desktop preview.
 Only content authorized for redistribution is in scope.
 
-The V2 store has a cinematic, artwork-first Discover page, manually selected featured concepts,
-poster and landscape shelves, a searchable/filterable/sortable Browse grid, and a dedicated
+The beta store has a compact cinematic Discover page, a transparent sticky header with a BETA
+badge, focus-driven featured artwork, square and landscape shelves, a searchable Browse grid, and a dedicated
 hash-addressable detail page for every entry. Search, Favorites, Library, Downloads and
 Settings/About share one monochrome design system and self-hosted Manrope typography.
+Header links are Discover, Browse, Downloads and Library, followed by Favorites, Search and Settings icons.
 
 ![Voidplay Discover desktop preview with original concept artwork](docs/images/store-preview.png)
 
 All six listings are explicitly fictional concepts. Original generated artwork is stored locally;
 no executable files, download URLs, fabricated ratings or compatibility claims are included.
-Downloads explains the absence of packages. **This is not a PS4 release.** Console rendering,
+Downloads provides an explicitly labeled dummy transfer flow. **This is not a PS4 release.** Console rendering,
 controller input, network/storage behavior and installation remain unverified.
 See [capability status](docs/ps4-status.md), [design](docs/design-v2.md),
 [artwork provenance and prompts](docs/artwork.md) and [verification](docs/verification.md).
@@ -24,7 +25,7 @@ Requires Node >=22.18 and npm. Verified locally with Node 26.7.0.
 ```sh
 npm ci
 npm run dev
-npm run check       # lint, strict TypeScript, 11 pure-logic tests, production build
+npm run check       # lint, strict TypeScript, 15 pure-logic tests, production build
 npm run preview     # serve the static production build
 ```
 
@@ -39,7 +40,7 @@ npm run test:e2e
 
 Keep the dev server running. Set `VOIDPLAY_URL` for a different port or production preview,
 `AGENT_BROWSER_BIN` if the binary is outside PATH, and `AGENT_BROWSER_EXECUTABLE_PATH`
-if Chrome needs an explicit location. The three test scenarios use isolated browser sessions;
+if Chrome needs an explicit location. The four test scenarios use isolated browser sessions;
 request interception and synthetic screenshot metadata exist only inside the tests.
 Screenshots and audit reports are written under ignored `artifacts/`.
 
@@ -58,6 +59,21 @@ write failures retain session changes. Library tracking does not mean downloaded
 Loaded catalog entries remain usable offline, but this is not an installable offline app:
 there is no service worker or persistent catalog cache.
 
+## Dummy downloads
+
+As requested for the beta, Download to PS4 currently starts a **demo simulation** and opens
+Downloads. It does not fetch a package, measure internet bandwidth, send bytes to a PS4,
+write a file or install anything. The manager labels progress, sizes, speed and ETA as demo
+values and supports queueing, pause/resume, cancel, retry and clearing finished demos.
+One demo runs at a time and continues across store pages. Completed demos do not become
+installed applications or automatically enter Library.
+
+The bounded `voidplay.demo-transfers.v1` browser record persists demo state separately from
+catalog and collections. Pending/active entries restore paused after reload; the simulator
+never claims to transfer in a closed tab. Storage failures retain session state and show a
+message. The dummy queue is intended for one active app tab; concurrent-tab coordination,
+a real package source/admin contract and a PS4 receiver are deferred.
+
 ## Boundaries
 
 - `src/catalog.ts`: strict Zod catalog validation, fetch loader, filtering and sorting.
@@ -66,6 +82,8 @@ there is no service worker or persistent catalog cache.
 - `src/useStoreNavigation.ts`, `src/routes.ts`: hash routes, history, back and focus restoration.
 - `src/navigation.ts`: directional desktop keyboard navigation.
 - `src/collections.ts`, `src/useCollections.ts`: validated local collections and storage feedback.
+- `src/demoTransfers.ts`, `src/useDemoTransfers.ts`, `src/Downloads.tsx`: separate dummy queue/state machine and manager.
+- `src/FavoriteButton.tsx`: shared, accessible filled-heart favorite control.
 - `src/FeaturedHero.tsx`, `src/ContentShelf.tsx`, `src/ContentPoster.tsx`: artwork presentation.
 - `src/Details.tsx`, `src/ScreenshotGallery.tsx`: selected-item details and optional gallery.
 - `src/CatalogView.tsx`, `src/CollectionView.tsx`, `src/SecondaryPages.tsx`: store screens.
