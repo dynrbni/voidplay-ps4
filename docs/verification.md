@@ -74,3 +74,15 @@ compact-layout/dummy-download scope. The following docs-only handoff does not ch
 ## Scrolled header and shelf focus follow-up
 
 The header now changes from clear to a blurred translucent surface above 24px of scroll. Poster focus uses an inset white ring and padded scrolling gutters so the selected edge is not outside the clipped scroll viewport. Artwork fades and focus lift respect reduced motion. The E2E checks cover transparent initial state, scrolled surface, sticky position, first/last focus and responsive overflow.
+
+## Admin catalog and storage milestone
+
+- `npm run check`: strict lint/types, 23 unit tests, catalog validation and independent store/admin production builds.
+- `npm run verify:public`: built store manifest is valid; no admin/workspace/package/credential markers in `dist/`.
+- Four production store E2E scenarios plus two admin/publication scenarios. The admin scenario fills the actual form, validates missing metadata/auth instructions, configures/removes sources, previews, stages a snapshot, saves draft edits without leaking them, exports and unpublishes. The date input uses a native value/input event in the harness because agent-browser's text fill does not populate Chrome's date control.
+- Browser publication test injects test-only authorized metadata; the checked-in public catalog still has no executable package entries. One manifest supplies home, browse, search and direct detail; unpublishing the last entry keeps the public catalog empty.
+- `/voidplay-ps4/` subpath preview: catalog, twelve visible images and self-hosted font loaded; no document overflow.
+- Axe WCAG2 A/AA: zero violations on admin empty/editor/preview and Settings. Existing shelf/gradient coverage limits still apply to older store audits.
+- `npm run native:test`: capacity bounds/overflow and exclusive file read/write checks pass with address/undefined sanitizers on the Mac. Native ELF, eboot and PKG build; PkgTool validates local package hashes/signatures. See `docs/ps4-diagnostic.md` for exact provenance and the separate, unverified device results.
+- FTP connection and remote package size observed. Full package read-back timed out on both passive/active attempts. No PS4 package install, app launch, native storage result, controller input, HTTPS request or sandbox file round-trip has been verified.
+- GitHub Pages remains disabled; the manual main-only deployment workflow has not been run. No credential-bearing publishing endpoint is present.

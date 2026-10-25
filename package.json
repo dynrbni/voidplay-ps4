@@ -21,7 +21,8 @@
     "catalog:validate": "node scripts/catalog-cli.ts validate",
     "catalog:import": "node scripts/catalog-cli.ts import",
     "test:admin": "node --test e2e/admin.test.mjs",
-    "verify:public": "node scripts/verify-public.ts"
+    "verify:public": "node scripts/verify-public.ts",
+    "native:test": "./native/diagnostic/test-host.sh"
   },
   "dependencies": {
     "react": "^19.3.1",

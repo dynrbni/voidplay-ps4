@@ -33,3 +33,12 @@
 - PASS: lint/types/15 pure tests/build and all four E2E scenarios on production. Zero axe violations across eight pages plus active Downloads; one Discover overlap contrast item manually inspected.
 - Inspected desktop, scrolled header, laptop and mobile captures; corrected mobile transfer row wrapping. Updated docs/images and documentation to the explicit dummy scope.
 - Committed as 4094fef, pushed to codex/fluid-store-redesign and verified via matching ls-remote SHA. Refreshed PR #3 title/body; final documentation handoff records the result.
+
+## Admin catalog and native storage milestone
+- Audited clean working tree, main and the open #1 → #2 → #3 PR stack; preserved dependencies and did not merge.
+- Fixed clipped poster focus/glow, translucent scrolled header and reduced-motion-aware transitions in bb7dfb5; pushed PR #3.
+- Built independent React/TS owner admin with complete metadata/source forms, local drafts, validated snapshots, preview, backup/import/export, revision and conflict checks.
+- Published manifest now feeds all public browsing routes; preview fixtures remain explicit. Public export/atomic import/Pages workflow keeps admin and credentials outside store output.
+- Added storage/network/download/install interfaces, clearly labeled mock storage and install/cleanup gates; real console transfers remain unavailable.
+- Researched pinned OpenOrbis sources, built native diagnostic ELF/eboot/PKG and validated local package structure. Host sanitizer tests pass; FTP package accepted but read-back integrity and all console runtime probes are unverified.
+- Available validation: 23 unit tests, independent builds, public-artifact checks, 4 store + 2 admin/publication browser scenarios, subpath hosting check and owner-dashboard/Settings accessibility checks. Final remote handoff follows.
