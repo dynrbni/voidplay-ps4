@@ -9,4 +9,4 @@ The user clarified that source URLs/admin publishing are deferred: downloads mus
 - [x] Implement a typed demo transfer queue with progress, demo speed/size/ETA, pause/resume/cancel/retry, duplicate prevention and browser-local restoration to paused state.
 - [x] Connect detail actions and header Downloads to the same queue; preserve navigation, accessibility and focus restoration.
 - [x] Test simulator state transitions and browser flows; inspect desktop/laptop/mobile and sticky header scrolling.
-- [ ] Document the dummy boundary, run production checks, commit, push and update the existing PR.
+- [x] Document the dummy boundary, run production checks, commit, push and update the existing PR.

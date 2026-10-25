@@ -32,3 +32,4 @@
 - Added isolated typed demo queue with simulated metrics, single active job, pause/resume/cancel/retry, duplicate prevention and paused restore; no network/file/PS4 operations.
 - PASS: lint/types/15 pure tests/build and all four E2E scenarios on production. Zero axe violations across eight pages plus active Downloads; one Discover overlap contrast item manually inspected.
 - Inspected desktop, scrolled header, laptop and mobile captures; corrected mobile transfer row wrapping. Updated docs/images and documentation to the explicit dummy scope.
+- Committed as 4094fef, pushed to codex/fluid-store-redesign and verified via matching ls-remote SHA. Refreshed PR #3 title/body; final documentation handoff records the result.

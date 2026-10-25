@@ -66,3 +66,7 @@ is not guaranteed because no service worker/cache layer is implemented.
 
 Branch: `codex/fluid-store-redesign`, updating [PR #3](https://github.com/dynrbni/voidplay-ps4/pull/3)
 against `feature/homepage-cinematic-redesign`. Earlier foundation/homepage PRs remain separate.
+
+Implementation commit: `4094fefdb999d3cad0054648a45a89c1f255166a`. Push was verified by
+matching `git ls-remote` to the local commit, and PR #3 title/body were updated to the final
+compact-layout/dummy-download scope. The following docs-only handoff does not change tested code.

@@ -43,4 +43,4 @@ Implementation, visual inspection, production check and three E2E scenarios comp
 
 ## Compact beta correction
 
-User-supplied references and dummy transfer clarification implemented. Transparent/sticky header, compact layout, filled-heart favorites and connected demo queue are verified. See docs/superpowers/plans/2026-10-25-compact-store.md. Commit/push and PR refresh remain.
+User-supplied references and dummy transfer clarification implemented. Transparent/sticky header, compact layout, filled-heart favorites and connected demo queue are verified. See docs/superpowers/plans/2026-10-25-compact-store.md. Implemented in 4094fef, pushed and verified against origin; PR #3 title/body updated to the final compact layout and demo download scope.
