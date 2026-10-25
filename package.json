@@ -22,7 +22,14 @@
     "catalog:import": "node scripts/catalog-cli.ts import",
     "test:admin": "node --test e2e/admin.test.mjs",
     "verify:public": "node scripts/verify-public.ts",
-    "native:test": "./native/diagnostic/test-host.sh"
+    "native:test": "./native/diagnostic/test-host.sh",
+    "native:doctor": "python3 -B framework/voidplay-native/tools/cli.py doctor",
+    "native:preview": "python3 -B framework/voidplay-native/tools/cli.py mac-run",
+    "native:watch": "python3 -B framework/voidplay-native/tools/cli.py mac-watch",
+    "native:runtime:test": "sh framework/voidplay-native/tools/test-portable.sh",
+    "native:mac:smoke": "python3 -B framework/voidplay-native/tools/cli.py mac-smoke",
+    "native:ps4:build": "python3 -B framework/voidplay-native/tools/cli.py ps4-build",
+    "native:ps4:verify": "python3 -B framework/voidplay-native/tools/cli.py ps4-verify"
   },
   "dependencies": {
     "react": "^19.3.1",

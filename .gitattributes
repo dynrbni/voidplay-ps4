@@ -1,0 +1,2 @@
+# Preserve the upstream SDL notice verbatim, including its whitespace.
+framework/voidplay-native/licenses/SDL2.txt -whitespace

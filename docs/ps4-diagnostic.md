@@ -126,3 +126,22 @@ reinstallation and the first dialog/report must be observed separately; no autom
 installation, license changes, firmware changes or cleanup was performed.
 
 Transfer attempt for corrected 01.01: FTP connection timed out before upload. The new package is available locally; its presence on the console is not claimed. The owner has been asked to re-enable FTP.
+
+## Owner crash report and C++ migration, 2026-10-26
+
+The subsequent FTP attempt resumed a new partial file to 6,619,136 bytes, but
+full read-back hashing timed out. It was not renamed to the intended final PKG
+path and was not installed by the agent. The transfer record remains in ignored
+`artifacts/diagnostic-01.01-transfer.json`; no verified transfer is claimed.
+
+The owner then supplied a screenshot showing CE-34878-0 for the diagnostic and
+reported no initial 01.01 message. The installed artifact's hash/version cannot
+be established from that screenshot. Lack of a dialog does not prove `main`
+was never reached: dialog initialization could fail before a later crash.
+No crash address or successful boot trace was captured. The owner reports
+firmware 12.00 and GoldHEN; the exact GoldHEN version is still unknown.
+
+The [C++ foundation](../framework/voidplay-native/README.md) now isolates a
+minimal startup test under a separate title ID. It does not include the old
+storage/network/dialog probes. This is an isolation experiment, not a claimed
+crash fix. The owner deferred enabling FTP/Klog, so hardware tests remain pending.

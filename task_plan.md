@@ -55,3 +55,11 @@ remains unavailable. FTP and the owner's Internal Package Installer/file-manager
 as transport/setup facts only. No console compatibility claim or automatic installation.
 
 Remote handoff: PR #4 opened/attached against PR #3; implementation commits 40a70f7 and da882b0 pushed with matching remote SHA. GitHub CI did not start because of an account billing lock. Local checks pass; console runtime and full FTP read-back hash remain unverified.
+
+## C++ runtime migration, 2026-10-26
+
+User now supplied a CE-34878-0 screenshot and requests native C++ with separate Mac testing.
+Current plan: `docs/superpowers/plans/2026-10-26-cpp-runtime.md`.
+Clean branch `codex/cpp-runtime-foundation` starts at db6e545, stacked on PR #4.
+Direct C++ choice takes precedence over the attached brief's JSX goal; retain its hardware-first gates.
+Do not port the full store before isolating native startup and validating PS4 presentation.

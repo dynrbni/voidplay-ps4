@@ -9,3 +9,5 @@ artifacts/
 admin-dist/
 native/diagnostic/build/
 native/diagnostic/__pycache__/
+framework/voidplay-native/build/
+framework/voidplay-native/**/__pycache__/
