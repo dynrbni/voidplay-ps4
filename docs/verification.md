@@ -74,3 +74,27 @@ compact-layout/dummy-download scope. The following docs-only handoff does not ch
 ## Scrolled header and shelf focus follow-up
 
 The header now changes from clear to a blurred translucent surface above 24px of scroll. Poster focus uses an inset white ring and padded scrolling gutters so the selected edge is not outside the clipped scroll viewport. Artwork fades and focus lift respect reduced motion. The E2E checks cover transparent initial state, scrolled surface, sticky position, first/last focus and responsive overflow.
+
+## Admin catalog and storage milestone
+
+- `npm run check`: strict lint/types, 23 unit tests, catalog validation and independent store/admin production builds.
+- `npm run verify:public`: built store manifest is valid; no admin/workspace/package/credential markers in `dist/`.
+- Four production store E2E scenarios plus two admin/publication scenarios. The admin scenario fills the actual form, validates missing metadata/auth instructions, configures/removes sources, previews, stages a snapshot, saves draft edits without leaking them, exports and unpublishes. The date input uses a native value/input event in the harness because agent-browser's text fill does not populate Chrome's date control.
+- Browser publication test injects test-only authorized metadata; the checked-in public catalog still has no executable package entries. One manifest supplies home, browse, search and direct detail; unpublishing the last entry keeps the public catalog empty.
+- `/voidplay-ps4/` subpath preview: catalog, twelve visible images and self-hosted font loaded; no document overflow.
+- Axe WCAG2 A/AA: zero violations on admin empty/editor/preview and Settings. Existing shelf/gradient coverage limits still apply to older store audits.
+- `npm run native:test`: capacity bounds/overflow and exclusive file read/write checks pass with address/undefined sanitizers on the Mac. Native ELF, eboot and PKG build; PkgTool validates local package hashes/signatures. See `docs/ps4-diagnostic.md` for exact provenance and the separate, unverified device results.
+- FTP connection and remote package size observed. Full package read-back timed out on both passive/active attempts. No PS4 package install, app launch, native storage result, controller input, HTTPS request or sandbox file round-trip has been verified.
+- GitHub Pages remains disabled; the manual main-only deployment workflow has not been run. No credential-bearing publishing endpoint is present.
+
+Remote handoff: PR #4 (`codex/catalog-admin-storage-poc` → `codex/fluid-store-redesign`), implementation commits `40a70f7` and `da882b0`. GitHub Actions run [40210738627](https://github.com/dynrbni/voidplay-ps4/actions/runs/40210738627) did not start any job steps: GitHub reported the account is locked due to a billing issue. Remote CI is therefore unavailable, not passing; no account billing changes or repeated reruns were attempted.
+
+## Native launch failure follow-up
+
+Owner reports package 01.00 cannot continue on firmware 12.00/GoldHEN, without CE code.
+The package lacked three files included by the pinned OpenOrbis sample; its ELF also used a
+4 KiB RO LOAD sharing a 16 KiB executable page. Added package-input and ELF structural guards,
+checked build receipts and corrected packaging/link flags in version 01.01. Original artifacts
+fail the new guards. Six Python regression tests and host sanitizer checks pass; corrected
+native build, PKG hash/signature validation and extracted-payload hash comparisons pass.
+Console-side cause and corrected launch remain unverified; no automatic install was attempted.

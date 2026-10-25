@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { publicAsset } from './assets.ts';
 import type { CatalogEntry } from './catalog.ts';
 import { Icon } from './Icon.tsx';
 
@@ -11,5 +12,5 @@ export function ScreenshotGallery({ screenshots }: { screenshots: NonNullable<Ca
     <button className="shelf-arrow" aria-label="Previous screenshot" disabled={active === 0} onClick={() => setActive(value => value - 1)}><Icon name="left"/></button>
     <span aria-live="polite">{active + 1} / {screenshots.length}</span>
     <button className="shelf-arrow" aria-label="Next screenshot" disabled={active === screenshots.length - 1} onClick={() => setActive(value => value + 1)}><Icon name="right"/></button>
-  </div></div><figure>{failed.includes(shot.url) ? <div className="art-fallback">Screenshot unavailable</div> : <img src={shot.url} alt={shot.description} loading="lazy" onError={() => setFailed(values => [...values, shot.url])}/>}<figcaption>{shot.description}</figcaption></figure></section>;
+  </div></div><figure>{failed.includes(shot.url) ? <div className="art-fallback">Screenshot unavailable</div> : <img src={publicAsset(shot.url)} referrerPolicy="no-referrer" alt={shot.description} loading="lazy" onError={() => setFailed(values => [...values, shot.url])}/>}<figcaption>{shot.description}</figcaption></figure></section>;
 }

@@ -1,15 +1,5 @@
 [
   {
-    "id": "save-shelf",
-    "coverUrl": "/art/save-shelf-concept.webp",
-    "title": "Save Shelf",
-    "description": "A fictional save-file organizer used to preview the Voidplay catalog. No executable or save data is included.",
-    "category": "Utilities",
-    "mock": true,
-    "compatibilityNotes": "Mock entry. PS4 firmware 12.00 compatibility has not been tested.",
-    "summary": "A quieter home for your save files. An organizer concept for keeping everything in its place."
-  },
-  {
     "id": "orbit-workshop",
     "coverUrl": "/art/orbit-workshop-hero.webp",
     "title": "Orbit Workshop",
@@ -19,6 +9,16 @@
     "compatibilityNotes": "Mock entry. No console build exists.",
     "summary": "A little curiosity. A whole new orbit. Explore a fictional homebrew puzzle-game concept.",
     "heroUrl": "/art/orbit-workshop-hero.webp"
+  },
+  {
+    "id": "save-shelf",
+    "coverUrl": "/art/save-shelf-concept.webp",
+    "title": "Save Shelf",
+    "description": "A fictional save-file organizer used to preview the Voidplay catalog. No executable or save data is included.",
+    "category": "Utilities",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. PS4 firmware 12.00 compatibility has not been tested.",
+    "summary": "A quieter home for your save files. An organizer concept for keeping everything in its place."
   },
   {
     "id": "local-player",

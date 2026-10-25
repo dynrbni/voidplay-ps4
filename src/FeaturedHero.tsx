@@ -10,7 +10,7 @@ export function FeaturedHero({ entry, favorite, onSelect, onFavorite }: {
     <div className="featured-copy"><p className="eyebrow">Discover</p><h1 id="featured-title">{entry.title}</h1>
       <p className="hero-description">{entry.summary ?? entry.description}</p>
       <div className="hero-actions"><button className="primary" onClick={() => onSelect(entry)}>View application</button><FavoriteButton title={entry.title} saved={favorite} onToggle={onFavorite}/></div>
-      <p className="hero-disclosure">Original concept · Demo downloads</p>
+      <p className="hero-disclosure">{entry.mock ? 'Original concept · Demo downloads' : `${entry.author} · ${entry.version} · PS4 runtime unverified`}</p>
     </div>
   </section>;
 }

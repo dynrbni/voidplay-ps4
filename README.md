@@ -3,7 +3,7 @@
 An independent PS4 homebrew store project, currently a React/TypeScript desktop preview.
 Only content authorized for redistribution is in scope.
 
-The beta store has a compact cinematic Discover page, a transparent sticky header with a BETA
+The beta store has a compact cinematic Discover page, a sticky header that gains a translucent surface on scroll, a BETA
 badge, focus-driven featured artwork, square and landscape shelves, a searchable Browse grid, and a dedicated
 hash-addressable detail page for every entry. Search, Favorites, Library, Downloads and
 Settings/About share one monochrome design system and self-hosted Manrope typography.
@@ -11,8 +11,8 @@ Header links are Discover, Browse, Downloads and Library, followed by Favorites,
 
 ![Voidplay Discover desktop preview with original concept artwork](docs/images/store-preview.png)
 
-All six listings are explicitly fictional concepts. Original generated artwork is stored locally;
-no executable files, download URLs, fabricated ratings or compatibility claims are included.
+The checked-in catalog uses six explicitly fictional preview concepts. Original generated artwork is stored locally;
+no executable packages are published. The separate admin supports authorized real metadata and sources through validated export.
 Downloads provides an explicitly labeled dummy transfer flow. **This is not a PS4 release.** Console rendering,
 controller input, network/storage behavior and installation remain unverified.
 See [capability status](docs/ps4-status.md), [design](docs/design-v2.md),
@@ -25,8 +25,11 @@ Requires Node >=22.18 and npm. Verified locally with Node 26.7.0.
 ```sh
 npm ci
 npm run dev
-npm run check       # lint, strict TypeScript, 15 pure-logic tests, production build
+npm run check       # lint, strict types, unit tests, catalog validation, store/admin builds
 npm run preview     # serve the static production build
+npm run admin:dev   # separate local owner dashboard
+npm run verify:public
+npm run native:test # host-only native checks
 ```
 
 Vite binds to loopback by default and reports its selected port. The `dist/` output is a
@@ -36,6 +39,7 @@ Browser regression tests use `agent-browser` with a local Chrome installation:
 
 ```sh
 npm run test:e2e
+npm run test:admin # requires the separate admin production preview
 ```
 
 Keep the dev server running. Set `VOIDPLAY_URL` for a different port or production preview,
@@ -72,7 +76,7 @@ The bounded `voidplay.demo-transfers.v1` browser record persists demo state sepa
 catalog and collections. Pending/active entries restore paused after reload; the simulator
 never claims to transfer in a closed tab. Storage failures retain session state and show a
 message. The dummy queue is intended for one active app tab; concurrent-tab coordination,
-a real package source/admin contract and a PS4 receiver are deferred.
+a live PS4 receiver and installation remain unavailable. Published entries never start a demo transfer.
 
 ## Boundaries
 
@@ -90,21 +94,32 @@ a real package source/admin contract and a PS4 receiver are deferred.
 - `src/main.tsx`: startup and render-error recovery.
 - `public/art/`, `public/fonts/`: local concept artwork and licensed font.
 
-The catalog accepts bounded, unique lowercase/hyphenated IDs, title, description, category
-(`Utilities`, `Games`, `Media`), `mock: true` and compatibility notes. Optional summary,
-cover/hero artwork, author, version, license, release notes and screenshot descriptions are
-validated. Artwork paths must be local `/art/name.svg|webp|png|jpg`; remote and traversal paths
-are rejected. Unknown metadata, live listings and download sources are rejected. Fields without
-data are omitted. Current fixtures have no release metadata or genuine screenshots, so their
-pages do not show those sections. A live package catalog still needs a separate validated
-contract for redistribution authorization, URLs, file sizes, versions and SHA-256 verification.
+The published contract lives in `shared/catalog.ts`, and `public/catalog.json` is the single
+public manifest. Preview mode explicitly loads the separate fictional fixture. Each published
+entry has complete metadata, authorization and one to three validated source descriptions.
+Drafts, local snapshots, revision checks and imports live in the owner workspace, outside
+the public build. No catalog records are duplicated in React components.
+
+See [owner editing and safe Git publishing](docs/catalog-publishing.md) for field requirements,
+backup/export/import commands, validation and the manual GitHub Pages workflow. The admin
+build is local-only and separate from `dist/`; no browser GitHub tokens or direct publishing
+backend are included. Pages has not been enabled or deployed by this change.
+
+Storage, networking, real downloads and installation expose interfaces in `src/platform/`.
+Settings shows an explicitly labeled desktop storage mock. Mock figures never authorize
+installation. Cleanup requires compatibility, permission, verified integrity, sufficient verified
+space and confirmed installation. No automatic installation or cleanup is wired up.
+
+The independent [native diagnostic](native/diagnostic/README.md) builds a small experimental
+PS4 test package; see [actual results](docs/ps4-diagnostic.md). Host/cross-build and FTP evidence
+are recorded separately from on-console launch, storage, controller, HTTPS and file I/O.
+Firmware 12.00 behavior remains unverified. The full React application has not been ported.
 
 ## Git workflow and licensing
 
 Use stable `main` and short-lived feature branches. Check, review, commit with Conventional
-Commits, push to `https://github.com/dynrbni/voidplay-ps4.git`, then open a PR. The V2 branch
-stacks on the earlier homepage branch while PRs #1 and #2 remain unmerged.
+Commits, push to `https://github.com/dynrbni/voidplay-ps4.git`, then open a PR. The catalog/admin milestone stacks on the corrected V2 branch while PRs #1–#3 remain unmerged.
 
 No Overdrive/Netflix source or assets were copied. Dependency/font notices are documented in
-[dependencies](docs/dependencies.md). No project-wide distribution license has been selected.
+[dependencies](docs/dependencies.md). No project-wide distribution license has been selected. Native diagnostic source has its own GPL-3.0-only license for the OpenOrbis-linked experiment.
 Actual PS4 execution must be proven before choosing a console renderer or exposing installation.

@@ -6,3 +6,6 @@ dist/
 .DS_Store
 *.log
 artifacts/
+admin-dist/
+native/diagnostic/build/
+native/diagnostic/__pycache__/

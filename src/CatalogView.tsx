@@ -13,7 +13,7 @@ export function CatalogView({ entries, mode, query, category, sort, onQuery, onC
   const categories = ['All', ...new Set(entries.map(entry => entry.category))];
   function clear() { onQuery(''); onCategory('All'); onSort('curated'); }
   return <div className={`catalog-page ${mode === 'search' ? 'search-page' : ''}`}>
-    <div className="page-heading"><div><p className="eyebrow">The Voidplay collection</p><h1>{mode === 'browse' ? 'Find your next discovery.' : 'What are you looking for?'}</h1></div><p className="catalog-count" role="status">{visible.length}<span>of {entries.length} concepts</span></p></div>
+    <div className="page-heading"><div><p className="eyebrow">The Voidplay collection</p><h1>{mode === 'browse' ? 'Find your next discovery.' : 'What are you looking for?'}</h1></div><p className="catalog-count" role="status">{visible.length}<span>of {entries.length} entries</span></p></div>
     <form className="filters" role="search" onSubmit={event => event.preventDefault()}>
       <label className="search-field"><span className="sr-only">Search applications</span><Icon name="search"/><input ref={searchRef} type="search" value={query} placeholder="Search titles, tools, and possibilities" onChange={event => onQuery(event.target.value)}/></label>
       <label className="sort-field">Sort by<select value={sort} onChange={event => onSort(event.target.value)}><option value="curated">Curated order</option><option value="title">Title A–Z</option></select></label>
@@ -23,6 +23,6 @@ export function CatalogView({ entries, mode, query, category, sort, onQuery, onC
       {visible.length ? <ul className="app-grid">{visible.map(entry => <ContentPoster key={entry.id} entry={entry} onSelect={onSelect} favorite={favorites.includes(entry.id)} onFavorite={onFavorite}/>)}</ul>
         : <div className="message"><Icon name="search"/><h2>No matching applications</h2><p>Try a different title or explore another category.</p><button onClick={clear}>Clear filters</button></div>}
     </section>
-    <p className="catalog-note">Original concepts for the beta preview. Demo downloads only; no real packages or installation.</p>
+    <p className="catalog-note">{entries.some(entry => !entry.mock) ? 'Published catalog. Console transfer and installation are unavailable in this preview.' : 'Original concepts for the beta preview. Demo downloads only; no real packages or installation.'}</p>
   </div>;
 }

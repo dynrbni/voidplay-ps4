@@ -44,3 +44,14 @@ Implementation, visual inspection, production check and three E2E scenarios comp
 ## Compact beta correction
 
 User-supplied references and dummy transfer clarification implemented. Transparent/sticky header, compact layout, filled-heart favorites and connected demo queue are verified. See docs/superpowers/plans/2026-10-25-compact-store.md. Implemented in 4094fef, pushed and verified against origin; PR #3 title/body updated to the final compact layout and demo download scope.
+
+## Admin catalog and PS4 diagnostic continuation
+
+Current milestone plan: docs/superpowers/plans/2026-10-25-admin-storage.md.
+UI follow-up pushed on existing PR #3 (bb7dfb5), then separate codex/catalog-admin-storage-poc branch.
+Owner admin/publication and platform interfaces implemented and locally verified. Native diagnostic
+cross-built and packaged; console-side integrity/launch/storage/controller/HTTPS/file-I/O evidence
+remains unavailable. FTP and the owner's Internal Package Installer/file-manager path are recorded
+as transport/setup facts only. No console compatibility claim or automatic installation.
+
+Remote handoff: PR #4 opened/attached against PR #3; implementation commits 40a70f7 and da882b0 pushed with matching remote SHA. GitHub CI did not start because of an account billing lock. Local checks pass; console runtime and full FTP read-back hash remain unverified.

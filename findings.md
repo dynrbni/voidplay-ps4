@@ -50,3 +50,18 @@
 - Favorites now need sibling buttons rather than nesting a heart inside a card button; row navigation preserves whether the user is traversing cards or hearts.
 - Active/queued demo records restore paused. Demo progress is separate from catalog metadata and tracked Library; no real transfer request occurs.
 - Mobile transfer controls initially shrank the title/progress; explicit wrapping fixed the content width.
+
+## Admin/storage milestone audit
+- Clean 2e6c342 on codex/fluid-store-redesign. origin/main remains 722faee; open PR stack #1 foundation → #2 homepage → #3 compact store. No branch protection configured, but README requires PR integration; no merge requested.
+- GitHub API reports has_pages=false. No publishing server exists, so choose separate loopback admin and validated local JSON export + Git/PR workflow. Do not place GitHub credentials in browser/public data.
+- OO_PS4_TOOLCHAIN unset; only Apple clang and make found on PATH. Homebrew LLVM absent. Device address/launch path requested asynchronously.
+
+### Milestone implementation findings
+- UI follow-up passed 15 unit/4 browser tests and was pushed as bb7dfb5 on PR #3 before creating codex/catalog-admin-storage-poc.
+- Separate local admin and static public manifest share strict Zod schemas; publication exports only validated snapshots, never drafts or owner workspace. No server-side publishing infrastructure exists, so Git/PR export is the documented production route.
+- OpenOrbis v0.5.4 release archive was downloaded and inspected. Source-only clone lacks built libc; release sysroot plus non-Apple LLVM/lld successfully built ELF/eboot/test PKG. Host tools ran on Apple Silicon. Dependencies installed: LLVM/lld, z3, xz update; no shell profile/default compiler changes.
+- OpenOrbis musl PS4 statvfs conversion is omitted; diagnostic uses declared libc fstatfs, validates arithmetic/results and reports candidate/unverified mount-scoped figures. Never infer PS4 disk capacity from browser quota.
+- Owner supplied FTP and Internal Package Installer/file-manager launch path. FTP connected and accepted the diagnostic under its owned directory; matching size observed, read-back hash incomplete due timeouts. No install/launch performed; firmware 12.00 remains unverified. Private endpoint is intentionally absent from tracked configuration.
+
+### Owner launch failure follow-up
+Owner reports package 01.00 fails with “cannot continue using this application” on firmware 12.00/GoldHEN, no CE code. Found missing OpenOrbis sample modules and 4 KiB/overlapping ELF LOAD layout. Corrected 01.01 builds with package/ELF/source-receipt guards and six Python regression checks. PKG/extracted runtime hashes verified locally; corrected FTP transfer is blocked by connection timeout. Console root cause and corrected launch remain unverified.
