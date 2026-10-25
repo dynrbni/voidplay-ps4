@@ -115,6 +115,14 @@ PS4 test package; see [actual results](docs/ps4-diagnostic.md). Host/cross-build
 are recorded separately from on-console launch, storage, controller, HTTPS and file I/O.
 Firmware 12.00 behavior remains unverified. The full React application has not been ported.
 
+The [C++ migration foundation](framework/voidplay-native/README.md) adds a native
+Mac display/input preview (`npm run native:preview`), watch mode and portable
+sanitizer tests. Its separate PS4 C++ startup package isolates the reported
+CE-34878-0 failure before a console renderer or full store port is attempted.
+See the [source audit and staged migration](framework/voidplay-native/docs/architecture.md).
+The owner admin remains a separate web tool. The C++ store rewrite is not complete;
+PS4 startup/display and firmware 12.00 support need direct hardware evidence.
+
 ## Git workflow and licensing
 
 Use stable `main` and short-lived feature branches. Check, review, commit with Conventional

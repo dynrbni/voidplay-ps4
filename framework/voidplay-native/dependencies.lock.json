@@ -1,0 +1,26 @@
+{
+  "openorbis": {
+    "version": "0.5.4",
+    "source": "https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain.git",
+    "revision": "b458dfd9d2f5c40aa249b127c9b9b4488afdc686",
+    "archive": "https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/releases/download/v0.5.4/toolchain-llvm-18.tar.gz",
+    "sha256": "3c7cd5bb593ca74fa1c13fd59f3938dc0fc07985167f7275063019e63abe4526",
+    "files": {
+      "lib/libc.a": "dd3f25830490bc0aab6a87a1bce890a502e2ec874ac8c3169e37210c4e49aef7",
+      "lib/libkernel.so": "0b52fd74a9ec02eed0e03a691b087cc2910f0901d0bcdd643c5d666aaa76d9c3",
+      "lib/crt1.o": "4173c4401c0b5d0a72c2641f712982bb38a78e346515278a32fa99d4bbf9dd86",
+      "link.x": "e52b4bf39ecf6db66c861d130fe89a67aec6e34c5af394faf60331a1655769c1",
+      "include/orbis/libkernel.h": "3c9de7af9d0ec7227540fc2defbc5c08e3bcd7693caa6ff8088a125f7b35a4cf",
+      "samples/hello_world/sce_sys/about/right.sprx": "e3416f9c6152276b494982baf7b65ebcd8052274ffc42f95a776318022842b64",
+      "samples/hello_world/sce_module/libc.prx": "39ad53672bb0b14895f8465eb1619478ab935f5afe5dbf69c15f02cfc0a75ce6",
+      "samples/hello_world/sce_module/libSceFios2.prx": "3f8236c5996cf8e9917b8d27706d9743f6603d89de3b9859eacbb9f466b19c01"
+    }
+  },
+  "ps4CompilerMajor": 18,
+  "languageStandard": "c++17",
+  "desktopSdlMajor": 2,
+  "referencesOnly": {
+    "ps5overdrive": "264f78e6b92e5eed1415490b003944eb97ed4f8b",
+    "ps5React": "65691ac70c814edd01b6f7174ad208748b503a17"
+  }
+}

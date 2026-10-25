@@ -1,0 +1,38 @@
+Voidplay native C++ migration foundation
+New code in this subtree: GPL-3.0-only; see LICENSE.
+The rest of the repository retains its existing licensing status.
+
+Architecture research only (no source/assets imported):
+PS5 React — created by half144 and PS5 React contributors.
+https://github.com/half144/ps5-react
+Continuation: https://github.com/JVK3R/ps5-react
+Also studied in https://github.com/Ex-Communicad0/ps5overdrive/tree/main/ps5-react
+Audited commits and source paths are in docs/architecture.md.
+
+The reference framework's own code is GPL-3.0-or-later with the additional
+attribution-preservation term in LICENSE-ATTRIBUTION (GPLv3 section 7(b)).
+Its NOTICE, LICENSE-ATTRIBUTION, LICENSE and dependency notices were inspected.
+If reference code is imported later, preserve those notices/terms in the
+source and distributions; this acknowledgement alone does not replace them.
+Embedded React is Apache-2.0; React/QuickJS-ng are MIT; the reference's platform
+and GL dependencies carry separate terms. None is linked into this experiment.
+
+Desktop dependency: SDL2, zlib license; full notice in licenses/SDL2.txt.
+The macOS system compiler/runtime/SDK retain Apple's and LLVM's terms.
+PS4 build: OpenOrbis v0.5.4 release and LLVM/LLD 18.1.8. OpenOrbis source:
+https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain
+OpenOrbis is distributed under GPLv3; subcomponents retain their own notices.
+OpenOrbis musl fork notice: licenses/musl-COPYRIGHT; source revision used for
+the audit: 2b0bb8ce2fa64ac255cb656785729d159a5f074c.
+LLVM: Apache-2.0 WITH LLVM-exception, https://llvm.org/LICENSE.txt
+
+The private experimental PKG copies right.sprx, libc.prx and libSceFios2.prx
+from the pinned OpenOrbis hello_world sample contract. Their exact release
+bytes and all build inputs are recorded in receipts. No SDK modules or PKGs
+are committed or automatically published. Before a binary release, audit all
+linked/bundled components' redistribution terms, preserve their notices and
+provide corresponding source/build materials as required. A top-level SDK
+license must not be assumed to settle every bundled binary's provenance.
+
+The package icon is derived from this repository's original generated
+orbit-workshop artwork; see ../../docs/artwork.md. It is not PS5 reference art.
