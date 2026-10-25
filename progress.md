@@ -9,4 +9,6 @@
 - Browser regression initially caught Escape routing and Search-focus issues; fixed and reran successfully on dev and production previews.
 - npm run check passes lint/types/seven tests/build. Axe Discover/Browse both zero WCAG A/AA violations and zero incomplete after fixes.
 - Inspected actual 1080p Home/Browse and mobile screenshots. Reference attachments unavailable; no direct-match claim.
-- No console compatibility or installation claims. Publication pending final review.
+- No console compatibility or installation claims.
+- Reviewed diff/whitespace; committed bc45cba and pushed feature/homepage-cinematic-redesign to intended origin.
+- Opened stacked PR https://github.com/dynrbni/voidplay-ps4/pull/2 against feature/store-foundation. Not merged; foundation PR #1 must land first, then redesign can retarget main.

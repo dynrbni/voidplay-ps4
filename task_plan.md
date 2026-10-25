@@ -28,11 +28,11 @@ Near-black, white/muted type, amber focus; self-hosted Manrope. Original locally
 - Inspect actual 1080p/mobile screenshots; run accessibility and quality checks.
 
 ### Phase 3: Publication
-**Status:** in_progress
+**Status:** complete
 - Update docs, review diff, commit/push branch, open stacked PR; verify remote head.
 
 ## Next Step
-Review final diff and checks, commit and push redesign, open stacked PR.
+Review stacked PR #2 (feature/store-foundation base). Merge foundation PR #1 before retargeting redesign to main. No merge performed.
 
 ## Errors
 Browser regressions found Escape/back and Search focus failures; corrected document-level back handling and already-mounted Search focus, then full dev/production E2E passed. Axe found prohibited aria-label on generic div; added group role. Caption contrast ambiguity resolved with opaque background. Browser bridge remains disconnected; local agent-browser/Chrome used.
