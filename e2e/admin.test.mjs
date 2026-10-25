@@ -16,7 +16,10 @@ function browser(...args) {
 }
 const evaluate = script => browser('eval', script).result;
 const click = name => browser('find', 'role', 'button', 'click', '--name', name, '--exact');
-const wait = script => browser('wait', '--fn', `Boolean(${script})`);
+const wait = script => {
+  try { browser('wait', '--fn', `Boolean(${script})`); }
+  catch (error) { throw new Error(`Browser condition failed: ${script}\n${evaluate('document.querySelector("[role=alert]")?.textContent ?? document.body.innerText.slice(0, 2000)')}`, { cause: error }); }
+};
 const store = process.env.VOIDPLAY_URL ?? 'http://127.0.0.1:4175/';
 function screenshot(name) { evaluate('(async()=>{window.scrollTo(0,0);await document.fonts.ready;return true;})()'); browser('screenshot', `artifacts/owner-${name}.png`); }
 
@@ -75,7 +78,7 @@ test('password login, private authoring, three sources, trailers and publication
     browser('network', 'route', '**/www.youtube-nocookie.com/embed/**', '--body', '<p>Trailer fixture</p>');
     click('Load trailer'); wait('document.querySelector("iframe")');
     assert.equal(evaluate('document.querySelector("iframe").src'), 'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0');
-    click('Edit metadata'); click('Stage published snapshot'); wait('document.querySelector(".notice")?.textContent.includes("snapshot is ready")');
+    click('Edit metadata'); wait('document.querySelector("#title")'); click('Stage published snapshot'); wait('document.querySelector(".notice")?.textContent.includes("snapshot is ready")');
     browser('fill', '#title', 'Private draft edit'); click('Save draft'); wait('document.querySelector(".notice")?.textContent.includes("Draft saved")');
     click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
     const published = JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8'));
