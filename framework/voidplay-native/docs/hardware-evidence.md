@@ -90,3 +90,16 @@ These local fixes are not explanations or fixes for the owner's console crash.
 Console display, controller, HTTPS/TLS, filesystem, real storage, downloads and
 installation remain unimplemented/unverified in this C++ runtime. Full store
 migration follows those gates. No kernel or system-UI modification is used.
+
+## GitHub handoff
+
+Runtime commit `9db3eb2b713540dfa86649350db892b7d6574ad3` and test/evidence
+commit `486dd57af1a8db06e7d47d260c256967cb64c4fe` were pushed with matching
+remote HEAD. [PR #5](https://github.com/dynrbni/voidplay-ps4/pull/5) targets the
+catalog milestone branch; it has not been merged.
+
+[Check run 40223133473](https://github.com/dynrbni/voidplay-ps4/actions/runs/40223133473)
+did not execute. Its annotation says: “The job was not started because your
+account is locked due to a billing issue.” This is not a CI test result;
+the local checks above are the available validation. No billing settings or
+workflow permissions were changed to bypass the account restriction.

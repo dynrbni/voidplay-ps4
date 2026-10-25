@@ -28,6 +28,8 @@
 - [x] Run build/receipt tamper tests; doctor, PS4 build, ELF/SELF/PKG checks; record exact hashes and limitations.
 - [x] Run existing checks as appropriate to ensure catalog/admin work is preserved.
 - [x] Document separate Mac/cross-build/structural/hardware evidence, console test procedure and next gates.
-- [ ] Commit coherent Conventional Commits, push, create/attach stacked PR against catalog milestone; verify remote head.
+- [x] Commit coherent Conventional Commits, push, create/attach stacked PR against catalog milestone; verify remote head.
 
 Hardware dependency: no actual startup evidence is available for the replacement C++ boot package. Do not proceed to a PS4 renderer/full store until that gate passes. Mac tests do not satisfy it.
+
+Handoff: runtime 9db3eb2 and tests/evidence 486dd57 pushed; PR #5 opened/attached against PR #4's branch. GitHub check run 40223133473 never started because the account is locked due to billing. Local results and the exact package are recorded in the framework hardware-evidence report. No hardware success is claimed.
