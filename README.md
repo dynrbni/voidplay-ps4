@@ -5,9 +5,10 @@ Only content the owner is authorized to redistribute is in scope.
 
 ## Current status
 
-Working desktop Home and Browse screens, search/category filters, application detail
-dialogs, and keyboard focus navigation. All listings are explicitly fictional mock
-entries; artwork is labeled placeholder text. No executable files or download links
+Cinematic Discover homepage with featured artwork, three horizontally navigable curated
+shelves, and a distinct Browse poster grid with search/category filters and title sorting.
+Application dialogs, keyboard focus/back navigation, and local Manrope typography are shared.
+All six listings are explicitly fictional mock entries; artwork is original concept SVGs. No executable files or download links
 are included. Loading, empty, invalid-catalog, network-error and offline states are implemented.
 
 **This is not a PS4 release.** Firmware 12.00 execution, React rendering, controller
@@ -31,7 +32,7 @@ The static `dist/` output is a desktop web preview, not a console package.
 No environment variables, credentials, paid service, or public file hosting are needed.
 
 ```sh
-npm run check       # lint, typecheck, six Node tests, production build
+npm run check       # lint, typecheck, seven Node tests, production build
 ```
 
 For browser regression checks, install/use `agent-browser` (verified 0.39.2) with Chrome
@@ -51,21 +52,26 @@ See [verification](docs/verification.md) for tested flows and limitations.
 
 - `src/catalog.ts`: Zod input validation, fetch loader, pure search/filter functions.
 - `public/catalog.mock.json`: same-origin fixture, not a published application catalog.
-- `src/App.tsx`, `src/Details.tsx`: store presentation and modal lifecycle.
+- `src/App.tsx`, `src/Details.tsx`: store state, data loading and modal lifecycle.
+- `src/AppNavigation.tsx`, `src/FeaturedHero.tsx`, `src/ContentShelf.tsx`, `src/ContentPoster.tsx`: shared presentation and artwork fallback.
+- `public/art/`, `public/fonts/`: original concept artwork and licensed local font.
 - `src/navigation.ts`: desktop spatial keyboard navigation independent of cards.
 - `src/main.tsx`: startup and render-error recovery.
 - `docs/design.md`: visual rationale and first-slice scope.
 
 The fixture is an array of strict objects: `id` (lowercase hyphenated identifier),
 `title`, `description`, `category` (`Utilities`, `Games`, `Media`), `mock: true`,
-`compatibilityNotes`. IDs must be unique; unknown fields are rejected. Strings and
+`compatibilityNotes`, plus optional `coverUrl` limited to local `/art/name.svg` paths.
+IDs must be unique; unknown fields and remote/traversal artwork URLs are rejected. Strings and
 array size are bounded. Empty arrays are valid. Real package metadata and API routes
 are deliberately not invented. Before accepting a live catalog, define and validate
 release versions, distribution authorization, URLs, SHA-256 and size metadata separately.
 The asynchronous loader can be replaced without rewriting cards or filters.
 
 Tab follows document order; arrows move between controls, excluding native input/select
-editing. Enter opens applications; Escape or Close returns focus. Browser offline state
+editing. Shelf arrows stay within a row; next/previous buttons and touch scrolling are also
+available. Enter opens applications; Escape or Close returns focus. Escape in Browse
+returns to Discover while preserving its scroll and shelf position. Browser offline state
 is a connectivity hint, not a promise that a server is reachable. Loaded fixtures remain
 viewable offline; there is no service worker or persistent offline cache.
 

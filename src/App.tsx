@@ -1,19 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { filterCatalog, loadCatalog } from './catalog.ts';
+import { filterCatalog, loadCatalog, sortCatalog } from './catalog.ts';
 import type { CatalogEntry } from './catalog.ts';
 import { Details } from './Details.tsx';
 import { installKeyboardNavigation } from './navigation.ts';
+import { AppNavigation } from './AppNavigation.tsx';
+import { FeaturedHero } from './FeaturedHero.tsx';
+import { ContentShelf } from './ContentShelf.tsx';
+import { ContentPoster } from './ContentPoster.tsx';
 
 type CatalogState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; entries: CatalogEntry[] };
-
-function AppCard({ entry, onSelect }: { entry: CatalogEntry; onSelect: (entry: CatalogEntry) => void }) {
-  return (
-    <li><button className="app-card" onClick={() => onSelect(entry)} aria-label={`View ${entry.title} (mock)`}>
-      <span className="cover"><span>{entry.title}</span><small>Artwork placeholder</small></span>
-      <span className="card-info"><span className="category">{entry.category} · Mock</span><strong>{entry.title}</strong></span>
-    </button></li>
-  );
-}
 
 export function App() {
   const [page, setPage] = useState<'home' | 'browse'>('home');
@@ -21,11 +16,28 @@ export function App() {
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
+  const [sort, setSort] = useState('curated');
   const [selected, setSelected] = useState<CatalogEntry | null>(null);
   const [online, setOnline] = useState(navigator.onLine);
-  const heading = useRef<HTMLHeadingElement>(null);
+  const heading = useRef<HTMLDivElement>(null);
+  const search = useRef<HTMLInputElement>(null);
+  const discover = useRef({ scroll: 0, trigger: null as HTMLElement | null });
 
   useEffect(installKeyboardNavigation, []);
+  useEffect(() => {
+    function back(event: KeyboardEvent) {
+      if (event.key === 'Escape' && page === 'browse' && !document.querySelector('dialog[open]')) {
+        event.preventDefault();
+        setPage('home');
+        requestAnimationFrame(() => {
+          discover.current.trigger?.focus({ preventScroll: true });
+          window.scrollTo(0, discover.current.scroll);
+        });
+      }
+    }
+    document.addEventListener('keydown', back);
+    return () => document.removeEventListener('keydown', back);
+  }, [page]);
   useEffect(() => {
     const controller = new AbortController();
     loadCatalog(controller.signal).then(
@@ -41,58 +53,68 @@ export function App() {
     return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update); };
   }, []);
 
-  function navigate(next: 'home' | 'browse') {
+  function navigate(next: 'home' | 'browse', focusSearch = false) {
+    if (next === 'browse' && page === 'browse' && focusSearch) {
+      search.current?.focus();
+      search.current?.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    if (page === 'home' && next === 'browse') {
+      discover.current = { scroll: window.scrollY, trigger: document.activeElement instanceof HTMLElement ? document.activeElement : null };
+    }
     setPage(next);
-    requestAnimationFrame(() => heading.current?.focus());
+    requestAnimationFrame(() => {
+      if (next === 'home' && page === 'browse') {
+        discover.current.trigger?.focus({ preventScroll: true });
+        window.scrollTo(0, discover.current.scroll);
+      } else {
+        window.scrollTo(0, 0);
+        (focusSearch ? search.current : heading.current)?.focus({ preventScroll: true });
+      }
+    });
   }
-  function retry() {
-    setCatalog({ status: 'loading' });
-    setAttempt(value => value + 1);
-  }
-  function clearFilters() { setQuery(''); setCategory('All'); }
+  function browseCategory(next: string) { setCategory(next); setQuery(''); navigate('browse'); }
+  function retry() { setCatalog({ status: 'loading' }); setAttempt(value => value + 1); }
+  function clearFilters() { setQuery(''); setCategory('All'); setSort('curated'); }
 
   const entries = catalog.status === 'ready' ? catalog.entries : [];
   const featured = entries[0];
-  const visible = page === 'browse' ? filterCatalog(entries, query, category) : entries;
+  const visible = sortCatalog(filterCatalog(entries, query, category), sort);
 
-  return (
-    <div className="shell">
-      <a className="skip-link" href="#content">Skip to catalog</a>
-      <header className="header">
-        <a className="wordmark" href="#" onClick={event => { event.preventDefault(); navigate('home'); }} aria-label="Voidplay home">void<span>play</span><i aria-hidden="true">.</i></a>
-        <nav aria-label="Store"><button aria-current={page === 'home' ? 'page' : undefined} onClick={() => navigate('home')}>Home</button>
-          <button aria-current={page === 'browse' ? 'page' : undefined} onClick={() => navigate('browse')}>Browse</button></nav>
-        <span className="preview-label">Desktop preview</span>
-      </header>
-      {!online && <p className="offline" role="status">You’re offline. Loaded mock entries remain available; retry loading after reconnecting.</p>}
-      <main id="content" tabIndex={-1}>
-        <div className="page-heading"><div><p className="eyebrow">Homebrew library</p>
-          <h1 ref={heading} tabIndex={-1}>{page === 'home' ? 'Make room for homebrew.' : 'Find your next project.'}</h1></div>
-          <p className="source-note">Local mock catalog<br />PS4 runtime unverified</p></div>
-        {catalog.status === 'loading' ? <section className="message" role="status"><h2>Loading local catalog…</h2><p>Reading the preview fixture.</p></section>
-          : catalog.status === 'error' ? <section className="message" role="alert"><h2>Catalog unavailable</h2><p>The local catalog could not be loaded or its metadata is invalid.</p><button onClick={retry}>Retry catalog</button></section>
-          : entries.length === 0 ? <section className="message"><h2>No applications yet</h2><p>The catalog is empty. Reload after entries have been added.</p><button onClick={retry}>Reload catalog</button></section>
-          : <>
-            {page === 'home' && featured && <section className="featured" aria-labelledby="featured-title">
-              <div className="featured-copy"><p className="eyebrow">Featured fixture · {featured.category}</p><h2 id="featured-title">{featured.title}</h2>
-                <p>{featured.description}</p><button className="primary" onClick={() => setSelected(featured)}>View application</button></div>
-              <div className="featured-art" aria-hidden="true"><span>{featured.title}</span><small>Mock cover / artwork placeholder</small></div>
-            </section>}
-            {page === 'browse' && <form className="filters" role="search" onSubmit={event => event.preventDefault()}>
-              <label>Search applications<input type="search" value={query} placeholder="Title, description, or category" onChange={event => setQuery(event.target.value)} /></label>
-              <label>Category<select value={category} onChange={event => setCategory(event.target.value)}><option>All</option><option>Utilities</option><option>Games</option><option>Media</option></select></label>
-              <button type="button" onClick={clearFilters}>Clear filters</button>
-            </form>}
-            <section aria-labelledby="shelf-title"><div className="shelf-heading"><h2 id="shelf-title">{page === 'home' ? 'In the preview library' : 'Catalog'}</h2>
-              {page === 'home' ? <button className="text-button" onClick={() => navigate('browse')}>Browse all applications</button> : <p role="status">{visible.length} {visible.length === 1 ? 'application' : 'applications'}</p>}</div>
-              {visible.length > 0 ? <ul className="app-grid">{visible.map(entry => <AppCard key={entry.id} entry={entry} onSelect={setSelected} />)}</ul>
-                : <div className="message"><h3>No matching applications</h3><p>Try another search or clear your category selection.</p><button onClick={clearFilters}>Clear filters</button></div>}
-            </section>
-          </>}
-      </main>
-      <footer><p><strong>Preview, not a console release.</strong> All listings are fictional mock data. No downloads or installation.</p>
-        <p>Keyboard: Tab to move · Arrow keys between controls · Enter to open · Esc to close details</p></footer>
-      {selected && <Details entry={selected} onClose={() => setSelected(null)} />}
-    </div>
-  );
+  return <div className="shell">
+    <a className="skip-link" href="#content">Skip to catalog</a>
+    <AppNavigation page={page} onNavigate={next => navigate(next)} onSearch={() => navigate('browse', true)} />
+    {!online && <p className="offline" role="status">You’re offline. Loaded mock entries remain available; retry loading after reconnecting.</p>}
+    <main id="content" tabIndex={-1}>
+      <div ref={heading} tabIndex={-1} className="page-focus" role="group" aria-label={page === 'home' ? 'Discover' : 'Browse'}>
+        {page === 'browse' && <div className="page-heading"><div><p className="eyebrow">The Voidplay collection</p><h1>Browse applications</h1></div><p role="status">{visible.length} {visible.length === 1 ? 'application' : 'applications'} <span>· Mock catalog</span></p></div>}
+      </div>
+      {catalog.status === 'loading' ? <section className="message" role="status"><h2>Loading local catalog…</h2><p>Reading the preview fixture.</p></section>
+        : catalog.status === 'error' ? <section className="message" role="alert"><h2>Catalog unavailable</h2><p>The local catalog could not be loaded or its metadata is invalid.</p><button onClick={retry}>Retry catalog</button></section>
+        : entries.length === 0 ? <section className="message"><h2>No applications yet</h2><p>The catalog is empty. Reload after entries have been added.</p><button onClick={retry}>Reload catalog</button></section>
+        : <>
+          <div hidden={page !== 'home'}>
+          {featured && <FeaturedHero entry={featured} onSelect={setSelected} onBrowse={() => browseCategory(featured.category)} />}
+          <div className="home-shelves"><p className="collection-note">Curated for the preview <span>No popularity or rating data</span></p>
+            <ContentShelf title="Homebrew spotlight" entries={entries} onSelect={setSelected} onBrowse={() => browseCategory('All')} />
+            <ContentShelf title="Tools & utilities" entries={entries.filter(entry => entry.category === 'Utilities')} onSelect={setSelected} onBrowse={() => browseCategory('Utilities')} />
+            <ContentShelf title="Picture & sound" entries={entries.filter(entry => entry.category === 'Media')} onSelect={setSelected} onBrowse={() => browseCategory('Media')} />
+          </div>
+          </div><div hidden={page !== 'browse'}>
+          <form className="filters" role="search" onSubmit={event => event.preventDefault()}>
+            <label>Search applications<input ref={search} type="search" value={query} placeholder="Title, description, or category" onChange={event => setQuery(event.target.value)} /></label>
+            <label>Category<select value={category} onChange={event => setCategory(event.target.value)}><option>All</option><option>Utilities</option><option>Games</option><option>Media</option></select></label>
+            <label>Sort by<select value={sort} onChange={event => setSort(event.target.value)}><option value="curated">Curated order</option><option value="title">Title A–Z</option></select></label>
+            <button type="button" onClick={clearFilters}>Clear filters</button>
+          </form>
+          <section className="catalog" aria-label="Application catalog">
+            {visible.length > 0 ? <ul className="app-grid">{visible.map(entry => <ContentPoster key={entry.id} entry={entry} onSelect={setSelected} />)}</ul>
+              : <div className="message"><h2>No matching applications</h2><p>Try another search or clear your category selection.</p><button onClick={clearFilters}>Clear filters</button></div>}
+          </section>
+          </div>
+        </>}
+    </main>
+    <footer><p><strong>Voidplay desktop preview.</strong> Fictional mock listings and original concept artwork. No downloads or installation.</p><p>Tab / Arrows: navigate <span>Enter: details</span> <span>Esc: back</span> · PS4 controller support unverified</p></footer>
+    {selected && <Details entry={selected} onClose={() => setSelected(null)} />}
+  </div>;
 }

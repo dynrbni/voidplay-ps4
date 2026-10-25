@@ -1,33 +1,24 @@
-# First store slice
+# Cinematic store direction
 
-Approved direction: the user accepted the proposed desktop home/catalog slice and asked to continue.
+Implements the owner's homepage redesign specification. No reference screenshot files were attached in the accessible conversation; composition was evaluated against the written brief, not a claimed pixel comparison.
 
-Reading this as a TV-oriented homebrew catalog for PS4 owners, in a restrained console-library language, ENERGY 2 / RHYTHM 2 / MOTION 1.
+Reading this as a TV-first homebrew store, with a cinematic featured view and a denser console catalog. ENERGY 2 / RHYTHM 2 / MOTION 1.
 
-## Scope and boundaries
+## Decisions
 
-React/TypeScript/Vite desktop preview only. Home features one mock application and a recent shelf; Browse supports text search and categories. A native HTML dialog reveals selected fixture metadata and restores focus on close. All entries explicitly say mock; no download URL, file size, checksum, version, or console compatibility is invented. Downloads and installation are unavailable, not simulated. No backend/admin or console APIs enter this slice.
+- Near-black #080808 grounds the content like an entertainment library; white and #b5b5b5 secondary text provide hierarchy without panel clutter.
+- Amber marks focus and the active destination, not decorative ratings or fabricated status.
+- Self-hosted Manrope variable Latin font replaces system/Georgia throughout navigation, hero, catalog and dialogs. Its neutral geometric forms suit a consistent TV interface; system fallbacks cover unsupported scripts/offline font failure.
+- A 53vh full-width hero puts artwork behind lower-left copy. Horizontal and bottom gradients protect text and blend the first shelf into the page, rather than enclosing the feature in a card.
+- Hero actions are real: View details and browse the featured category. No library, download, installation or controller action is fabricated.
+- Three shelves use actual fixture subsets: spotlight, utilities and media. Curated/mock labels replace unsupported popularity, ratings and recency claims.
+- Posters are 2:3, with quiet category metadata and one-line title truncation. Browse uses six columns at 1080p; shelves expose a partial next poster to indicate lateral navigation.
+- Original locally stored SVG concept art gives each fictional entry a distinct subject, not commercial game imagery. Text explicitly labels concept/mock art; failed/missing artwork gets a title-based fallback.
+- Navigation shows only implemented Discover, Browse and Search. Two outline icons identify real Search and Details actions; no console-button hints imply controller integration.
+- Spacing, type roles, surfaces, timing and focus are CSS tokens. Restrained transform/color transitions communicate focus without changing layout; reduced-motion removes them.
 
-Catalog JSON loads asynchronously with runtime validation and retryable loading/error states. An empty catalog or unmatched search provides a clear recovery action. Browser offline status is reported separately: cached local fixtures can still be viewed. A future API can replace the loader without changing catalog presentation.
+## Input and state
 
-## Visual decisions
+Presentation is split into AppNavigation, FeaturedHero, ContentShelf and ContentPoster. Existing Zod loader, filtering and native detail dialog remain independent. Shelf left/right movement stays within its row; up/down uses spatial navigation; focused cards scroll into view. Home and Browse remain mounted but hidden to preserve shelf context. Escape from Browse returns to Discover's saved scroll/trigger; modal Close/Escape preserves the invoking card. No hover-only action.
 
-- Charcoal `#171a1e` and raised slate `#24292f` reduce TV glare and separate content levels.
-- Warm-white `#f3f1eb` and muted `#b8bfc7` keep body text readable at viewing distance.
-- Amber `#f4bd6a` marks selection and focus rather than decorating every surface.
-- A restrained Georgia display title paired with system sans body text distinguishes the library while retaining readable controls without web-font downloads.
-- A wide featured panel above a consistent shelf reflects featured versus browse hierarchy; catalog cards stay uniform for directional predictability.
-- Large spacing and 48px controls support remote viewing and keyboard targeting; mobile reflows without horizontal scrolling.
-- Text-only cover placeholders explicitly name missing artwork; no borrowed icons, invented branding assets, or unlicensed screenshots.
-- The recurring split Void/play wordmark treatment is typography, not a fabricated app icon. Small square corners and a strong amber focus frame provide the repeated console-library motif.
-- Only focus/hover color transitions; reduced-motion disables transitions. No background ornaments, glow, blur, or animated progress.
-
-## Input and checks
-
-Tab follows document order. Arrow keys move spatially between enabled controls, while text inputs and selects retain native editing. Navigation is separate from cards. Dialog Escape/close uses the browser's focus restoration. Desktop keyboard tests do not demonstrate PS4 controller support.
-
-Use Node's built-in test runner for pure catalog/focus logic and browser checks for visible flows, modal focus, empty/loading/error/offline states, and mobile/1080p layout. Lint, type check, and production build before committing.
-
-## Licensing
-
-No Overdrive code/assets reused. Inspect upstream license and notices before any future reuse. Fictional fixtures are visibly mock and are not distributable packages.
+Loading, empty catalog, unmatched search, invalid metadata, network retry, offline hint and image-failure states remain explicit. Browser tests cover these states and production output. No console API or live catalog contract is invented.

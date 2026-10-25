@@ -1,46 +1,38 @@
-# Voidplay first slice
+# Cinematic homepage redesign
 
 ## Goal
-Establish audited, tested desktop store preview without asserting PS4 compatibility.
+Implement the user's cinematic home/store specification on the existing desktop app. No console compatibility claims.
 
-## Current Phase
-Store foundation implemented, verified, committed and pushed. PR #1 open for review; no merge performed.
+## Audit
+- Clean feature/store-foundation at df34c23; origin matches intended repository.
+- Fetched origin: main remains baseline 722faee, foundation PR #1 unmerged.
+- Created feature/homepage-cinematic-redesign from existing app; use stacked PR against feature/store-foundation.
+- Baseline npm run check passed: lint, strict types, six tests, production build.
+- Existing state routing in App.tsx; Zod JSON loader; independent spatial navigation; native detail dialog. No router/backend change needed.
+- No reference screenshot attachments available in this conversation; follow written brief without claiming exact comparison.
+
+## Design
+Approved by explicit implementation specification. ENERGY 2 / RHYTHM 2 / MOTION 1.
+Near-black, white/muted type, amber focus; self-hosted Manrope. Original locally stored SVG concept illustrations, labeled mock. Full-bleed 52vh hero, left/lower copy, dual real actions; horizontal curated poster shelves. Browse remains a filterable/sortable poster grid. No fake statistics or controller hints.
 
 ## Phases
-### Phase 0: Audit
+### Phase 1: Presentation and assets
 **Status:** complete
-- Workspace initially empty, including hidden entries.
-- Not a Git repository; no branch, remotes, history, or user changes.
-- Intended GitHub repository confirmed accessible and empty.
-- No baseline build, tests, lint, or TypeScript configuration exists.
+- Self-host font/license, original concept artwork and validated optional art URLs.
+- Shared poster and artwork fallback; compact navigation, cinematic hero, shelves, distinct Browse.
 
-### Phase 1: First-slice design
+### Phase 2: Interaction and verification
 **Status:** complete
-- Propose React/TypeScript/Vite desktop home and catalog preview.
-- Explicit mock fixtures; no download URLs, installation, or console claims.
-- Obtain required design and anti-slop usage-mode approval before implementation.
+- Scope horizontal arrows to shelves; maintain focus and scroll after details.
+- Tests for schema/sorting, shelves, fallback, loading/empty/error/offline, keyboard and mobile.
+- Inspect actual 1080p/mobile screenshots; run accessibility and quality checks.
 
-### Phase 2: Foundation and store slice
-**Status:** complete
-- Establish initial main baseline and dedicated feature branch.
-- Build approved slice, meaningful tests, onboarding, and capability status.
-
-### Phase 3: Verification and publication
-**Status:** complete
-- Type check, lint, tests, production build, rendered UI and keyboard checks.
-- Review diff and secrets; commit coherent units, push intended remote, open PR if permitted.
+### Phase 3: Publication
+**Status:** in_progress
+- Update docs, review diff, commit/push branch, open stacked PR; verify remote head.
 
 ## Next Step
-Review PR #1; next engineering slice is an isolated OpenOrbis host-tool/hello_world feasibility test once prerequisites and console access are available.
+Review final diff and checks, commit and push redesign, open stacked PR.
 
-## Errors Encountered
-| Command | Result | Resolution |
-| --- | --- | --- |
-| git status --short --branch | fatal: not a git repository (or any of the parent directories): .git | Expected for empty workspace; initialized only after empty remote verification. |
-| agent-browser skills get core | command not found | Used npm tool cache and installed local Chrome; no project runtime dependency added. |
-| browser.tabs.open | desktop bridge disconnected | Switched to isolated local agent-browser session. |
-| Initial Node tests | missing catalog/navigation modules | Expected red tests; implemented and all six pass. |
-| Screenshot save | artifacts directory absent | Created ignored artifacts directory and reran. |
-| Initial browser checks | dialog closed during Strict Mode replay; close state not unmounted | Explicit show/close/cancel lifecycle; full dev/production regression passes. |
-| Browser test harness | native Tab includes browser chrome; unsupported semantic focus/select actions | Adjusted Tab-cycle expectation and used supported focus/select calls. |
-| Branch protection API | 404 Branch not protected | Informational policy check, no protections bypassed. |
+## Errors
+Browser regressions found Escape/back and Search focus failures; corrected document-level back handling and already-mounted Search focus, then full dev/production E2E passed. Axe found prohibited aria-label on generic div; added group role. Caption contrast ambiguity resolved with opaque background. Browser bridge remains disconnected; local agent-browser/Chrome used.

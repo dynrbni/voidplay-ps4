@@ -6,6 +6,7 @@ const entrySchema = z.strictObject({
   description: z.string().trim().min(1).max(2000),
   category: z.enum(['Utilities', 'Games', 'Media']),
   mock: z.literal(true),
+  coverUrl: z.string().regex(/^\/art\/[a-z0-9-]+\.svg$/).optional(),
   compatibilityNotes: z.string().trim().min(1).max(1000)
 });
 
@@ -25,6 +26,10 @@ export function filterCatalog(entries: CatalogEntry[], query: string, category: 
     (category === 'All' || entry.category === category) &&
     `${entry.title} ${entry.description} ${entry.category}`.toLowerCase().includes(term)
   );
+}
+
+export function sortCatalog(entries: CatalogEntry[], order: string): CatalogEntry[] {
+  return order === 'title' ? [...entries].sort((a, b) => a.title.localeCompare(b.title, 'en')) : entries;
 }
 
 export async function loadCatalog(signal: AbortSignal, request: typeof fetch = fetch): Promise<CatalogEntry[]> {

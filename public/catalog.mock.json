@@ -1,6 +1,7 @@
 [
   {
     "id": "save-shelf",
+    "coverUrl": "/art/save-shelf.svg",
     "title": "Save Shelf",
     "description": "A fictional save-file organizer used to preview the Voidplay catalog. No executable or save data is included.",
     "category": "Utilities",
@@ -9,6 +10,7 @@
   },
   {
     "id": "orbit-workshop",
+    "coverUrl": "/art/orbit-workshop.svg",
     "title": "Orbit Workshop",
     "description": "A fictional homebrew puzzle game for testing browsing and search. No game package is available.",
     "category": "Games",
@@ -17,6 +19,7 @@
   },
   {
     "id": "local-player",
+    "coverUrl": "/art/local-player.svg",
     "title": "Local Player",
     "description": "A fictional media player listing for previewing application details. Playback is not implemented.",
     "category": "Media",
@@ -25,10 +28,29 @@
   },
   {
     "id": "file-desk",
+    "coverUrl": "/art/file-desk.svg",
     "title": "File Desk",
     "description": "A fictional file browser listing. It does not access the console filesystem or distribute any files.",
     "category": "Utilities",
     "mock": true,
     "compatibilityNotes": "Mock entry. Console filesystem access is unverified."
+  },
+  {
+    "id": "pixel-forge",
+    "coverUrl": "/art/pixel-forge.svg",
+    "title": "Pixel Forge",
+    "description": "A fictional pixel-art editor for testing the creative tools collection. No editor executable is included.",
+    "category": "Utilities",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. No console build exists."
+  },
+  {
+    "id": "signal-room",
+    "coverUrl": "/art/signal-room.svg",
+    "title": "Signal Room",
+    "description": "A fictional audio library used to preview media browsing. No playback or streaming service is connected.",
+    "category": "Media",
+    "mock": true,
+    "compatibilityNotes": "Mock entry. Audio and networking APIs are unverified."
   }
 ]

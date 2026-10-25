@@ -1,57 +1,60 @@
-# Store foundation verification
+# Cinematic redesign verification
 
-Environment: macOS Apple Silicon, Node 26.7.0, npm 11.19.0, local Google Chrome via
-agent-browser 0.39.2. No actual console tests.
+## Baseline and scope
 
-## Automated checks
+macOS Apple Silicon, Node 26.7.0, local Google Chrome via agent-browser 0.39.2.
+Foundation baseline passed lint/types/six tests/build before changes. No backend or
+console changes. Branch is stacked on unmerged foundation PR #1.
 
-- `npm ci`: clean lockfile installation passed; npm reported zero known vulnerabilities.
-  npm 11 warned that optional `fsevents@2.3.3` has an unapproved install script; no
-  approval override was added and checks/build succeeded without one.
-- `npm run check`: lint (zero warnings), strict type check, six Node behavior tests,
-  Vite production build. Passed again after clean installation.
-- `npm run test:e2e` against running dev server and again against production preview
-  (`VOIDPLAY_URL=http://127.0.0.1:4173`): one passing full browser flow on each.
-  Covers every application card, feature action, detail Close/Escape, focus restoration,
-  native Tab cycling in modal (browser chrome may take one tab stop), arrow right/left,
-  visible 3px focus outline, Home/Browse/wordmark navigation, text/category intersection,
-  clear filters, offline/online event handling, empty fixture, malformed fixture,
-  request failure, loading state and retry recovery.
-- Browser regression captures 1920x1080 Home, 390x844 Home/Browse; screenshots inspected.
-  No horizontal overflow at tested dimensions. All cards and controls usable.
-- Runtime page-error collection empty at the end of browser flow. Injected network
-  failures are deliberate test scenarios, not silently ignored production errors.
-- Axe 4.12.1 WCAG 2 A/AA: Home 0 violations / 0 incomplete; Browse 0 / 0;
-  Details 0 violations / 1 incomplete (automated overlap ambiguity for description
-  contrast). Direct luminance calculation: muted text on dialog surface 7.89:1;
-  muted text on cover surface 6.32:1. Both exceed 4.5:1.
+## Results
 
-## Corrections found by actual browser tests
+- `npm run check`: PASS, ESLint zero warnings, strict TypeScript, seven Node tests,
+  production Vite build. Tests cover catalog validation (including art URL restrictions),
+  filter intersection, immutable title sort, fixture validity, fetch failures and spatial candidates.
+- `npm run test:e2e`: PASS against development preview, then production preview using
+  `VOIDPLAY_URL=http://127.0.0.1:4173`. One full browser regression per run.
+- Browser coverage: hero sizing and real actions; horizontally overflowing shelf;
+  left/right row boundaries, up/down movement, focus outline, scrolled-card dialog and
+  focus/scroll restoration; shelf buttons; Browse/category/search/sort; all six details;
+  Search focus; Escape back; mobile overflow; offline hint; failed hero/poster artwork;
+  loading/empty/invalid metadata/network failure and retry. Final page errors: none.
+- Rendered screenshots inspected at 1920x1080 (Discover and Browse) and 390x844
+  (Discover and Browse). The hero dominates, first shelf begins beneath it; Browse is
+  a distinct dense poster grid. No horizontal document overflow. Home has intentional
+  lateral shelf overflow only. `docs/images/` holds desktop evidence.
+- Axe 4.12.1 WCAG 2 A/AA: Discover zero violations / zero incomplete; Browse zero /
+  zero. Fixed an invalid accessible label role and replaced translucent concept-art
+  captions with opaque backgrounds to remove contrast ambiguity.
+- Manrope font self-hosted with OFL notice; concept SVGs locally authored and labeled.
+  No runtime dependency added; no remote image/font dependency.
 
-- Removed dialog-closing effect cleanup: React Strict Mode replay closed the newly
-  opened modal. Explicit close/cancel now closes before unmounting, preserving native
-  focus restoration.
-- Explicit Close/cancel state handling replaces reliance on asynchronous close-event
-  behavior. Browser check asserts the dialog unmounts and can reopen.
-- Test harness adjusted to supported agent-browser commands and awaited dialog removal,
-  instead of assuming synchronous React updates.
+## Issues found and fixed
 
-## Anti-slop delivery gate
+- Escape attached only to the React shell missed cases where focus fell to the
+  document after route changes. Document-level handler now restores Discover context.
+- Search while already in Browse could lose focus to pointer timing. Existing-page
+  Search now focuses the mounted native input directly; cross-page focus waits for render.
+- Hidden mounted screens preserve shelf offset and input state; hidden controls are
+  excluded from directional navigation and the accessibility tree.
 
-- Hard gates: PASS for this preview scope. Honest fixture/placeholder labels, no
-  fabricated compatibility or download claims, real controls/destinations, tested
-  loading/empty/error/offline states, visible keyboard focus and mobile reflow.
-- Purpose gates: PASS. Palette/type/spacing/shelf/card decisions documented in
-  `design.md`; no decorative gradients, glow, icons, blur or fabricated visual assets.
-- Liveliness: PASS. ENERGY 2 / RHYTHM 2 / MOTION 1; featured typographic cover is the
-  focal point, shelf is subordinate, amber selection and split wordmark recur.
-- Craftsmanship/quality locks: PASS within desktop mock-catalog scope, based on
-  browser flows, screenshots and checks above. This is not a final cover-art design
-  or a console release.
+## Design gate
 
-## Known limits
+- Hard gates PASS for desktop preview scope: honest mock/concept disclosures, no
+  invented metrics or compatibility, real destinations/actions, recovery/fallback
+  states, keyboard focus, responsive layout and rendered-browser evidence.
+- Purpose gates PASS: hero overlays protect text; poster layout serves shelf scanning;
+  Manrope unifies TV hierarchy; amber indicates selection. Rationale in design.md.
+- Liveliness PASS: ENERGY 2 / RHYTHM 2 / MOTION 1; cinematic focal feature contrasts
+  with compact shelves and dense Browse, with restrained focus transitions.
+- Craftsmanship PASS within implemented mock store scope; no unbuilt nav destinations,
+  decorative controller hints or download/install controls.
 
-Only local Chrome and the listed sizes were exercised. PS4 browser/embedded runtime,
-controller input, long-running transfers, checksum verification, persistent offline
-caching and all backend/admin behaviors are untested or absent. Screen-reader and
-physical TV viewing have not been manually evaluated.
+## Limitations
+
+The requested two screenshot attachments were not available to this session; visual
+review follows the written specification, not a direct reference-image comparison.
+Only listed Chrome desktop/mobile viewports were tested, not physical TV viewing,
+manual screen-reader usage, PS4 execution or controller hardware. Real versions,
+file sizes, ratings, popularity, release dates and compatibility are absent rather
+than invented. Font subset covers Latin; system fallback handles other scripts.
+No install/download/library/admin/backend capabilities are added by this redesign.
