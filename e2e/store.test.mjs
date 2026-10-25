@@ -47,6 +47,8 @@ test('compact store: transparent sticky header, shared hearts, details and respo
     screenshot('compact-home-1080');
     evaluate('window.scrollTo(0,500); true');
     assert.equal(evaluate('document.querySelector(".header").getBoundingClientRect().top'), 0);
+    waitFor('getComputedStyle(document.querySelector(".header")).backgroundColor === "rgba(5, 5, 5, 0.84)"');
+    assert.notEqual(evaluate('getComputedStyle(document.querySelector(".header")).backgroundColor'), 'rgba(0, 0, 0, 0)');
     screenshot('compact-header-scrolled-1080');
     evaluate('window.scrollTo(0,0); document.querySelector(".shelf-row .app-card").focus(); true');
     browser('press', 'ArrowRight');
@@ -137,7 +139,7 @@ test('compact store: transparent sticky header, shared hearts, details and respo
     assert.equal(evaluate('Math.abs(scrollY-window.savedScroll)<2'),true);
     browser('press','ArrowRight');
     assert.equal(evaluate('document.activeElement.dataset.entryId'),'signal-room');
-    assert.equal(evaluate('getComputedStyle(document.activeElement.querySelector(".cover")).outlineColor'),'rgb(255, 255, 255)');
+    assert.equal(evaluate('getComputedStyle(document.activeElement.querySelector(".cover"), "::after").borderColor'),'rgb(255, 255, 255)');
     browser('set','viewport','1366','768');
     evaluate('window.scrollTo(0,0);true'); noOverflow(); screenshot('compact-home-laptop');
     browser('set','viewport','390','844');

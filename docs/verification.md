@@ -70,3 +70,7 @@ against `feature/homepage-cinematic-redesign`. Earlier foundation/homepage PRs r
 Implementation commit: `4094fefdb999d3cad0054648a45a89c1f255166a`. Push was verified by
 matching `git ls-remote` to the local commit, and PR #3 title/body were updated to the final
 compact-layout/dummy-download scope. The following docs-only handoff does not change tested code.
+
+## Scrolled header and shelf focus follow-up
+
+The header now changes from clear to a blurred translucent surface above 24px of scroll. Poster focus uses an inset white ring and padded scrolling gutters so the selected edge is not outside the clipped scroll viewport. Artwork fades and focus lift respect reduced motion. The E2E checks cover transparent initial state, scrolled surface, sticky position, first/last focus and responsive overflow.
