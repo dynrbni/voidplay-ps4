@@ -62,3 +62,13 @@ Audited clean current milestone/remote/open PR stack and created codex/cpp-runti
 Local results: Apple ASan/UBSan portable tests and 11 Python tests pass; real SDL smoke passes at 1920x1080 and 640x360; watch rebuild/restart verified. Existing npm check (23 tests and both builds), native diagnostic checks and public artifact verification pass. Final PS4 receipt hashes 35 inputs/13 outputs; full package verification passed. No console runtime claim. Owner deferred hardware setup; do not retry deployment until resumed.
 
 Remote handoff: 9db3eb2 and 486dd57 pushed and remote HEAD matched. PR #5 created/attached against codex/catalog-admin-storage-poc. GitHub run 40223133473 did not start: account billing lock, confirmed from check annotations. No merge or console deployment. README opened in Codex (queued by the app).
+
+## Owner Pages catalog — 2026-10-26
+
+- Audited clean d368c6a/main/open stacked PR dependencies; implemented on codex/pages-owner-catalog without merging prior work.
+- Added private Mac password/session backend, revision-safe atomic workspace, validated GitHub publication, genre/trailer metadata, lazy web trailer and live real-mode catalog flow.
+- Configured owner password privately through hidden input. Private files are ignored with restrictive permissions; no password/verifier or GitHub credential is shipped in public assets.
+- Implementation 9c6086f and local-studio link 639af8c pushed; PR #6 opened/attached against #5. Pages initially deployed 3b5ea71; real authenticated empty publication fa58612 created revision 1; asset redeploy 8e638b1 preserved the catalog byte-for-byte and Pages reported built.
+- Verified real HTTP 200 store/admin/catalog, localhost 200 and private workspace 401 without authorization. Two isolated admin/publication browser scenarios and four store regressions pass, alongside 29 tests, lint/types/build and public-artifact checks.
+- Pages-to-loopback access was blocked by the browser; local studio link is provided. One staging browser timeout during concurrent rebuild did not reproduce in isolated runs; harness now waits for metadata rendering and includes validation diagnostics.
+- Documented owner workflow, persistence/backups, publication, deployment preservation and browser limits. Hosted source CI remains blocked by account billing. Native PS4 catalog/video integration remains outside this web milestone.

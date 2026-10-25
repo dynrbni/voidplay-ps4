@@ -116,7 +116,7 @@ Drafts, local snapshots, revision checks and imports live in the owner workspace
 the public build. No catalog records are duplicated in React components.
 
 See [owner editing and safe Git publishing](docs/catalog-publishing.md) for field requirements,
-backup/export/import commands, validation and the manual GitHub Pages workflow. The admin
+backup/export/import commands, validation and the current publication contract. The admin
 build is separate from `dist/`; the combined Pages build includes its public login shell.
 The local owner backend protects workspace and publishing actions; no browser GitHub tokens
 are used. See the owner workflow and verification report for actual Pages deployment status.

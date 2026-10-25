@@ -75,3 +75,11 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - Native Mac test exercises a shared C++ surface and SDL window/input. It is a display test, not a migrated store or PS4 emulator. Existing catalog/admin/browser client remains intact.
 - Final PS4 boot package at runtime commit 9db3eb2: SHA256 03be335c4aaffae155e3524b7bfdf6d44f74b3f722d2908e90ad048c71ddfe90, 6,619,136 bytes, VPLY00002 01.00. Cross-build/structural/extracted-content checks passed; hardware unverified.
 - Owner deferred FTP/Klog activation. No replacement transfer/install/launch. Full store migration remains gated on console startup/presentation, not complete.
+
+## Owner Pages catalog — 2026-10-26
+
+- Owner selected a Mac backend instead of cloud hosting. GitHub Pages serves public assets/JSON and a login shell; a loopback server protects private authoring and publishing with password authentication. No static password gate is claimed.
+- Real catalog starts empty. Optional genres and normalized YouTube trailers are shared metadata; one to three mirrors preserve independent provider/URL/size/hash/access requirements. No authorized real listing was supplied.
+- Pages is now enabled on gh-pages and built successfully. Authenticated backend publication created empty real revision 1 in fa58612; asset redeploy 8e638b1 preserved its exact catalog blob c4b59dd37d2339ae140816f21e00fff83f0288cd.
+- Chrome blocked HTTPS Pages to HTTP loopback API access in this session. The Pages login shell provides a direct local-studio link; localhost owner editing is the reliable development route. Mac must remain running.
+- Regular source Actions are still blocked by account billing, independently of successful legacy Pages builds. Native C++ catalog/trailer/console integration is not established by this web milestone.

@@ -98,3 +98,66 @@ checked build receipts and corrected packaging/link flags in version 01.01. Orig
 fail the new guards. Six Python regression tests and host sanitizer checks pass; corrected
 native build, PKG hash/signature validation and extracted-payload hash comparisons pass.
 Console-side cause and corrected launch remain unverified; no automatic install was attempted.
+
+## Password-authenticated owner studio and live Pages — 2026-10-26
+
+Owner selected a loopback Mac backend for development. The public Pages admin
+shell contains no credential or private workspace. Server authentication protects
+all workspace/edit/import/publish endpoints. The requested password was configured
+through hidden input; a salted scrypt verifier is stored privately with mode 0600
+inside a mode 0700 ignored directory. Sessions expire and remain only in memory.
+Unauthenticated access to the running Mac workspace returned HTTP 401.
+
+- `npm run check`: PASS, zero lint warnings, strict TypeScript, 29 tests, real-mode
+  manifest validation and independent store/admin production builds.
+- `npm run verify:public`: PASS. Combined Pages output inspection also rejects
+  server/private workspace/package/credential markers. Private verifier material
+  was checked against tracked text and generated Pages output with no matches.
+- Two isolated owner/publication browser scenarios PASS: wrong/correct password,
+  private authoring, three independent mirrors, optional normalized YouTube
+  trailer, snapshot isolation from later draft edits, publication/unpublication,
+  logout/reload, mobile overflow and zero WCAG2 A/AA axe violations on login/editor.
+  The tests use a temporary backend/workspace and fixture publisher. Trailer
+  network responses are intercepted; actual uploader playback is not certified.
+- Four store regression browser scenarios PASS using explicit test-preview data.
+  Real mode also covers empty catalogs, genres/search and direct details from
+  the same published manifest. No test fixture was published to the live site.
+- One browser run during asset rebuild/deployment timed out at snapshot staging.
+  Two subsequent isolated runs passed; the harness now waits for the metadata
+  editor after leaving trailer preview and reports visible validation errors on
+  failure. The original timeout's cause was not established.
+
+Actual deployment evidence:
+
+- [Store](https://dynrbni.github.io/voidplay-ps4/),
+  [admin shell](https://dynrbni.github.io/voidplay-ps4/admin/) and
+  [catalog JSON](https://dynrbni.github.io/voidplay-ps4/catalog.json) returned HTTP 200.
+- Initial `gh-pages` assets: `3b5ea71ee9e1a2269421831343dba97a94bcfd36`.
+- A password-authenticated request to the actual Mac backend committed the empty
+  real-mode catalog revision 1: `fa58612aaf227e8982139e403038239e73c38963`.
+  This is an actual GitHub publication, separate from fixture browser tests.
+- Asset redeploy: `8e638b1f9b3190a308039aa996317b618c901f37`. GitHub Pages API
+  reported `built` with no error. It preserved revision 1's exact catalog blob
+  `c4b59dd37d2339ae140816f21e00fff83f0288cd`, despite the source catalog being r0.
+  HTTP re-fetch confirmed revision 1, `previewMode: false`, zero entries.
+- The deployed admin's **Open studio on this Mac** link was verified in Chrome
+  to target `http://127.0.0.1:5186/`. Direct localhost serves HTTP 200. Chrome in
+  this session blocked Pages HTTPS-to-loopback API access, so use that local
+  studio link when the browser does not permit local-network access. Pages
+  alone cannot host the authenticated backend; this Mac must be running.
+
+Source implementation `9c6086fccc9e6385c0339ada71a66f7ac0309832` and local-studio
+fallback `639af8c` are pushed on `codex/pages-owner-catalog` in
+[stacked PR #6](https://github.com/dynrbni/voidplay-ps4/pull/6), targeting
+`codex/cpp-runtime-foundation`. PRs #1–#5 remain unmerged. The deployment branch
+is separate; publishing does not bypass the source PR integration policy.
+
+Hosted source checks did not start: [run 40230710043](https://github.com/dynrbni/voidplay-ps4/actions/runs/40230710043)
+reports the account is locked due to a billing issue. Local checks pass; hosted
+CI is unavailable, not passing. Legacy branch-based Pages deployment succeeded
+independently. No account billing changes were made.
+
+The catalog intentionally contains no invented real game/package. Browser source
+links and catalog metadata are live-capable; native C++ catalog retrieval,
+YouTube playback, console downloads/installation and firmware 12.00 runtime
+remain unverified/unimplemented in the separate native startup PoC.

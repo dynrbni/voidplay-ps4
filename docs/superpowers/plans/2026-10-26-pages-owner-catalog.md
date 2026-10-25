@@ -12,8 +12,15 @@
 - [x] Add owner form fields, store genre/search metadata and a click-to-load trailer with safe embed URL and external fallback.
 - [x] Implement server-side password authentication, bounded sessions/rate limits, revision-safe private workspace and publication; password remains local/server secret only.
 - [x] Build a Pages output containing public catalog/store and admin shell, excluding server code, secrets, workspace and test fixtures. Start the public catalog in real/empty mode.
-- [ ] Publish the development site/catalog through a separate deployment branch, within available GitHub permissions. Report exact blockers if Pages deployment or cloud auth is unavailable.
+- [x] Publish the development site/catalog through a separate deployment branch, within available GitHub permissions. Report exact blockers if Pages deployment or cloud auth is unavailable.
 - [x] Exercise login failures/session/logout, real entry editing with 1–3 mirrors, save/publish/unpublish, trailer validation/embed and public catalog loading. Verify no secrets in Git or generated assets.
-- [ ] Document the actual owner workflow and hosting limits, commit Conventional Commits, push and attach a stacked PR.
+- [x] Document the actual owner workflow and hosting limits, commit Conventional Commits, push and attach a stacked PR.
 
 The owner has not supplied metadata or redistribution permission for a real game. Do not invent an executable listing. Tests use isolated metadata fixtures and never publish those fixtures to the live catalog.
+
+## Result
+
+Published store, admin shell and real-mode catalog return HTTP 200. Authenticated
+Mac publication created revision 1 (empty); an asset redeploy preserved its exact
+catalog blob. Source PR #6 remains stacked on #5. See docs/verification.md for
+commit hashes, browser evidence and the account billing block on Actions.
