@@ -1,56 +1,63 @@
 [
   {
     "id": "save-shelf",
-    "coverUrl": "/art/save-shelf.svg",
+    "coverUrl": "/art/save-shelf-concept.webp",
     "title": "Save Shelf",
     "description": "A fictional save-file organizer used to preview the Voidplay catalog. No executable or save data is included.",
     "category": "Utilities",
     "mock": true,
-    "compatibilityNotes": "Mock entry. PS4 firmware 12.00 compatibility has not been tested."
+    "compatibilityNotes": "Mock entry. PS4 firmware 12.00 compatibility has not been tested.",
+    "summary": "A quieter home for your save files. An organizer concept for keeping everything in its place."
   },
   {
     "id": "orbit-workshop",
-    "coverUrl": "/art/orbit-workshop.svg",
+    "coverUrl": "/art/orbit-workshop-hero.webp",
     "title": "Orbit Workshop",
     "description": "A fictional homebrew puzzle game for testing browsing and search. No game package is available.",
     "category": "Games",
     "mock": true,
-    "compatibilityNotes": "Mock entry. No console build exists."
+    "compatibilityNotes": "Mock entry. No console build exists.",
+    "summary": "A little curiosity. A whole new orbit. Explore a fictional homebrew puzzle-game concept.",
+    "heroUrl": "/art/orbit-workshop-hero.webp"
   },
   {
     "id": "local-player",
-    "coverUrl": "/art/local-player.svg",
+    "coverUrl": "/art/local-player-concept.webp",
     "title": "Local Player",
     "description": "A fictional media player listing for previewing application details. Playback is not implemented.",
     "category": "Media",
     "mock": true,
-    "compatibilityNotes": "Mock entry. Media APIs and PS4 runtime support are unverified."
+    "compatibilityNotes": "Mock entry. Media APIs and PS4 runtime support are unverified.",
+    "summary": "Your media, on your terms. A simple player concept for the things you keep close."
   },
   {
     "id": "file-desk",
-    "coverUrl": "/art/file-desk.svg",
+    "coverUrl": "/art/file-desk-concept.webp",
     "title": "File Desk",
     "description": "A fictional file browser listing. It does not access the console filesystem or distribute any files.",
     "category": "Utilities",
     "mock": true,
-    "compatibilityNotes": "Mock entry. Console filesystem access is unverified."
+    "compatibilityNotes": "Mock entry. Console filesystem access is unverified.",
+    "summary": "Find your way through the files. A considered take on a familiar everyday tool."
   },
   {
     "id": "pixel-forge",
-    "coverUrl": "/art/pixel-forge.svg",
+    "coverUrl": "/art/pixel-forge-concept.webp",
     "title": "Pixel Forge",
     "description": "A fictional pixel-art editor for testing the creative tools collection. No editor executable is included.",
     "category": "Utilities",
     "mock": true,
-    "compatibilityNotes": "Mock entry. No console build exists."
+    "compatibilityNotes": "Mock entry. No console build exists.",
+    "summary": "Small pixels. Endless possibilities. A creative-tool concept for your next idea."
   },
   {
     "id": "signal-room",
-    "coverUrl": "/art/signal-room.svg",
+    "coverUrl": "/art/signal-room-concept.webp",
     "title": "Signal Room",
     "description": "A fictional audio library used to preview media browsing. No playback or streaming service is connected.",
     "category": "Media",
     "mock": true,
-    "compatibilityNotes": "Mock entry. Audio and networking APIs are unverified."
+    "compatibilityNotes": "Mock entry. Audio and networking APIs are unverified.",
+    "summary": "Make room for the music. An audio-library concept built around your collection."
   }
 ]

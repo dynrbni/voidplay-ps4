@@ -36,3 +36,11 @@ Review stacked PR #2 (feature/store-foundation base). Merge foundation PR #1 bef
 
 ## Errors
 Browser regressions found Escape/back and Search focus failures; corrected document-level back handling and already-mounted Search focus, then full dev/production E2E passed. Axe found prohibited aria-label on generic div; added group role. Caption contrast ambiguity resolved with opaque background. Browser bridge remains disconnected; local agent-browser/Chrome used.
+
+## V2 redesign continuation
+
+Implementation, visual inspection, production check and three E2E scenarios complete. See docs/superpowers/plans/2026-10-25-fluid-store-redesign.md for the V2 checklist. Implementation commit 9a88442 was pushed and verified on origin/codex/fluid-store-redesign. PR #3 targets feature/homepage-cinematic-redesign; final documentation handoff follows.
+
+## Compact beta correction
+
+User-supplied references and dummy transfer clarification implemented. Transparent/sticky header, compact layout, filled-heart favorites and connected demo queue are verified. See docs/superpowers/plans/2026-10-25-compact-store.md. Implemented in 4094fef, pushed and verified against origin; PR #3 title/body updated to the final compact layout and demo download scope.
