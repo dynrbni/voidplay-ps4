@@ -92,6 +92,7 @@ Highest risks: existing untraced CE-34878-0, OpenOrbis startup/exit, VideoOut bu
 
 Local implementation and validation completed through Mac native interaction,
 sanitizers, cross-build/package inspection and reproducible command documentation.
-Source publication/final clean-source receipt are the remaining handoff steps.
+Source 1a692a2 is pushed in PR #7 against PR #6. The final clean-source receipt
+and Downloads copy were hash-verified; GitHub CI could not start due to billing.
 Physical PS4 installation, display, input and lifecycle acceptance remain pending;
 the new Hello World package has no console result yet.
