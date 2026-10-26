@@ -65,7 +65,7 @@ class TransferGateTests(unittest.TestCase):
             (root / 'ps4-boot').mkdir()
             package = root / 'fixture.pkg'; package.write_bytes(b'package-fixture' * 128)
             ftp = MemoryFTP(corrupt)
-            if existing: ftp.files[f'/data/Voidplay-Cpp-Boot-01.00-{sha256(package)[:12]}.pkg'] = b'previous'
+            if existing: ftp.files[f'/data/Voidplay-Cpp-Boot-{console.cli.APP_VERSION}-{sha256(package)[:12]}.pkg'] = b'previous'
             with patch.object(console.cli, 'PACKAGE', package), patch.object(console.cli, 'BUILD', root), patch.object(console.cli, 'ps4_verify'), patch.object(console, 'FTP', return_value=ftp), contextlib.redirect_stdout(io.StringIO()):
                 if corrupt or existing:
                     with self.assertRaises(ValueError): console.transfer('fixture', 2121)

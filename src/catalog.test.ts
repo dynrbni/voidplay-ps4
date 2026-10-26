@@ -73,5 +73,5 @@ test('loader handles HTTP errors, malformed JSON and aborted transfers', async (
   assert.equal(entries[0]?.title, metadataSchema.parse(testEntry()).title);
   assert.equal(requests.length, 1);
   assert.deepEqual(await loadCatalog(new AbortController().signal, async () => new Response(JSON.stringify({ ...manifest, entries: [] }))), []);
-  await assert.rejects(loadCatalog(new AbortController().signal, async () => new Response(JSON.stringify({ ...manifest, entries: [{ ...testEntry(), redistribution: { authorized: false } }] }))));
+  await assert.rejects(loadCatalog(new AbortController().signal, async () => new Response(JSON.stringify({ ...manifest, entries: [{ ...testEntry(), id: '' }] }))));
 });

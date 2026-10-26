@@ -62,3 +62,22 @@ Audited clean current milestone/remote/open PR stack and created codex/cpp-runti
 Local results: Apple ASan/UBSan portable tests and 11 Python tests pass; real SDL smoke passes at 1920x1080 and 640x360; watch rebuild/restart verified. Existing npm check (23 tests and both builds), native diagnostic checks and public artifact verification pass. Final PS4 receipt hashes 35 inputs/13 outputs; full package verification passed. No console runtime claim. Owner deferred hardware setup; do not retry deployment until resumed.
 
 Remote handoff: 9db3eb2 and 486dd57 pushed and remote HEAD matched. PR #5 created/attached against codex/catalog-admin-storage-poc. GitHub run 40223133473 did not start: account billing lock, confirmed from check annotations. No merge or console deployment. README opened in Codex (queued by the app).
+
+## Owner Pages catalog — 2026-10-26
+
+- Audited clean d368c6a/main/open stacked PR dependencies; implemented on codex/pages-owner-catalog without merging prior work.
+- Added private Mac password/session backend, revision-safe atomic workspace, validated GitHub publication, genre/trailer metadata, lazy web trailer and live real-mode catalog flow.
+- Configured owner password privately through hidden input. Private files are ignored with restrictive permissions; no password/verifier or GitHub credential is shipped in public assets.
+- Implementation 9c6086f and local-studio link 639af8c pushed; PR #6 opened/attached against #5. Pages initially deployed 3b5ea71; real authenticated empty publication fa58612 created revision 1; asset redeploy 8e638b1 preserved the catalog byte-for-byte and Pages reported built.
+- Verified real HTTP 200 store/admin/catalog, localhost 200 and private workspace 401 without authorization. Two isolated admin/publication browser scenarios and four store regressions pass, alongside 29 tests, lint/types/build and public-artifact checks.
+- Pages-to-loopback access was blocked by the browser; local studio link is provided. One staging browser timeout during concurrent rebuild did not reproduce in isolated runs; harness now waits for metadata rendering and includes validation diagnostics.
+- Documented owner workflow, persistence/backups, publication, deployment preservation and browser limits. Hosted source CI remains blocked by account billing. Native PS4 catalog/video integration remains outside this web milestone.
+
+
+## Catalog and boot correction — 2026-10-26
+
+- User requested all descriptive metadata optional, actual artwork recovery and investigation of C++ Boot Test CE-34878-0. Preserved private revision 8 with a backup; source tree was initially clean on PR #6.
+- e988263 makes ID-only entries publishable, unknown values honest, sources/screenshots optional, and artwork recoverable from page metadata with authenticated bounded public-DNS fetching. Failed hero/cover falls back to the other. Added focus refresh without discarding unsaved edits.
+- Repaired only artwork in existing private/public snapshots, published live r9 in b2a0d5e. Pages asset commit 3876665 built and preserved the exact catalog blob. No fixture content or unrelated draft changes published.
+- PASS: 32 tests, lint/types/builds, public-output checks, two admin/publication browser scenarios (minimal metadata and image fallback included), four store regressions. Mac owner backend restarted; old sessions require login again.
+- Native candidate 4b78134 (01.01) stays alive instead of returning through libc exit; local sanitizer/11 Python tests and package/receipt/extracted checks pass. Klog establishes a VPLY00002 crash but no faulting instruction. FTP full-size writes have failed read-back; candidate not ready/installed/launched. Owner cannot install the replacement yet; no console fix/success is claimed.

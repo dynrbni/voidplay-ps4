@@ -1,7 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createPasswordRecord } from '../server/password.ts';
 import { testEntry } from '../shared/fixtures.ts';
 import { emptyWorkspace, exportManifest, updateWorkspace } from '../shared/catalog.ts';
 let session = `voidplay-admin-${process.pid}`;
@@ -12,59 +16,102 @@ function browser(...args) {
 }
 const evaluate = script => browser('eval', script).result;
 const click = name => browser('find', 'role', 'button', 'click', '--name', name, '--exact');
-const wait = script => browser('wait', '--fn', `Boolean(${script})`);
-const admin = process.env.VOIDPLAY_ADMIN_URL ?? 'http://127.0.0.1:4185/';
+const wait = script => {
+  try { browser('wait', '--fn', `Boolean(${script})`); }
+  catch (error) { throw new Error(`Browser condition failed: ${script}\n${evaluate('document.querySelector("[role=alert]")?.textContent ?? document.body.innerText.slice(0, 2000)')}`, { cause: error }); }
+};
 const store = process.env.VOIDPLAY_URL ?? 'http://127.0.0.1:4175/';
-function screenshot(name) { evaluate('(async()=>{window.scrollTo(0,0);await document.fonts.ready;return true;})()'); browser('screenshot', `artifacts/admin-${name}.png`); }
-test('owner editor validates drafts, snapshots edits, previews, exports and unpublishes independently', { timeout: 150000 }, () => {
+function screenshot(name) { evaluate('(async()=>{window.scrollTo(0,0);await document.fonts.ready;return true;})()'); browser('screenshot', `artifacts/owner-${name}.png`); }
+
+test('password login, private authoring, three sources, trailers and publication work end to end', { timeout: 240000 }, async () => {
   mkdirSync('artifacts', { recursive: true });
+  const directory = await mkdtemp(join(tmpdir(), 'voidplay-owner-e2e-'));
+  const password = 'fixture-owner-password';
+  await writeFile(join(directory, 'credentials.json'), JSON.stringify(await createPasswordRecord(password)), { mode: 0o600 });
+  const child = spawn(process.execPath, ['--input-type=module', '-e', `
+    import { startOwnerServer } from './server/owner.ts';
+    import { writeFile } from 'node:fs/promises';
+    import { join, resolve } from 'node:path';
+    const directory=process.env.VP_TEST_DIRECTORY;
+    const app=await startOwnerServer({directory,assets:resolve('admin-dist'),port:0,resolveArtwork:async()=>({url:'https://example.com/resolved-cover.webp',fromPage:true}),publish:async manifest=>{
+      await writeFile(join(directory,'submitted.json'),JSON.stringify(manifest));
+      return {revision:manifest.revision,commit:'fixture-commit',catalogUrl:'https://example.com/catalog.json',storeUrl:'https://example.com/',state:'committed'};
+    }});
+    console.log(JSON.stringify({url:app.url}));
+  `], { env: { ...process.env, VP_TEST_DIRECTORY: directory }, stdio: ['ignore', 'pipe', 'pipe'] });
   try {
-    browser('open', admin); wait('document.querySelector("#new-id")');
-    screenshot('empty');
-    browser('fill', '#new-id', 'first-entry'); click('Create'); click('Save draft'); click('Stage published snapshot');
-    wait('document.querySelector(".validation")');
-    assert.equal(evaluate('JSON.parse(localStorage.getItem("voidplay.owner-workspace.v1")).records[0].state'), 'draft');
+    const admin = await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Fixture backend did not start.')), 10000);
+      child.stdout.once('data', chunk => { clearTimeout(timer); resolve(JSON.parse(String(chunk)).url); });
+      child.once('error', reject);
+    });
+    browser('open', admin); wait('document.querySelector("#owner-password")');
+    screenshot('login');
+    assert.equal(browser('a11y', '--tags', 'wcag2a,wcag2aa').counts.violations, 0);
+    browser('find', 'label', 'Password', 'fill', 'wrong'); click('Sign in'); wait('document.querySelector("[role=alert]")');
+    browser('find', 'label', 'Password', 'fill', password); click('Sign in'); wait('document.querySelector("#new-id")');
+    assert.equal(evaluate('localStorage.length + sessionStorage.length'), 0);
+    browser('find', 'label', 'New entry ID', 'fill', 'first-entry'); click('Create'); click('Save draft');
+    wait('document.querySelector(".notice")?.textContent.includes("Draft saved")');
+    browser('fill', '#releaseDate', '');
+    browser('fill', '#coverUrl', 'javascript:invalid');
+    click('Stage published snapshot'); wait('document.querySelector(".validation")');
+    browser('fill', '#coverUrl', 'https://example.com/artwork-page'); click('Check cover artwork url');
+    wait('document.querySelector("#coverUrl")?.value === "https://example.com/resolved-cover.webp"');
     const fixture = testEntry('first-entry');
     for (const key of ['title', 'summary', 'description', 'author', 'version', 'coverUrl', 'heroUrl', 'fileFormat', 'releaseNotes', 'license']) browser('fill', `#${key}`, fixture[key]);
     evaluate('(()=>{const input=document.querySelector("#releaseDate");Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(input,"2026-10-25");input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));return true;})()');
+    browser('find', 'label', 'Genres (comma separated)', 'fill', 'Puzzle, Adventure');
+    browser('find', 'label', 'YouTube trailer URL (optional)', 'fill', 'https://youtu.be/M7lc1UVf-VE');
     browser('find', 'label', 'Interface languages (comma separated)', 'fill', 'English, Indonesian');
     browser('find', 'label', 'File size (bytes)', 'fill', '1024');
     browser('find', 'label', 'Compatibility notes', 'fill', fixture.compatibility.notes);
     browser('check', '.wide.checkbox input');
     browser('find', 'label', 'Authorization statement', 'fill', fixture.redistribution.statement);
-    click('Add source');
-    for (const key of ['provider', 'url', 'sha256']) browser('fill', `[aria-label="Source 1 ${key}"]`, fixture.sources[0][key]);
-    browser('check', '.source input[type="checkbox"]');
-    click('Validate'); wait('document.querySelector(".validation")');
-    browser('find', 'label', 'Access instructions (requirements only)', 'fill', 'Obtain access from the provider; no credentials stored.');
-    click('Add source'); click('Add source');
+    for (let i = 1; i <= 3; i++) {
+      click('Add source');
+      browser('fill', `[aria-label="Source ${i} provider"]`, `Fixture mirror ${i}`);
+      browser('fill', `[aria-label="Source ${i} url"]`, `https://example.com/fixture-${i}.pkg`);
+      browser('fill', `[aria-label="Source ${i} sha256"]`, 'a'.repeat(64));
+      browser('fill', `[aria-label="Source ${i} expected size"]`, String(i * 1024));
+    }
     assert.equal(evaluate('Array.from(document.querySelectorAll("button")).find(e=>e.textContent === "Add source").disabled'), true);
-    click('Remove source 3'); click('Remove source 2');
-    click('Add screenshot');
-    browser('find', 'label', 'Screenshot 1 URL', 'fill', fixture.coverUrl);
-    browser('find', 'label', 'Screenshot 1 description', 'fill', 'Test artwork');
     click('Preview entry'); wait('document.querySelector(".entry-preview")');
+    assert.equal(evaluate('document.querySelector("iframe") === null'), true);
     screenshot('preview');
-    assert.equal(browser('a11y', '--tags', 'wcag2a,wcag2aa').counts.violations, 0);
-    click('Edit metadata');
-    click('Stage published snapshot');
-    assert.equal(evaluate('document.querySelector(".validation")?.textContent ?? ""'), '');
-    wait('document.querySelector(".notice")');
-    assert.equal(evaluate('JSON.parse(localStorage.getItem("voidplay.owner-workspace.v1")).records[0].state'), 'published');
-    browser('fill', '#title', 'Unpublished changed title'); click('Save draft');
-    assert.equal(evaluate('JSON.parse(localStorage.getItem("voidplay.owner-workspace.v1")).records[0].published.title'), 'Authorized test tool');
+    browser('network', 'route', '**/www.youtube-nocookie.com/embed/**', '--body', '<p>Trailer fixture</p>');
+    click('Load trailer'); wait('document.querySelector("iframe")');
+    assert.equal(evaluate('document.querySelector("iframe").src'), 'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0');
+    click('Edit metadata'); wait('document.querySelector("#title")'); click('Stage published snapshot'); wait('document.querySelector(".notice")?.textContent.includes("snapshot is ready")');
+    browser('fill', '#title', 'Private draft edit'); click('Save draft'); wait('document.querySelector(".notice")?.textContent.includes("Draft saved")');
+    click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
+    const published = JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8'));
+    assert.equal(published.entries[0].title, fixture.title);
+    assert.equal(published.entries[0].sources.length, 3);
+    assert.deepEqual(published.entries[0].genres, ['Puzzle', 'Adventure']);
+    assert.equal(published.entries[0].trailerUrl, 'https://www.youtube.com/watch?v=M7lc1UVf-VE');
     screenshot('editor');
     assert.equal(browser('a11y', '--tags', 'wcag2a,wcag2aa').counts.violations, 0);
-    click('Export public catalog'); wait('document.querySelector(".notice").textContent.includes("Exported")');
-    click('Unpublish');
-    assert.equal(evaluate('JSON.parse(localStorage.getItem("voidplay.owner-workspace.v1")).records[0].state'), 'unpublished');
-    browser('set', 'viewport', '390', '844');
-    assert.equal(evaluate('document.documentElement.scrollWidth <= innerWidth'), true); screenshot('mobile');
-  } finally { browser('close'); }
+    click('Unpublish'); wait('document.querySelector(".notice")?.textContent.includes("Entry unpublished")');
+    click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
+    assert.deepEqual(JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8')).entries, []);
+    browser('set', 'viewport', '390', '844'); assert.equal(evaluate('document.documentElement.scrollWidth <= innerWidth'), true); screenshot('mobile');
+    browser('find', 'label', 'New entry ID', 'fill', 'minimal-entry'); click('Create');
+    click('Stage published snapshot'); wait('document.querySelector(".notice")?.textContent.includes("snapshot is ready")');
+    click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
+    const minimal = JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8')).entries[0];
+    assert.equal(minimal.title, 'minimal-entry'); assert.equal(minimal.fileSize, 0); assert.deepEqual(minimal.sources, []);
+    click('Sign out'); wait('document.querySelector("#owner-password")');
+    browser('reload'); wait('document.querySelector("#owner-password")');
+  } finally {
+    browser('close');
+    if (child.exitCode === null) { child.kill('SIGTERM'); await new Promise(resolve => child.once('exit', resolve)); }
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 test('one published catalog supplies Discover, Browse, Search and direct detail routes', { timeout: 90000 }, () => {
   session = `voidplay-published-${process.pid}`;
-  const manifest = exportManifest(updateWorkspace(emptyWorkspace(), 0, testEntry(), 'publish'));
+  const manifest = exportManifest(updateWorkspace(emptyWorkspace(), 0, { ...testEntry(), genres: ['Puzzle'], trailerUrl: 'https://youtu.be/M7lc1UVf-VE' }, 'publish'));
   try {
     browser('open', store);
     browser('network', 'route', '**/catalog.json', '--body', JSON.stringify(manifest)); browser('reload');
@@ -72,12 +119,16 @@ test('one published catalog supplies Discover, Browse, Search and direct detail 
     assert.equal(evaluate('document.querySelector(".hero-disclosure").textContent.includes("Demo")'), false);
     click('Browse'); wait('document.querySelector(".catalog-page:not([hidden])") || location.hash === "#/browse"');
     assert.equal(evaluate('Array.from(document.querySelectorAll(".app-card")).filter(e=>e.getClientRects().length).length'), 1);
-    click('Search'); browser('find', 'label', 'Search applications', 'fill', 'Authorized');
+    click('Search'); browser('find', 'label', 'Search applications', 'fill', 'Puzzle');
     wait('Array.from(document.querySelectorAll(".app-card")).some(e=>e.getClientRects().length && e.textContent.includes("Authorized test tool"))');
     browser('find', 'role', 'button', 'click', '--name', 'View Authorized test tool', '--exact');
     wait('document.querySelector(".detail-page")');
     assert.equal(evaluate('document.querySelector(".download-to-console").disabled'), true);
     assert.equal(evaluate('document.querySelectorAll(".download-sources a").length'), 1);
+    assert.equal(evaluate('document.querySelector(".item-metadata").textContent.includes("Puzzle")'), true);
+    browser('network', 'route', '**/www.youtube-nocookie.com/embed/**', '--body', '<p>Trailer fixture</p>');
+    click('Load trailer'); wait('document.querySelector(".trailer iframe")');
+    assert.equal(evaluate('document.querySelector(".trailer iframe").src'), 'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0');
     screenshot('published-detail');
     browser('reload'); wait('document.querySelector(".detail-page")');
     browser('network', 'unroute', '**/catalog.json');
@@ -96,5 +147,14 @@ test('one published catalog supplies Discover, Browse, Search and direct detail 
     click('View application'); wait('Boolean(document.querySelector(".detail-page"))');
     assert.equal(evaluate('document.querySelector(".detail-information p").textContent.length'), longEntry.description.trim().length);
     assert.equal(evaluate('document.documentElement.scrollWidth <= innerWidth'), true);
+    browser('network', 'route', '**/not-an-image', '--abort');
+    browser('network', 'unroute', '**/catalog.json');
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ ...manifest, revision: 4, entries: [{ id: 'minimal-entry', coverUrl: '/art/orbit-workshop-hero.webp', heroUrl: 'https://example.com/not-an-image' }] }));
+    browser('open', store + '#/item/minimal-entry'); browser('reload');
+    wait('document.querySelector(".detail-page")');
+    wait('Array.from(document.querySelectorAll(".hero-art img")).some(image => image.complete && image.naturalWidth > 0 && image.src.includes("orbit-workshop"))');
+    assert.equal(evaluate('document.querySelector("#detail-title").textContent'), 'minimal-entry');
+    assert.equal(evaluate('document.querySelector(".item-metadata").textContent.includes("Size unknown")'), true);
+    assert.equal(evaluate('document.querySelector(".download-sources").textContent.includes("No download links")'), true);
   } finally { browser('close'); }
 });

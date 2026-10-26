@@ -4,10 +4,10 @@ import type { CatalogEntry } from './catalog.ts';
 import { FavoriteButton } from './FavoriteButton.tsx';
 
 export function Artwork({ entry, source, eager = false }: { entry: CatalogEntry; source?: string; eager?: boolean }) {
-  const [failedUrl, setFailedUrl] = useState<string>();
-  const url = source ?? entry.coverUrl;
-  return url && failedUrl !== url
-    ? <img src={publicAsset(url)} referrerPolicy="no-referrer" alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setFailedUrl(url)}/>
+  const [failedUrls, setFailedUrls] = useState<string[]>([]);
+  const url = [source, entry.coverUrl, entry.heroUrl].find(value => value && !failedUrls.includes(value));
+  return url
+    ? <img src={publicAsset(url)} referrerPolicy="no-referrer" alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setFailedUrls(previous => [...previous, url])}/>
     : <span className="art-fallback"><strong>{entry.title}</strong><span>Artwork unavailable</span></span>;
 }
 

@@ -103,3 +103,38 @@ did not execute. Its annotation says: “The job was not started because your
 account is locked due to a billing issue.” This is not a CI test result;
 the local checks above are the available validation. No billing settings or
 workflow permissions were changed to bypass the account restriction.
+
+## Boot crash follow-up — 2026-10-26
+
+Owner supplied a screenshot of **Voidplay C++ Boot Test** with CE-34878-0 and
+reported a blank screen followed by a crash. FTP and Klog subsequently connected.
+A private Klog capture records `VPLY00002`, `ExceptionCode: 12`, crash reporting
+and termination, but no matching build marker, registers or faulting instruction.
+A later requested startup capture did not yield a usable startup stack. A partial
+FTP read of the system log timed out. Raw logs contain unrelated console activity
+and remain ignored/private; no raw log was committed or sent to another service.
+
+The original probe intentionally returned from `main` after eight seconds. The
+bundled musl object calls `exit` and then `_exit` on this path, confirmed by local
+disassembly. Another native port documents a return-from-main crash on its own
+hardware ([orbis-compat](https://github.com/orbis-ports/orbis-compat)); that is
+supporting evidence for an experiment, not verification of this console's cause.
+Version **01.01** now stays in a sleeping heartbeat loop until closed through the
+PS button menu. This eliminates the probe's intentional return path. It does not
+prove the owner's failure occurred on that path.
+
+Candidate source: `4b781345fd8465b49e115a86538e477e7c110fef`, clean native inputs.
+Build tag `f79c44d560df775d`, `VPLY00002`, version `01.01`, 6,619,136 bytes.
+SHA-256: `b98b6f82985b188cbcf2b01328de3dccb4bd885a107962e21f6c401421ee92fc`.
+Portable sanitizer checks/11 Python tests, cross-build, local PKG validation,
+extracted-content comparison and artifact verification passed.
+
+FTP accepted complete-size candidate files, but passive read-back failed with
+426 and active read-back timed out. Transfer receipts remain `ready: false`,
+`read_back_verified: false`, `installed: false`, `launched: false`. Partial files
+were neither renamed to ready PKGs nor automatically installed. Local verified
+PKG remains available for manual USB transfer with a destination checksum check.
+Version 01.01 has **not** been verified installed or run on this console. Expect a
+blank screen because it is still only a startup probe; observe at least 20 seconds
+and close via PS menu. A successful full store, graphics or catalog runtime is
+not implied by this experiment.
