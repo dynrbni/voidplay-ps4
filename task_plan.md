@@ -67,3 +67,11 @@ Do not port the full store before isolating native startup and validating PS4 pr
 ## Owner Pages catalog, 2026-10-26
 
 User redirected focus to a real owner-edited catalog and password login. They selected a Mac backend because no cloud account exists. Current branch codex/pages-owner-catalog, based on d368c6a / PR #5. See docs/superpowers/plans/2026-10-26-pages-owner-catalog.md. The Mac backend protects private workspace/actions; Pages hosts public metadata and the login shell. Native console testing remains deferred.
+
+## Catalog permissive metadata, artwork recovery and C++ crash follow-up (2026-10-26)
+
+User explicitly requests immediate repairs. Preserve owner workspace (currently revision 8), make all descriptive metadata optional with honest empty states, diagnose artwork page links and resolve usable image URLs with bounded authenticated fetching. Keep ID/revision/URL validity and installation gates. Existing source branch/PR #6 is clean; continue there. Investigate C++ Boot Test using live Klog and the exact native artifact, then build/verify a correction supported by evidence. Never claim console launch fixed until tested.
+
+- [x] Optional metadata and resilient store rendering, preview/artwork diagnostics and regression coverage.
+- [x] Native crash evidence and targeted candidate build/verification; owner cannot install 01.01 yet, so hardware acceptance remains pending.
+- [x] Preserve private data, run checks/browser tests, push source and redeploy Pages preserving live catalog.

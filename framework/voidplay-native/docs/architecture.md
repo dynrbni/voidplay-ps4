@@ -75,8 +75,7 @@ renderer and window before SDL shutdown. Watch mode rebuilds/restarts this
 native process; it resets application state.
 
 `native/ps4/boot.cpp` is a separate, renderer-free C++ experiment. It uses the
-OpenOrbis CRT, libc and kernel import stubs, logs entry/heartbeat/normal return,
-and waits eight seconds. It has no C++ standard-library objects, global
+OpenOrbis CRT, libc and kernel import stubs, logs entry/heartbeat and stays alive until closed from the PS menu. It has no C++ standard-library objects, global
 constructors, exceptions or RTTI. It imports no dialog, networking, pad or
 storage subsystem. It does not yet implement `Presenter` or console input.
 Kernel logging itself must be tested; an empty log is not proof of execution.
@@ -119,7 +118,7 @@ adding animation. No 4K or 60 FPS console promise is made.
 
 1. **Startup:** build/verify the new boot package. On the owner's PS4, capture
    its exact hash/title/version, firmware and GoldHEN version, launch via the
-   selected installer, and collect entry/heartbeat/return or a crash trace.
+   selected installer, and collect entry/heartbeat or a crash trace.
    A transport success or eight seconds of black screen alone is insufficient.
 2. **Display:** after startup evidence, test one color frame, geometry/text,
    channel order, buffer lifetime and bounded exit; then add pad input/reconnect

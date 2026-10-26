@@ -83,3 +83,11 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - Pages is now enabled on gh-pages and built successfully. Authenticated backend publication created empty real revision 1 in fa58612; asset redeploy 8e638b1 preserved its exact catalog blob c4b59dd37d2339ae140816f21e00fff83f0288cd.
 - Chrome blocked HTTPS Pages to HTTP loopback API access in this session. The Pages login shell provides a direct local-studio link; localhost owner editing is the reliable development route. Mac must remain running.
 - Regular source Actions are still blocked by account billing, independently of successful legacy Pages builds. Native C++ catalog/trailer/console integration is not established by this web milestone.
+
+
+## Optional catalog/artwork and native crash follow-up
+
+- Owner artwork URLs were HTML pages; the cover page has a valid Open Graph image, while the wallpaper page returned HTTP 403. Repairing those image fields and cover/hero fallback addresses the web symptom. Private backup and independent draft/snapshot preservation prevent unrelated edits from leaking.
+- All descriptive metadata can be omitted; IDs/revisions remain structural. Supplied invalid URLs/dates/checksums still fail. Missing package size/hash never becomes verified install evidence.
+- An old owner tab displayed revision 1 while disk workspace had revision 8. Focus refresh applies newer server revisions only while no unsaved edits exist. Restarting the owner backend revokes memory-only sessions.
+- Klog/FTP are reachable now. A capture records VPLY00002 crash reporting and exception code 12; no trace identifies the failing instruction. The original probe's eight-second main return enters musl exit/_exit. Candidate 01.01 removes that return path; hardware outcome remains unknown because the owner cannot install it yet. Passive/active FTP read-back failed despite complete-size writes, so no partial file is marked ready.

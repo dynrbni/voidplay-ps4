@@ -89,10 +89,11 @@ framework/voidplay-native/build/ps4-boot/
   packaged-param.sfo
 ```
 
-`VPLY00002`, version `01.00`, title **Voidplay C++ Boot Test** is separate from
+`VPLY00002`, version `01.01`, title **Voidplay C++ Boot Test** is separate from
 the previous diagnostic. Check that this title ID is unused on the console.
-The package intentionally shows no UI: it logs entry and eight one-second
-heartbeats, then returns. A blank screen during that interval is expected.
+The package intentionally shows no UI: it logs entry and remains alive with one-second
+heartbeats. Close it from the PS button menu. A blank screen is expected;
+returning through the bundled libc exit path is no longer part of this probe.
 It tests startup, not graphics, controller, storage, networking or the store.
 
 Each build attempt invalidates its previous receipt first. Receipts hash source,
@@ -118,7 +119,7 @@ python3 -B framework/voidplay-native/tools/console.py collect-klog --host PS4_IP
 
 Transfer verifies the local build, refuses an existing destination, uploads a
 unique file without a `.pkg` suffix, checks size and full read-back SHA-256,
-then renames it to `/data/Voidplay-Cpp-Boot-01.00-<hash>.pkg`. A timeout leaves
+then renames it to `/data/Voidplay-Cpp-Boot-01.01-<hash>.pkg`. A timeout leaves
 the partial file and a failed `transfer.json`; it never marks an unverified
 copy ready, installs, launches or deletes anything. FTP credentials, when
 needed, come from local `VOIDPLAY_FTP_USER`/`VOIDPLAY_FTP_PASSWORD` environment

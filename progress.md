@@ -72,3 +72,12 @@ Remote handoff: 9db3eb2 and 486dd57 pushed and remote HEAD matched. PR #5 create
 - Verified real HTTP 200 store/admin/catalog, localhost 200 and private workspace 401 without authorization. Two isolated admin/publication browser scenarios and four store regressions pass, alongside 29 tests, lint/types/build and public-artifact checks.
 - Pages-to-loopback access was blocked by the browser; local studio link is provided. One staging browser timeout during concurrent rebuild did not reproduce in isolated runs; harness now waits for metadata rendering and includes validation diagnostics.
 - Documented owner workflow, persistence/backups, publication, deployment preservation and browser limits. Hosted source CI remains blocked by account billing. Native PS4 catalog/video integration remains outside this web milestone.
+
+
+## Catalog and boot correction — 2026-10-26
+
+- User requested all descriptive metadata optional, actual artwork recovery and investigation of C++ Boot Test CE-34878-0. Preserved private revision 8 with a backup; source tree was initially clean on PR #6.
+- e988263 makes ID-only entries publishable, unknown values honest, sources/screenshots optional, and artwork recoverable from page metadata with authenticated bounded public-DNS fetching. Failed hero/cover falls back to the other. Added focus refresh without discarding unsaved edits.
+- Repaired only artwork in existing private/public snapshots, published live r9 in b2a0d5e. Pages asset commit 3876665 built and preserved the exact catalog blob. No fixture content or unrelated draft changes published.
+- PASS: 32 tests, lint/types/builds, public-output checks, two admin/publication browser scenarios (minimal metadata and image fallback included), four store regressions. Mac owner backend restarted; old sessions require login again.
+- Native candidate 4b78134 (01.01) stays alive instead of returning through libc exit; local sanitizer/11 Python tests and package/receipt/extracted checks pass. Klog establishes a VPLY00002 crash but no faulting instruction. FTP full-size writes have failed read-back; candidate not ready/installed/launched. Owner cannot install the replacement yet; no console fix/success is claimed.

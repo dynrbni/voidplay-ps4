@@ -161,3 +161,49 @@ The catalog intentionally contains no invented real game/package. Browser source
 links and catalog metadata are live-capable; native C++ catalog retrieval,
 YouTube playback, console downloads/installation and firmware 12.00 runtime
 remain unverified/unimplemented in the separate native startup PoC.
+
+
+## Optional metadata, owner artwork repair and boot crash — 2026-10-26
+
+- `npm run check` PASS: lint/types, 32 tests, both production builds and catalog
+  validation. `verify:public` and combined Pages output validation pass.
+- Two admin/publication browser scenarios PASS after updating the requirements:
+  ID-only entry staging/publication, page-to-image helper response, three optional
+  mirrors, snapshot isolation and logout. Minimal public metadata renders detail
+  pages with honest unknown values, no sources and a real cover fallback after a
+  failed hero. Four existing store browser regressions also PASS.
+- Artwork failures were page URLs used as images, not an absent catalog entry.
+  The authenticated resolver checks HTTPS public-address DNS, pins the result,
+  validates redirects/types and limits HTML/body/time. Pure checks cover page
+  metadata extraction and private/reserved/mapped-address exclusion. The real
+  supplied cover page resolved to an image; the supplied wallpaper host returned
+  403. Failed/missing cover and hero can fall back to each other.
+- Backed up private workspace revision 8, repaired only its known artwork fields
+  while preserving draft and public snapshots independently, then published r9 in
+  `b2a0d5e6ea05a01d6b616c6fa5a3cf4f8103333f`. No fixture was added and no unrelated
+  draft metadata was published. Owner-supplied content remains in the live catalog;
+  it was not copied into tracked components/tests.
+- Source fix `e988263` and native candidate `4b78134` pushed to the existing PR #6.
+  Pages assets `3876665a052d7ed0168f7e785e4f4b8ff9e4e22f` reported `built` with no
+  error. Redeploy preserved exact r9 catalog blob
+  `d3160a9a1d549a549d51bfef171f0c882a0bc689`. Local owner server was restarted on
+  127.0.0.1:5186; an old tab with no unsaved editor still showed r1. The refreshed
+  admin checks newer workspace revisions on focus when it has no unsaved edits.
+  Server restart revokes old memory-only sessions, so the owner signs in again.
+- Live Chrome verification after deployment loaded the actual owner entry and
+  decoded its remote cover plus hero fallback successfully; inspected the rendered
+  screenshot. The source cover is low resolution, so a distinct landscape hero
+  remains optional. No image was downloaded into the repository or committed.
+- Hosted check 121343029733 did not start because of the same account billing
+  lock. Local results above are the available check evidence.
+
+The screenshot is a real console failure of VPLY00002. Klog recorded crash
+reporting/exception code 12 but no faulting instruction or verified main marker.
+Candidate 01.01 keeps the boot probe alive instead of returning through libc exit;
+this is an experiment supported by the bundled object's disassembly and another
+native port's report, not a proven root cause. Local sanitizer/11 Python tests,
+cross-build, extracted-content and package checks passed. Full-size FTP writes
+were observed, but read-back failed; receipts remain not ready/not installed/not
+launched. The owner cannot install the new candidate yet. Hardware verification
+therefore remains pending. Exact candidate hashes and test procedure are in
+`framework/voidplay-native/docs/hardware-evidence.md`.

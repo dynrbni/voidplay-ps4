@@ -15,7 +15,7 @@ The Mac display test uses a portable C++ pixel surface and scene with SDL2
 only at the window/input boundary. It has no browser, React, QuickJS, PS5 SDK
 or console service emulation. All console services remain unsupported.
 The PS4 startup experiment imports only libc/kernel through the SDK CRT and
-logs entry/heartbeat/exit; it intentionally initializes no graphics, dialog,
+logs entry/heartbeat and stays alive until closed from the PS menu; it intentionally initializes no graphics, dialog,
 controller, storage or networking. A black screen during its bounded run is
 expected, not evidence that rendering works.
 

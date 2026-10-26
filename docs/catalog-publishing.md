@@ -16,20 +16,22 @@ preserves its public snapshot. Staging replaces that snapshot only after all
 publication rules pass. Unpublish retains the private history but removes the
 entry from the next public export, including when it is the last entry.
 
-Publication requires title, both descriptions, category/developer, version/date,
-cover/hero, interface languages, positive integral bytes, format, compatibility
-notes, changelog, license and an explicit redistribution authorization statement.
-Audio/subtitle lists may be empty. Genres and a validated YouTube trailer are
-supported; screenshots are optional, up to twelve, with captions. Verified
-compatibility requires actual firmware values and recorded test evidence.
+Only the permanent entry ID is required for a listing. Titles fall back to that ID;
+all descriptions, artwork, genre, developer/version/date, languages, file metadata,
+compatibility notes, changelog, license and permission statements can be omitted.
+Zero to three sources are accepted. A configured source needs a valid URL; omitted
+provider, size, checksum and access instructions do not prevent listing. Blank
+source/screenshot rows are excluded from published snapshots. Missing size and
+checksum remain unknown, not verified. Installation and cleanup still require
+separate authorization, compatibility, integrity and verified storage evidence.
 
-Every entry needs 1–3 independently configured sources: source ID, provider,
-public HTTPS URL, expected bytes for that source, 64-character SHA-256 and access
-requirements. Required authentication needs explanatory instructions. Never paste
-passwords, tokens or signed/private URLs. Schemas reject unknown fields, URL
-credentials, unsafe schemes, local hosts, common secret query parameters,
-duplicate IDs and inconsistent revisions. Validation does not independently
-establish redistribution permission, package integrity or firmware compatibility.
+Provided values remain bounded and validated: invalid URLs/dates/checksums,
+credential-bearing links, duplicate IDs and unsupported claims of verified firmware
+compatibility fail. Existing complete snapshots/backups remain readable. Artwork
+checks can resolve Open Graph/Twitter image metadata through the authenticated Mac
+backend, with public-address DNS pinning, redirect/body/time limits and no image
+proxy or upload. A host that blocks access needs a direct image URL or another host.
+Cover and hero fall back to each other when absent or unavailable.
 
 The workspace lives in `.owner-data/workspace.json` on this Mac, outside Git and
 static output. Sessions remain only in memory. Export private workspace backups

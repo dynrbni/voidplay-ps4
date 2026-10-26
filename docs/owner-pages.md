@@ -21,18 +21,24 @@ Mac. Other visitors cannot use their localhost to reach your workspace.
    The Pages front door provides **Open studio on this Mac** for that case.
 3. Enter a permanent slug such as `my-homebrew` under **New entry ID**, then
    choose **Create**. Add title, category, genres, developer, release/version,
-   descriptions, cover/hero image URLs and optional screenshots. Image URLs
-   must be public HTTPS, or `/art/` assets actually committed to the site.
+   descriptions, cover/hero image URLs and optional screenshots. All metadata is optional; an empty title uses the permanent ID. Image URLs
+   must be public HTTPS, or `/art/` assets actually committed to the site. A pasted
+   page URL is not an image: use **Check cover artwork URL** / **Check hero artwork
+   URL** to find a page image. Hosts can block that check; copy a direct image URL
+   or leave the field blank. Missing/failed hero artwork falls back to the cover.
 4. Add an optional YouTube watch/share/Shorts URL. **Preview entry → Load
    trailer** loads a normalized `youtube-nocookie.com` embed only on request.
    There is a YouTube fallback link if the uploader disables embedding. No
    video is downloaded; native PS4 playback has not been implemented.
-5. Add one, two or three download sources. Each has its own provider, URL,
-   expected size in bytes, SHA-256 and access requirements. Removing/readding
+5. Add one, two or three download sources. Each supports its own provider, URL,
+   expected size in bytes, SHA-256 and access requirements. Zero sources are also
+   allowed. Only the URL is needed for a configured source; unknown size/hash
+   stays explicitly unverified and does not authorize installation. Removing/readding
    a source keeps IDs unique. Add languages, compatibility notes/evidence,
    changelog, license and the redistribution permission statement.
-6. **Save draft** stores private edits on this Mac. **Validate** checks required
-   publication metadata. **Stage published snapshot** freezes the validated
+6. **Save draft** stores private edits on this Mac. **Validate** checks the values you provided without requiring
+   descriptive metadata. Invalid URLs, dates/checksums, duplicate IDs and unsupported
+   claims of verified compatibility still fail validation. **Stage published snapshot** freezes the validated
    version; later saved draft edits do not leak into that snapshot.
 7. **Publish to Pages** commits only the exported public catalog to `gh-pages`
    through this Mac's authenticated `gh` CLI. It does not merge source PRs or
@@ -41,8 +47,8 @@ Mac. Other visitors cannot use their localhost to reach your workspace.
 8. **Unpublish**, then **Publish to Pages**, removes an entry from the public
    catalog. Back up the private workspace before moving Macs or changing setup.
 
-The catalog starts in real mode with no entries. No real game's download URL,
-checksum or redistribution permission was supplied, so no listing was invented.
+The catalog initially started in real mode with no entries. No game listing is seeded automatically. Entries subsequently added by the owner
+remain in the private workspace and live catalog.
 Fictional concepts remain test fixtures only and are removed from Pages output.
 The browser application loads the published JSON for Discover, Browse/search
 and item detail pages. The C++ PS4 runtime remains a separate startup/display
