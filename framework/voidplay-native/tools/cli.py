@@ -24,6 +24,7 @@ REPO = ROOT.parents[1]
 BUILD = ROOT / 'build'
 LOCK = json.loads((ROOT / 'dependencies.lock.json').read_text())
 CONTENT = 'IV0000-VPLY00002_00-VOIDPLAYBOOT0001'
+APP_VERSION = '01.01'
 PACKAGE = BUILD / 'ps4-boot' / (CONTENT + '.pkg')
 
 
@@ -229,11 +230,11 @@ def ps4_build():
     sfo.parent.mkdir(exist_ok=True)
     run([packer, 'sfo_new', sfo], log=log)
     entries = {
-        'APP_TYPE': ('Integer', '4', '1'), 'APP_VER': ('Utf8', '8', '01.00'),
+        'APP_TYPE': ('Integer', '4', '1'), 'APP_VER': ('Utf8', '8', APP_VERSION),
         'ATTRIBUTE': ('Integer', '4', '0'), 'CATEGORY': ('Utf8', '4', 'gd'),
         'CONTENT_ID': ('Utf8', '48', CONTENT), 'DOWNLOAD_DATA_SIZE': ('Integer', '4', '0'),
         'SYSTEM_VER': ('Integer', '4', '0'), 'TITLE': ('Utf8', '128', 'Voidplay C++ Boot Test'),
-        'TITLE_ID': ('Utf8', '12', 'VPLY00002'), 'VERSION': ('Utf8', '8', '01.00'),
+        'TITLE_ID': ('Utf8', '12', 'VPLY00002'), 'VERSION': ('Utf8', '8', APP_VERSION),
     }
     for key, (kind, size, value) in entries.items():
         run([packer, 'sfo_setentry', sfo, key, '--type', kind, '--maxsize', size, '--value', value], log=log)
@@ -246,7 +247,7 @@ def ps4_build():
     (directory / 'packaged-param.sfo').write_bytes(verify_extracted(packer, directory, log))
     outputs = [elf, oelf, eboot, config, directory / 'boot.d', directory / 'pkg.gp4', directory / 'packaged-param.sfo', PACKAGE, *[directory / p for p in files[1:]]]
     write_receipt(receipt, inputs, outputs, {'target': 'ps4-boot', 'build_id': identity, **source_context(),
-        'version': '01.00', 'title_id': 'VPLY00002', 'compiler': run([compiler, '--version']),
+        'version': APP_VERSION, 'title_id': 'VPLY00002', 'compiler': run([compiler, '--version']),
         'linker': run([linker, '--version']), 'package_bytes': PACKAGE.stat().st_size,
         'imports': ['libc/kernel via OpenOrbis CRT'], 'console_launch': 'unverified', 'firmware_12_00': 'unverified'})
     (directory / 'package.sha256').write_text(f'{sha256(PACKAGE)}  {PACKAGE.name}\n')

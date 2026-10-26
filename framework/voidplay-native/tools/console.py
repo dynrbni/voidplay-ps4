@@ -26,7 +26,7 @@ def transfer(host, port):
     cli.ps4_verify()
     package = cli.PACKAGE
     expected = sha256(package)
-    final = f'/data/Voidplay-Cpp-Boot-01.00-{expected[:12]}.pkg'
+    final = f'/data/Voidplay-Cpp-Boot-{cli.APP_VERSION}-{expected[:12]}.pkg'
     partial = '/data/.voidplay-boot-upload-' + uuid.uuid4().hex
     receipt = {'package_sha256': expected, 'remote_path': final, 'partial_path': partial,
                'read_back_verified': False, 'ready': False, 'installed': False, 'launched': False}
