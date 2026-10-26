@@ -129,3 +129,12 @@ package validation and exact extracted module bytes pass. Downloads copy is
 6,619,136 bytes, SHA-256
 `34d48ecee4ccf2f87d529f9e4600b130dc7f4d53192c5b7e6a06f3bf6f9047bc`.
 Owner is testing manually; no 01.01 console success has been observed yet.
+
+## Native Voidplay 01.02 — 2026-10-26
+
+- Owner reports the corrected React 01.01 runs smoothly on the actual console. Preserved its source-built bootstrap modules and display host; do not transfer that acceptance to the expanded 01.02 UI.
+- Added Voidplay [BETA] with the current white wordmark icon, Manrope atlas and reviewed local artwork. Discover/Browse/details read one published r9 JSON snapshot. Favorites/Library are session collections, Search uses a controller keyboard, Settings exposes actual build/catalog information. Downloads/trailer actions describe unavailable capabilities and never transfer/install files.
+- Shared input supports Cross confirm, Circle back, D-pad and left stick with deadzone/repeat and disconnect reset. Native renderer adds bounded baked images and absolute layout, with clipping and ASan/UBSan guard coverage.
+- Actual Mac native interaction verified routes, details, favorites/library, on-screen query/result opening, Settings information, Downloads empty state and Browse. Saved native screenshots; these are not PS4 captures.
+- Root lint/types/32 tests/catalog/store/admin builds and public-output checks passed. Framework state/layout/Python/native sanitizer and SDL smoke checks passed; final source-package identity follows in the handoff. No private owner workspace or live Pages publication changed.
+- Version 01.02 still needs manual installation and controller/display acceptance on PS4. Native online catalog refresh, storage, networking, download/install and video playback remain unavailable.

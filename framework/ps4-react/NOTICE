@@ -18,8 +18,12 @@ Sources: OpenOrbis-PS4-Toolchain src/modules/libc, src/modules/libSceFios2 and
 src/crt/crtlib.c at b458dfd9d2f5c40aa249b127c9b9b4488afdc686. The SDK release
 archive and bootstrap input hashes are recorded in the dependency locks.
 The bundled 5x7 ASCII font is original project bitmap data adapted from Voidplay's
-native diagnostic font, GPL-3.0-only. The package icon is derived from Voidplay's
-original orbit-workshop concept artwork (../../docs/artwork.md).
+native diagnostic font, GPL-3.0-only. Manrope is baked from its SIL OFL 1.1 font;
+see licenses/Manrope-OFL.txt and apps/voidplay/assets/manifest.json for provenance.
+The current package icon is the existing white voidplay. wordmark on black.
+The backdrop is original Voidplay concept artwork (../../docs/artwork.md).
+Catalog cover credits are in apps/voidplay/assets/manifest.json. No game binaries,
+downloaded game packages, or claimed authorization evidence are bundled as content.
 Corresponding source/build tools are distributed in this repository; dependency
 sources are pinned in dependencies.lock.json and package-lock.json. No proprietary
 SDK source or executable is redistributed. Firmware compatibility remains unverified.

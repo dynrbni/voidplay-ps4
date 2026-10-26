@@ -1,8 +1,8 @@
 # Recorded local verification
 
 Recorded on 2026-10-26 on the owner's macOS ARM64 development machine.
-This report covers the small PS4 React Hello World framework. It does not qualify
-the existing Voidplay store as a native PS4 application.
+This report retains the Hello World qualification history and records the native
+Voidplay 01.02 shell. Version-specific console results are kept separate.
 
 ## Implementation delivered
 
@@ -35,7 +35,7 @@ publication are preserved. Dependencies/build outputs are ignored.
 | Root `npm run verify:public` | PASS: valid public catalog; no private workspace/admin/package/credential markers. |
 | Native-only PS4 graphics target | Cross-build and package structural checks passed before JS integration; physical display not tested. |
 | React PS4 target | Cross-build and package/extracted-byte checks exercised. Final artifact identity is recorded by `dist/receipt.json` and its `.pkg.sha256` sibling. |
-| Physical PS4 firmware 12.00 / GoldHEN | **01.00 FAIL** before `main`: missing bootstrap module files. Corrected **01.01 UNVERIFIED** until reinstalled and tested. Display/controller/storage/network success is not claimed. |
+| Physical PS4 firmware 12.00 / GoldHEN | **01.00 FAIL** before `main`: missing bootstrap module files. **01.01 owner-reported successful launch**. **01.02 hardware acceptance pending**; storage/network success is not claimed. |
 
 The sanitizer integration executes the actual bundled React app, verifies a
 pixel change from state update and exact reset, repeats runtime startup/shutdown,
@@ -70,7 +70,7 @@ features are used as evidence of native compatibility.
 From `framework/ps4-react/`, `npm run build:ps4` produces:
 
 - `build/ps4/app.elf`, `app.oelf`, `eboot.bin`, SFO/icon/GP4 and packaged SFO.
-- `dist/PS4React-HelloWorld.pkg`, `.pkg.sha256` and `dist/receipt.json`.
+- `dist/Voidplay-BETA.pkg`, `.pkg.sha256` and `dist/receipt.json`.
 - `build/commands.log` with exact commands/outputs for diagnosis.
 
 The receipt records input/output hashes, source commit, whether framework source
@@ -137,3 +137,37 @@ The next smallest milestone is to install the exact HelloWorld hash on the actua
 console, capture startup logs, verify both headings for at least 30 seconds,
 test Cross/Circle and close from the PS menu. If startup fails, preserve the
 faulting logs and screen before adding any component, catalog or network feature.
+
+
+## Voidplay native 01.02
+
+The owner reports 01.01 now runs smoothly on firmware 12.00/GoldHEN. This is a
+user-reported outcome, not an independently captured timing/input trace. Preserve
+its bootstrap fix; do not infer that every new screen or native service is proven.
+
+The 01.02 package is titled `Voidplay [BETA]`, retains `RCTX00001` for updating
+that application, and uses the existing white `voidplay.` wordmark as its icon.
+The default React app renders a bundled public r9 catalog, artwork and Manrope.
+No private drafts, game executable, owner secret or download operation is included.
+
+Local validation covers 4 layout tests, 4 store navigation/state tests, 8 Python
+build/guard tests, native ASan/UBSan runtime/input/image bounds tests and a real
+SDL smoke run. Root checks also passed: lint, types, 32 tests, catalog validation,
+store/admin builds and public artifact checks. The PS4 executable and bootstrap
+modules cross-build; package verification compares extracted bytes, SFO and icon.
+The generated receipt/checksum records the exact final source and package identity.
+
+Actual native Mac interaction verified Enter opens details, Backspace restores
+its route, favorite/library actions populate their pages, search types a query
+and opens its result, and Settings opens catalog information. Screenshots below
+are **native Mac preview captures**, not PS4 captures:
+
+![Voidplay native Mac Discover](images/voidplay-native-home.png)
+![Voidplay native Mac details](images/voidplay-native-details.png)
+
+The catalog is offline and needs a rebuild to update. Session collections are
+not persisted, downloads/install/network/storage/video are unavailable, and the
+renderer is a fixed 1080p ASCII subset. The next console acceptance is to install
+the exact 01.02 artifact, observe Discover for 30 seconds, navigate each route
+with D-pad/left stick, confirm with Cross and return with Circle. No agent-side
+01.02 installation or console test has been performed.

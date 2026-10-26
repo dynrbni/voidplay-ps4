@@ -4,7 +4,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const manifest=resolve(process.argv[2]??resolve(root,'apps/hello-world/app.json'));
+const manifest=resolve(process.argv[2]??resolve(root,'apps/voidplay/app.json'));
 const app=JSON.parse(await readFile(manifest,'utf8'));
 const entry=resolve(dirname(manifest),app.entry);
 await mkdir(resolve(root,'build'),{recursive:true});

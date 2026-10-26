@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "host.hpp"
+#include "input.hpp"
 #include <orbis/libkernel.h>
 #include <orbis/VideoOut.h>
 #include <orbis/Pad.h>
@@ -12,6 +13,7 @@ int video=-1,pad=-1,index=0; void* memory=nullptr; off_t offset=0; bool allocate
 constexpr std::size_t slot=(static_cast<std::size_t>(width)*height*4+0x3fff)&~std::size_t(0x3fff);
 constexpr std::size_t bytes=(slot*2+0x1fffff)&~std::size_t(0x1fffff);
 void* buffers[2]; std::int64_t submitted=0; std::uint32_t buttons=0;
+DirectionRepeat directions;
 }
 void platform_log(const char* stage,const char* message){char line[512];int n=std::snprintf(line,sizeof line,"[ps4-react][%s] %s\n",stage,message);if(n>0)sceKernelWrite(2,line,static_cast<std::size_t>(n)<sizeof line?static_cast<std::size_t>(n):sizeof line-1);}
 double platform_now(){return static_cast<double>(sceKernelGetProcessTime())/1000.0;}
@@ -47,11 +49,14 @@ bool platform_present(Canvas frame){
 }
 const char* platform_input(){
     if(pad<0)return nullptr;OrbisPadData data{};
-    if(scePadReadState(pad,&data)<0||!data.connected){buttons=0;return nullptr;}
+    if(scePadReadState(pad,&data)<0||!data.connected){buttons=0;directions.reset();return nullptr;}
     auto pressed=data.buttons&~buttons;buttons=data.buttons;
+    const char* move=directions.update(buttons&ORBIS_PAD_BUTTON_LEFT,buttons&ORBIS_PAD_BUTTON_RIGHT,
+        buttons&ORBIS_PAD_BUTTON_UP,buttons&ORBIS_PAD_BUTTON_DOWN,
+        static_cast<int>(data.leftStick.x)-128,static_cast<int>(data.leftStick.y)-128,platform_now());
     if(pressed&ORBIS_PAD_BUTTON_CROSS)return "confirm";
     if(pressed&ORBIS_PAD_BUTTON_CIRCLE)return "back";
-    return nullptr;
+    return move;
 }
 void platform_close(){
     if(pad>=0)scePadClose(pad);

@@ -7,6 +7,8 @@ constexpr int width = 1920, height = 1080;
 struct Canvas { std::uint32_t* pixels; int w, h, stride; std::size_t capacity; bool valid() const; };
 void rect(Canvas, int x, int y, int w, int h, std::uint32_t color);
 void text(Canvas, int x, int y, const char*, int size, std::uint32_t color);
+bool image(Canvas, int x, int y, int w, int h, const char* asset);
+bool font_text(Canvas, int x, int y, const char*, int size, std::uint32_t color);
 void native_frame(Canvas);
 bool platform_open();
 bool platform_present(Canvas);

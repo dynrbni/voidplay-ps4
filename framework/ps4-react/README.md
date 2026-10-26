@@ -1,16 +1,20 @@
-# PS4 React: Hello World
+# Voidplay [BETA] — PS4 React
 
-A minimal standalone embedded React framework with a native macOS preview and
-an OpenOrbis PS4 package target. The first application displays **PS4 React** and
-**Hello World**, with a controller/keyboard counter. It is not the complete
-Voidplay store. PS4 launch and firmware 12.00 display/input remain unverified
-until the exact package is tested on the console.
+A standalone native React/QuickJS application with an SDL macOS preview and
+OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.02**:
+Discover, Browse, details, Favorites, Library, on-screen search and Settings.
+It uses the white `voidplay.` wordmark and bundled Manrope/artwork.
 
-Version 01.00 failed on the owner's PS4 before `main`: Klog reported
-`0xa0020102 (PRX_SCE_MODULE_LOAD_ERROR)` and missing `/app0/sce_module` files.
-Version 01.01 adds source-built OpenOrbis GPL bootstrap modules and rejects
-packages missing them. This correction still requires a new hardware run;
-the Mac preview and local package checks cannot qualify console launch.
+The owner reports that Hello World **01.01 runs smoothly on the actual PS4**.
+Version 01.02 preserves its source-built bootstrap modules and VideoOut path,
+but the larger UI requires a new console run. Local checks cannot promise zero
+runtime errors or firmware-wide compatibility.
+
+This first native store shell bundles the published catalog revision 9. It does
+not fetch updates online yet. Favorites and Library last for the current session.
+Downloads, installation, console storage queries and YouTube playback are not
+implemented; their screens explain the current state without simulated transfers.
+The web/admin catalog application remains independent and unchanged.
 
 ## Build on this Mac
 
@@ -44,7 +48,7 @@ an implementation of the FIOS API.
 
 Outputs:
 
-- `dist/PS4React-HelloWorld.pkg` and `.pkg.sha256`.
+- `dist/Voidplay-BETA.pkg` and `.pkg.sha256`.
 - `dist/receipt.json`: exact inputs, outputs, source revision, hashes and explicit
   unverified hardware status. Do not share its local paths without review.
 - `build/ps4/`: ELF, OELF, eboot, GP4, input/final SFO and object files.
@@ -52,7 +56,7 @@ Outputs:
 
 `python3 tools/build.py native` builds the independent native text/display
 qualification package before embedding React. It has a separate filename;
-use the HelloWorld package for the actual React application.
+use the Voidplay package for the actual React application.
 
 ## Native preview and editing
 
@@ -62,16 +66,19 @@ npm run smoke         # bounded real SDL run, key-event injection and frame capt
 npm test              # layout/build tests and native ASan/UBSan runtime checks
 ```
 
-Enter / controller Cross increments the counter. Backspace / Circle resets it.
-Escape/window-close exits on Mac. The PS4 app remains running until closed using
-the PS button menu; its process does not deliberately return through libc exit.
-The preview is not a console emulator. A passing Mac test does not qualify PS4.
+Enter / controller Cross opens or confirms. Backspace / Circle returns.
+D-pad and the **left analog stick** move focus; held directions repeat after a
+350 ms delay at 140 ms intervals, with an analog deadzone. Up from the first
+content item selects the header. Circle never exits the console application.
+Escape/window-close exits on Mac; use the PS menu on PS4.
 
-Application entry: `apps/hello-world/index.jsx`; metadata:
-`apps/hello-world/app.json`. The title ID is configurable and format-validated.
-Default `RCTX00001` is distinct from prior Voidplay diagnostics. Check whether
-it is already installed on your console before using it for another title; no
-local build can prove uniqueness across consoles.
+Application entry: `apps/voidplay/index.jsx`; metadata: `apps/voidplay/app.json`;
+shared catalog: `apps/voidplay/catalog.json`; interaction state: `model.mjs`.
+The old `apps/hello-world` source remains as a minimal example. The default title
+ID stays `RCTX00001` so this is an update to the working Hello World installation.
+Do not reuse it for an unrelated title. Build-time local artwork bindings and
+attribution are in `apps/voidplay/assets/manifest.json`; no network fetch occurs
+during asset baking. Catalog entries are never duplicated inside components.
 
 ```jsx
 import { AppRegistry, View, Text } from '@ps4-react/core';
@@ -100,9 +107,10 @@ arbitrary React web application translation is provided.
    In prior attempts this console accepted full-size files but FTP read-back
    failed. Such copies were not marked ready. A size match alone is insufficient.
 4. Install/register manually using the console's supported installer, then open
-   **PS4 React Hello World**. FTP does not install or launch anything.
-5. Expect a fullscreen native UI. Cross should increment the visible counter and
-   Circle reset it. Observe for at least 30 seconds and close from the PS menu.
+   **Voidplay [BETA]**. FTP does not install or launch anything.
+5. Expect a fullscreen native UI. Cross should open the focused catalog entry; Circle should return. Test the
+   D-pad and left stick, header routes, search and session collections for at
+   least 30 seconds, then close from the PS menu.
 6. Enable GoldHEN Klog before launching and capture with the existing read-only
    tool `framework/voidplay-native/tools/console.py collect-klog` (from repo root,
    with your explicit `--host`, `--port 3232`, `--seconds 60`). Look for
@@ -117,7 +125,7 @@ unique `.partial` filename with overwrite disabled, then download that file to a
 different local filename. On Mac compare both copies:
 
 ```sh
-shasum -a 256 dist/PS4React-HelloWorld.pkg /absolute/path/to/read-back.partial
+shasum -a 256 dist/Voidplay-BETA.pkg /absolute/path/to/read-back.partial
 ```
 
 Only if both full hashes match, rename the remote copy to a unique `.pkg` filename
@@ -143,7 +151,6 @@ performed by the build command.
 
 ## Evidence
 
-See [actual results](docs/verification.md). Only locally recorded checks are
-claimed. Hardware acceptance remains outstanding when the owner cannot install
-and run the replacement. GPL-3.0-only source and corresponding dependency/build
+See [actual results](docs/verification.md). Local checks and owner-reported hardware results are distinguished.
+The exact 01.02 package still needs console acceptance. GPL-3.0-only source and corresponding dependency/build
 materials are supplied; third-party MIT/OFL terms remain in their notices.

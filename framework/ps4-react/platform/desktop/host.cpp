@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "host.hpp"
+#include "input.hpp"
 #include <SDL.h>
 #include <cstdio>
 #include <cstdlib>
 namespace ps4react {
 namespace { SDL_Window* window; SDL_Renderer* renderer; SDL_Texture* texture; SDL_GameController* controller; }
+namespace { DirectionRepeat directions; }
 bool platform_open() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) return false;
-    window = SDL_CreateWindow("PS4 React - native Mac preview", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280,720, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Voidplay [BETA] - native Mac preview", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280,720, SDL_WINDOW_RESIZABLE);
     if (!window) return false;
     renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE);
     if (!renderer) return false;
@@ -30,15 +32,32 @@ const char* platform_input() {
             if(event.key.keysym.sym==SDLK_ESCAPE) return "exit";
             if(event.key.keysym.sym==SDLK_RETURN) return "confirm";
             if(event.key.keysym.sym==SDLK_BACKSPACE) return "back";
+            auto key=event.key.keysym.sym;
+            if(key==SDLK_LEFT||key==SDLK_RIGHT||key==SDLK_UP||key==SDLK_DOWN)
+                return directions.update(key==SDLK_LEFT,key==SDLK_RIGHT,key==SDLK_UP,key==SDLK_DOWN,0,0,platform_now());
+        }
+        if(event.type==SDL_WINDOWEVENT&&(event.window.event==SDL_WINDOWEVENT_EXPOSED||event.window.event==SDL_WINDOWEVENT_SIZE_CHANGED)){
+            SDL_RenderClear(renderer);SDL_RenderCopy(renderer,texture,nullptr,nullptr);SDL_RenderPresent(renderer);
         }
         if(event.type==SDL_CONTROLLERBUTTONDOWN) {
             if(event.cbutton.button==SDL_CONTROLLER_BUTTON_A) return "confirm";
             if(event.cbutton.button==SDL_CONTROLLER_BUTTON_B) return "back";
+            auto key=event.cbutton.button;
+            if(key>=SDL_CONTROLLER_BUTTON_DPAD_UP&&key<=SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
+                return directions.update(key==SDL_CONTROLLER_BUTTON_DPAD_LEFT,key==SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
+                    key==SDL_CONTROLLER_BUTTON_DPAD_UP,key==SDL_CONTROLLER_BUTTON_DPAD_DOWN,0,0,platform_now());
         }
         if(event.type==SDL_CONTROLLERDEVICEADDED && !controller && SDL_IsGameController(event.cdevice.which)) controller=SDL_GameControllerOpen(event.cdevice.which);
         if(event.type==SDL_CONTROLLERDEVICEREMOVED && controller && event.cdevice.which==SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller))) {SDL_GameControllerClose(controller);controller=nullptr;}
     }
-    return nullptr;
+    const auto* keys=SDL_GetKeyboardState(nullptr);
+    auto button=[](SDL_GameControllerButton value){return controller&&SDL_GameControllerGetButton(controller,value);};
+    int x=controller?SDL_GameControllerGetAxis(controller,SDL_CONTROLLER_AXIS_LEFTX)/256:0;
+    int y=controller?SDL_GameControllerGetAxis(controller,SDL_CONTROLLER_AXIS_LEFTY)/256:0;
+    return directions.update(keys[SDL_SCANCODE_LEFT]||button(SDL_CONTROLLER_BUTTON_DPAD_LEFT),
+        keys[SDL_SCANCODE_RIGHT]||button(SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
+        keys[SDL_SCANCODE_UP]||button(SDL_CONTROLLER_BUTTON_DPAD_UP),
+        keys[SDL_SCANCODE_DOWN]||button(SDL_CONTROLLER_BUTTON_DPAD_DOWN),x,y,platform_now());
 }
 void platform_close() { if(controller) SDL_GameControllerClose(controller); if(texture)SDL_DestroyTexture(texture);if(renderer)SDL_DestroyRenderer(renderer);if(window)SDL_DestroyWindow(window);SDL_Quit(); }
 void platform_log(const char* stage,const char* message){std::fprintf(stderr,"[ps4-react][%s] %s\n",stage,message);}

@@ -50,6 +50,7 @@ static_assert(sizeof(punctuation)/sizeof(punctuation[0]) == sizeof(symbols)-1);
 }
 void text(Canvas f, int x, int y, const char* value, int size, std::uint32_t color) {
     if (!value || !f.valid() || size < 7 || size > 112) return;
+    if(font_text(f,x,y,value,size,color))return;
     const int scale = size / 7, start = x;
     for (int i = 0; value[i] && i < 2048; ++i) {
         unsigned char c = value[i]; const std::uint8_t* glyph = nullptr;
@@ -66,7 +67,7 @@ void text(Canvas f, int x, int y, const char* value, int size, std::uint32_t col
 }
 void native_frame(Canvas f) {
     rect(f,0,0,f.w,f.h,0xff101216); rect(f,80,80,12,120,0xfff4f4f4);
-    text(f,128,92,"PS4 React",56,0xfff4f4f4); text(f,128,200,"Hello World",70,0xfff4f4f4);
-    text(f,128,330,"Native display qualification",28,0xffb9bec6);
+    text(f,128,92,"voidplay.",70,0xfff4f4f4); text(f,128,220,"Starting Voidplay [BETA]",42,0xfff4f4f4);
+    text(f,128,330,"Native console interface",28,0xffb9bec6);
 }
 }

@@ -21,6 +21,13 @@ JSValue native(JSContext* ctx,JSValueConst,int argc,JSValueConst* argv,int magic
     if(magic==3){state->owner->dirty=true;return JS_UNDEFINED;}
     if(++state->commands>2048)return JS_ThrowRangeError(ctx,"Frame command budget exceeded");
     if(magic==2){std::uint32_t color;if(argc!=1||JS_ToUint32(ctx,&color,argv[0])<0)return JS_ThrowTypeError(ctx,"clear needs a color");rect(state->canvas,0,0,state->canvas.w,state->canvas.h,color);state->commands=0;return JS_UNDEFINED;}
+    if(magic==6){
+        if(argc!=5)return JS_ThrowTypeError(ctx,"image needs five arguments");
+        int values[4]{};for(int i=0;i<4;i++)if(JS_ToInt32(ctx,&values[i],argv[i])<0||values[i]<-8192||values[i]>8192)return JS_ThrowRangeError(ctx,"Image bounds invalid");
+        std::size_t length=0;const char* name=JS_ToCStringLen(ctx,&length,argv[4]);if(!name)return JS_EXCEPTION;
+        bool ok=length<=80&&image(state->canvas,values[0],values[1],values[2],values[3],name);JS_FreeCString(ctx,name);
+        return ok?JS_UNDEFINED:JS_ThrowTypeError(ctx,"Unknown image or invalid bounds");
+    }
     if(argc!=5)return JS_ThrowTypeError(ctx,"Drawing command needs five arguments");
     int a[4]={};std::uint32_t color=0;
     for(int i=0;i<(magic==0?4:2);++i)if(JS_ToInt32(ctx,&a[i],argv[i])<0||a[i]<-16384||a[i]>16384)return JS_ThrowRangeError(ctx,"Coordinate out of range");
@@ -53,8 +60,8 @@ bool Runtime::start(Canvas canvas,const char* source,std::size_t length){
     JS_SetMemoryLimit(s->rt,32*1024*1024);JS_SetMaxStackSize(s->rt,512*1024);JS_SetInterruptHandler(s->rt,interrupt,s);
     s->ctx=JS_NewContext(s->rt);if(!s->ctx){stop();return false;}JS_SetContextOpaque(s->ctx,s);
     JSValue global=JS_GetGlobalObject(s->ctx),api=JS_NewObject(s->ctx);
-    const char* names[]={"rect","text","clear","commit","log","now"};
-    for(int i=0;i<6;i++)JS_SetPropertyStr(s->ctx,api,names[i],JS_NewCFunctionMagic(s->ctx,native,names[i],5,JS_CFUNC_generic_magic,i));
+    const char* names[]={"rect","text","clear","commit","log","now","image"};
+    for(int i=0;i<7;i++)JS_SetPropertyStr(s->ctx,api,names[i],JS_NewCFunctionMagic(s->ctx,native,names[i],5,JS_CFUNC_generic_magic,i));
     JS_SetPropertyStr(s->ctx,global,"__ps4Native",api);JS_FreeValue(s->ctx,global);
     s->deadline=platform_now()+2000;JS_UpdateStackTop(s->rt);
     JSValue result=JS_Eval(s->ctx,source,length,"hello-world.bundle.js",JS_EVAL_TYPE_GLOBAL);

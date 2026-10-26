@@ -101,3 +101,10 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - Native PS4 executable links QuickJS/React bundle and packages without any proprietary PRX/SPRX module. Console acceptance remains distinct from local package validity.
 - Repeated Mac app-bundle overwrites triggered a real kernel code-signature load failure before startup. Atomic inode replacement and local ad-hoc bundle signing/verification fixed the repeated-build smoke path; this is separate from the unknown PS4 crash.
 - Physical RCTX00001 01.00 failure is now identified: Klog reports 0xa0020102 / PRX_SCE_MODULE_LOAD_ERROR, explicitly missing application `.prx` files before main. OpenOrbis's GPL source modules are small bootstrap shims, not proprietary Sony runtime copies; compile them and include both libc.prx and libSceFios2.prx. The 01.01 package guards now reject the omitted-module layout. Actual launch remains a new acceptance test.
+
+## Native Voidplay shell
+
+- Owner-reported 01.01 console success establishes a working baseline after the missing-PRX correction. The larger 01.02 UI uses that startup path and requires its own hardware run.
+- The native renderer can show local RGB565 artwork and a baked Manrope ASCII atlas without a browser, font runtime, proprietary PRX or new graphics dependency. Asset preparation is offline; original source/attribution and OFL notice are tracked.
+- Shared public snapshot r9 feeds every native catalog view. No private authoring workspace or duplicate component-level catalog is bundled. Session collections and metadata do not imply installed packages or verified compatibility.
+- Native directions use SDK left-stick fields and the same bounded D-pad/analog repeat filter exercised under sanitizers. Absolute layout is independent of flow siblings, and Discover pagination keeps its second page above the footer.

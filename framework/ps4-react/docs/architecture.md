@@ -16,17 +16,17 @@ separate acceptance gate; a valid package alone does not establish them.
 | React 18.3.1 / reconciler 0.29.2 | Reuse MIT packages, pinned npm integrity | Real components/state execute in QuickJS; no React DOM. |
 | QuickJS-ng 0.15.0 | Reuse MIT interpreter, source/archive pinned | Same engine compiled for Mac and PS4. No qjs shell, filesystem/OS modules, worker runtime, SharedArrayBuffer/Atomics or JIT. |
 | PS5 React architectural flow | Reference only | No PS5 platform, payload, CRT, EGL, heap, service or renderer source imported. Required reference credit retained in NOTICE. |
-| Embedded React | Evaluated, not imported | A smaller newly written mutation renderer handles only View/Text for now. No compatibility claim with its API. |
+| Embedded React | Evaluated, not imported | A smaller newly written mutation renderer handles View/Text/Image. No compatibility claim with its API. |
 | JSX bundler | New esbuild script | Bundles JSX/React/reconciler into an IIFE and embeds source bytes in the executable. This is runtime interpretation, not JS-to-C++ compilation. |
-| Layout/raster/font | New portable implementation | Deterministic row/column layout and clipped CPU primitives; original bundled 5x7 ASCII glyphs. |
+| Layout/raster/font | New portable implementation | Deterministic row/column layout and clipped CPU primitives; Manrope atlas, RGB565 artwork and a small-size bitmap fallback. |
 | Mac presentation | New SDL2 adapter | Real window, streaming ARGB texture, native keyboard/controller events and close/cleanup. Smoke injects an SDL key event. |
 | PS4 presentation | New VideoOut adapter | Direct memory, two scanout buffers, explicit flip completion before reuse, bounded waits. Actual SDK headers/stubs and link output verified; hardware not yet verified. |
-| PS4 controller | New Pad/UserService adapter | Polls button edges and disconnected state. Initial device absence is logged and does not block display. Physical/reconnect qualification remains outstanding. |
+| PS4 controller | New Pad/UserService adapter | Polls confirm/back edges and shared D-pad/left-stick direction repeat. Initial device absence is logged and does not block display. Physical/reconnect qualification remains outstanding. |
 | HTTP/storage/download/install | Not exposed | No invented services or permissions; no automatic install/cleanup. Existing web/admin remain separate. |
 
 ## Data and ownership
 
-`apps/hello-world/index.jsx` → esbuild IIFE → QuickJS → React reconciler →
+`apps/voidplay/index.jsx` → esbuild IIFE → QuickJS → React reconciler →
 mutable host nodes → deterministic JS layout → bounded native text/rectangle
 commands → CPU framebuffer → SDL texture or PS4 VideoOut double buffer.
 
@@ -50,23 +50,37 @@ or a security certification. Drawing is clipped to the validated surface.
 Mac Escape/window-close unmounts React, flushes effects, clears timers/listeners,
 frees context/runtime, closes controllers/texture/renderer/window and releases
 pixels. PS4 stays running until closed using the PS menu; returning through the
-unqualified musl exit path is avoided. Circle resets the example counter. An OS
+unqualified musl exit path is avoided. Circle returns within the UI and never terminates the console process. An OS
 forced termination does not promise execution of user-space cleanup callbacks.
 
 ## Public subset
 
-Import `AppRegistry`, `View`, `Text`, `Controller` from `@ps4-react/core`.
+Import `AppRegistry`, `View`, `Text`, `Image`, `Controller` from `@ps4-react/core`.
 Register one root component. Function components, ordinary React state/effects
 and native event listeners are exercised; this is not a complete React Native API.
 
 Style fields: `backgroundColor`, `color` (#RRGGBB), fixed numeric `width`/`height`,
-`padding`, `gap`, `flexDirection` (row/column) and `fontSize` (7..112). Empty
-containers, nested text and newline are supported. Text uses printable ASCII;
-no Unicode shaping, wrapping, images, animations, flex growth, absolute layout,
-CSS/className, portals, Suspense/hydration, concurrent roots, browser APIs,
-networking or file access are promised. Unsupported types/styles fail visibly.
-Text is clipped at the framebuffer boundary; per-view overflow clipping is not
-implemented. Use content that fits fixed dimensions in this first milestone.
+`padding`, `gap`, `flexDirection` (row/column), `fontSize` (7..112), and absolute
+`position` with numeric `left`/`top`. Absolute children do not consume flow space.
+`Image` accepts only a reviewed, baked asset ID; it cannot read paths or URLs.
+Text supports printable ASCII/newlines, with a build-time Manrope atlas for sizes
+14..112 and the original bitmap fallback for smaller sizes. There is no Unicode
+shaping, automatic wrapping, flex growth, CSS/className, browser, video playback,
+portals, Suspense/hydration or networking/file bridge. Unsupported styles fail
+visibly. Images/text are clipped to the framebuffer, not per-view boundaries.
+
+The fixed 1920x1080 Voidplay shell imports one published JSON snapshot, never the
+private owner workspace. Cover bindings are separate local assets keyed by entry
+ID. A pure reducer handles routes, focus, details, modal state and a 40-key search
+keyboard. Discover shows six entries per page; other grids show two rows of five.
+Favorites/Library are session state. No transfer, install or storage capability is
+implied by these collections. Source URLs in catalog metadata are not executed.
+
+The shared direction filter prioritizes D-pad input, chooses the dominant analog
+axis outside a 50/128 deadzone, emits immediately, then repeats after 350 ms every
+140 ms. Disconnect resets repeat. The same filter is tested on Mac; the SDK's
+actual left-stick fields are read on PS4. Physical analog/reconnect qualification
+of this larger build remains separate from those portable tests.
 
 New components belong in the core/layout/renderer layers. The host/platform layer
 does not need duplication. The controller service only dispatches named actions
@@ -92,8 +106,8 @@ PRX or proprietary Sony module is copied. Their complete GPL source/build inputs
 and hashes are retained. These are bootstrap compatibility modules; they expose
 no application FIOS service. The required module paths, SELF structure and PS4
 dynamic-module type are checked before packaging and during extracted verification.
-The old module-free 01.00 package is now rejected by this guard. Console launch
-for the corrected package is a new, still-pending hardware acceptance test.
+The old module-free 01.00 package is now rejected by this guard. The owner subsequently reported successful 01.01 launch. The expanded 01.02
+Voidplay UI requires its own hardware acceptance test.
 
 The QuickJS FreeBSD include expects `malloc_np.h`; OpenOrbis musl declares the
 same `malloc_usable_size` in `malloc.h`. A small target-only compatibility header

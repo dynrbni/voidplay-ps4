@@ -1,0 +1,16 @@
+{
+  "font": {
+    "file": "Manrope.ttf",
+    "source": "https://github.com/google/fonts/tree/main/ofl/manrope",
+    "license": "SIL Open Font License 1.1; see licenses/Manrope-OFL.txt"
+  },
+  "covers": {
+    "my-home": {
+      "asset": "cover",
+      "file": "catalog-cover.png",
+      "source": "https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png",
+      "credit": "Grand Theft Auto V cover artwork; Rockstar Games. Public owner-catalog artwork reference only, not a game package."
+    }
+  },
+  "background": "Voidplay original concept art: public/art/orbit-workshop-hero.webp"
+}

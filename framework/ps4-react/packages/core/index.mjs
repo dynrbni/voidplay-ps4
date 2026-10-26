@@ -10,7 +10,7 @@ globalThis.setTimeout=(fn,delay=0,...args)=>{if(timers.size>=256)throw new Error
 globalThis.clearTimeout=id=>timers.delete(id);
 globalThis.queueMicrotask=fn=>{if(microtasks.length>=256)throw new Error('Microtask limit exceeded');microtasks.push(fn);};
 globalThis.console={log:(...args)=>native.log(args.join(' ')),warn:(...args)=>native.log(args.join(' ')),error:(...args)=>native.log(args.join(' '))};
-export const View='View',Text='Text';
+export const View='View',Text='Text',Image='Image';
 export const Controller=Object.freeze({subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);}});
 const container={children:[]};
 function append(parent,child){remove(parent,child);parent.children.push(child);}
@@ -20,7 +20,7 @@ const renderer=Reconciler({
   now:()=>native.now(),supportsMutation:true,isPrimaryRenderer:true,supportsPersistence:false,supportsHydration:false,
   getRootHostContext:()=>null,getChildHostContext:()=>null,getPublicInstance:instance=>instance,
   prepareForCommit:()=>null,resetAfterCommit:()=>layout(container,native),
-  createInstance(type,props){if(!['View','Text'].includes(type))throw new Error('Use PS4 React View/Text, not DOM elements');return{type,props,children:[]};},
+  createInstance(type,props){if(!['View','Text','Image'].includes(type))throw new Error('Use PS4 React View/Text/Image, not DOM elements');return{type,props,children:[]};},
   appendInitialChild:append,finalizeInitialChildren:()=>false,shouldSetTextContent:()=>false,
   createTextInstance:text=>({type:'raw',text,children:[]}),prepareUpdate:()=>true,
   commitUpdate(instance,_payload,_type,_old,props){instance.props=props;},commitTextUpdate(instance,_old,text){instance.text=text;},

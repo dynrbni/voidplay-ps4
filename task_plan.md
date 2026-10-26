@@ -102,3 +102,21 @@ a missing bootstrap PRX module error. Implement and locally verify 01.01 with
 source-built GPL OpenOrbis bootstrap modules and regressions, publish the candidate,
 then re-test the exact new package on the console. Do not reuse 01.00's acceptance
 status for 01.01 or infer firmware-wide success from local checks.
+
+## Native Voidplay shell, 2026-10-26
+
+Owner confirms 01.01 runs smoothly on the actual PS4. Preserve that bootstrap and
+VideoOut path. Implement Voidplay [BETA] at version 01.02, retaining title ID for
+the same application. Use the existing white `voidplay.` wordmark and Manrope,
+native artwork/text rendering, published catalog snapshot (r9), and controller-first
+Discover/Browse/details/Search/Favorites/Library/Downloads/Settings screens.
+Cross opens/accepts, Circle returns, D-pad and left stick move focus with bounded
+repeat/deadzone. Native transfers/install/video playback stay explicitly unavailable.
+Test state transitions, shared input repeat, renderer bounds, actual native Mac
+interaction and package contents; build and deliver a distinct 01.02 package.
+
+- [x] Native Voidplay screens, shared catalog/artwork/font and package branding.
+- [x] Controller routing, session collections, search and honest unavailable states.
+- [x] Local state/layout/build/sanitizer tests and actual native Mac interaction.
+- [ ] Final clean-source PKG, hash-verified Downloads handoff and GitHub push.
+- [ ] Separate 01.02 physical-console acceptance by owner (not a local-build claim).

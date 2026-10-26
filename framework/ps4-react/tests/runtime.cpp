@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "host.hpp"
+#include "input.hpp"
 #include "app_bundle.h"
 #include <cassert>
 #include <chrono>
@@ -18,6 +19,17 @@ int main(){
  Canvas small{guard+2,4,4,4,16};rect(small,-10,-10,INT_MAX,INT_MAX,0xffffffff);
  assert(guard[0]==0x12345678&&guard[1]==0x12345678&&guard[18]==0x12345678&&guard[19]==0x12345678);
  assert(!Canvas({guard,5,5,5,20}).valid());
+ DirectionRepeat directions;
+ assert(!directions.update(false,false,false,false,25,-25,0));
+ assert(!std::strcmp(directions.update(false,false,false,false,-100,0,10),"left"));
+ assert(!directions.update(false,false,false,false,-100,0,100));
+ assert(!std::strcmp(directions.update(false,false,false,false,-100,0,360),"left"));
+ assert(!directions.update(false,false,false,false,-100,0,400));
+ assert(!std::strcmp(directions.update(false,false,true,false,-100,0,410),"up"));
+ directions.reset();assert(!std::strcmp(directions.update(false,true,false,false,0,0,420),"right"));
+ assert(image(small,-3,-3,8,8,"cover"));
+ assert(!image(small,0,0,4,4,"unknown"));
+ assert(guard[0]==0x12345678&&guard[19]==0x12345678);
  std::uint32_t glyph_pixels[7*7]{};Canvas glyph_frame{glyph_pixels,7,7,7,49};
  for(int c=33;c<=126;++c){
   rect(glyph_frame,0,0,7,7,0);char value[]={static_cast<char>(c),0};text(glyph_frame,0,0,value,7,0xffffffff);

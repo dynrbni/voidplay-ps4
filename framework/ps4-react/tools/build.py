@@ -95,7 +95,7 @@ def run(args, cwd=ROOT, env=None):
 
 
 def manifest(path=None):
-    path = Path(path or ROOT / 'apps/hello-world/app.json').resolve()
+    path = Path(path or ROOT / 'apps/voidplay/app.json').resolve()
     app = json.loads(path.read_text())
     if not isinstance(app,dict) or any(not isinstance(v,str) for v in app.values()):raise ValueError('Manifest fields must be strings.')
     if set(app) != {'name','title','titleId','version','entry'}:
@@ -184,6 +184,7 @@ def compile_target(target, native_only=False, sanitize=False):
     BUILD.mkdir(exist_ok=True)
     name = target+('-native' if native_only else '')+('-asan' if sanitize else '')
     directory=BUILD/name; directory.mkdir(exist_ok=True)
+    print(run([sys.executable,ROOT/'tools/prepare_assets.py']))
     if not native_only: bundle()
     if target=='ps4':
         sdk, cxx, linker, converter, packer, gp4 = baseline.ps4_environment()
@@ -195,7 +196,7 @@ def compile_target(target, native_only=False, sanitize=False):
     flags += ['-O1','-g','-fno-omit-frame-pointer','-I',ROOT/'runtime','-I',BUILD]
     if sanitize: flags+=['-fsanitize=address,undefined']
     objects=[]
-    project=[ROOT/'renderer/canvas.cpp',ROOT/'runtime/main.cpp',ROOT/f'platform/{"ps4" if target=="ps4" else "desktop"}/host.cpp']
+    project=[ROOT/'renderer/canvas.cpp',ROOT/'renderer/media.cpp',ROOT/'runtime/main.cpp',ROOT/f'platform/{"ps4" if target=="ps4" else "desktop"}/host.cpp']
     if native_only: flags+=['-DPS4_REACT_NATIVE_ONLY']
     else:
         qjs=quickjs();flags+=['-isystem',qjs];project+=[ROOT/'runtime/quickjs.cpp']
@@ -215,7 +216,7 @@ def compile_target(target, native_only=False, sanitize=False):
         # Replacing the inode avoids macOS retaining the previous executable's code-signing cache.
         staged=app/'MacOS/PS4React.new'
         shutil.copyfile(binary,staged);staged.chmod(0o755);staged.replace(app/'MacOS/PS4React')
-        with (app/'Info.plist').open('wb') as output:plistlib.dump({'CFBundleIdentifier':'dev.voidplay.ps4react.preview','CFBundleName':'PS4 React Preview','CFBundleExecutable':'PS4React','CFBundlePackageType':'APPL','CFBundleVersion':'1','NSHighResolutionCapable':True},output)
+        with (app/'Info.plist').open('wb') as output:plistlib.dump({'CFBundleIdentifier':'dev.voidplay.ps4react.preview','CFBundleName':'Voidplay [BETA]','CFBundleExecutable':'PS4React','CFBundlePackageType':'APPL','CFBundleVersion':'1','NSHighResolutionCapable':True},output)
         run(['/usr/bin/codesign','--force','--sign','-',app.parent])
         run(['/usr/bin/codesign','--verify','--strict',app.parent])
         return app/'MacOS/PS4React'
@@ -233,7 +234,7 @@ def package(native_only=False):
     receipt=DIST/'receipt.json';receipt.unlink(missing_ok=True)
     app, _, _=manifest()
     if not (REPO/'public/art/orbit-workshop-hero.webp').is_file():raise ValueError('Missing package icon source: public/art/orbit-workshop-hero.webp')
-    for name in ['QuickJS-MIT.txt','React-MIT.txt','Reconciler-MIT.txt','Scheduler-MIT.txt','musl-MIT.txt']:
+    for name in ['QuickJS-MIT.txt','React-MIT.txt','Reconciler-MIT.txt','Scheduler-MIT.txt','musl-MIT.txt','Manrope-OFL.txt']:
         if not (ROOT/'licenses'/name).is_file():raise ValueError('Missing required dependency notice: '+name)
     directory=compile_target('ps4',native_only)
     environment=baseline.ps4_environment()
@@ -244,8 +245,7 @@ def package(native_only=False):
     run([packer,'sfo_new',sfo])
     fields={'APP_TYPE':('Integer','4','1'),'APP_VER':('Utf8','8',app['version']),'ATTRIBUTE':('Integer','4','0'),'CATEGORY':('Utf8','4','gd'),'CONTENT_ID':('Utf8','48',content),'DOWNLOAD_DATA_SIZE':('Integer','4','0'),'SYSTEM_VER':('Integer','4','0'),'TITLE':('Utf8','128',app['title']+(' Native Display' if native_only else '')),'TITLE_ID':('Utf8','12',app['titleId']),'VERSION':('Utf8','8',app['version'])}
     for key,(kind,size,value) in fields.items():run([packer,'sfo_setentry',sfo,key,'--type',kind,'--maxsize',size,'--value',value])
-    from PIL import Image
-    Image.open(REPO/'public/art/orbit-workshop-hero.webp').convert('RGB').resize((512,512)).save(sce/'icon0.png')
+    shutil.copyfile(BUILD/'voidplay-icon.png',sce/'icon0.png')
     notices=directory/'notices';notices.mkdir(exist_ok=True)
     for name in ['LICENSE','NOTICE']:shutil.copyfile(ROOT/name,notices/name)
     for source in (ROOT/'licenses').glob('*.txt'):shutil.copyfile(source,notices/source.name)
@@ -266,7 +266,7 @@ def package(native_only=False):
     if 'FAIL' in result.upper() or 'ERROR' in result.upper():raise ValueError('Package validator reported a failure.')
     for label in ['PFS Image Digest','Body Digest','PKG Header Digest','PKG Header Signature','Debug RIF Signature']:
         if not any(line.startswith('[OK]') and label in line for line in result.splitlines()):raise ValueError('Incomplete package validation: '+label)
-    target=DIST/('PS4React-NativeDisplay.pkg' if native_only else 'PS4React-HelloWorld.pkg')
+    target=DIST/('PS4React-NativeDisplay.pkg' if native_only else 'Voidplay-BETA.pkg')
     packaged_sfo=verify_extracted(packer,pkg,directory,paths)
     (directory/'packaged-param.sfo').write_bytes(packaged_sfo)
     shutil.copyfile(pkg,target)
@@ -319,7 +319,7 @@ def verify():
     for key,value in [('TITLE_ID',app['titleId']),('APP_VER',app['version'])]:
         if fields[key][1]!=value:raise ValueError('SFO mismatch: '+key)
     _,_,_,_,packer,_=baseline.ps4_environment()
-    target=DIST/('PS4React-NativeDisplay.pkg' if receipt['metadata']['native_only'] else 'PS4React-HelloWorld.pkg')
+    target=DIST/('PS4React-NativeDisplay.pkg' if receipt['metadata']['native_only'] else 'Voidplay-BETA.pkg')
     paths=[entry.attrib['targ_path'] for entry in ET.parse(directory/'pkg.gp4').getroot().findall('files/file')]
     verify_extracted(packer,target,directory,paths)
     print('Receipt/ELF/SELF/SFO and extracted package bytes PASS; hardware UNVERIFIED.')
@@ -339,7 +339,7 @@ def smoke():
 
 
 def tests():
-    print(run(['node','--test',ROOT/'tests/layout.test.mjs']))
+    print(run(['node','--test',ROOT/'tests/layout.test.mjs',ROOT/'tests/store.test.mjs']))
     print(run([sys.executable,'-B','-m','unittest','discover','-s',ROOT/'tests','-p','test_*.py']))
     compile_target('desktop',sanitize=True)
     directory=BUILD/'desktop-asan';binary=directory/'runtime-test'
