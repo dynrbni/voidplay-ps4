@@ -9,9 +9,9 @@ export function Header({state}){
  const positions=[390,565,735,945,1570,1650,1730];
  return <>
   {(state.screen!=='discover'&&!(state.screen==='details'&&state.detailPage===0))&&<Box w={1920} h={108} color="#050505EB"/>}
-  <Label x={80} y={34} size={39} w={185}>voidplay.</Label><Box x={270} y={41} w={60} h={28} radius={3} color="#FFFFFF"><Label x={11} y={6} size={16} color="#101010" w={50}>BETA</Label></Box>
+  <Image source="wordmark" style={at(80,31,184,48)}/><Box x={270} y={41} w={60} h={28} radius={3} color="#FFFFFF"><Label x={11} y={6} size={16} color="#101010" w={50}>BETA</Label></Box>
   {tabs.slice(0,4).map((tab,i)=><View key={tab} style={at(positions[i],27,i===2?200:165,58)}>
-   {(state.zone==='header'&&state.tab===i||state.screen===tab)&&<Box w={i===2?200:165} h={58} radius={29} border={state.zone==='header'&&state.tab===i?2:0} color="#FFFFFF1A"/>}
+   <Box w={i===2?200:165} h={58} radius={29} border={2} borderColor={state.zone==='header'&&state.tab===i?'#FFFFFF':'#FFFFFF00'} color={state.zone==='header'&&state.tab===i||state.screen===tab?'#FFFFFF1A':'#FFFFFF00'}/>
    <Label x={20} y={16} w={190} size={24}>{tab[0].toUpperCase()+tab.slice(1)}</Label>
   </View>)}
   {['heart','search','settings'].map((name,i)=><Round key={name} x={positions[i+4]} y={27} name={name} focused={state.zone==='header'&&state.tab===i+4} filled={i===0&&state.screen==='favorites'}/>)}
@@ -24,12 +24,12 @@ export function Home({state}){
  if(!hero)return <Empty title="No applications yet" message="Publish catalog entries in the owner studio, then sync and rebuild this native package." button="Browse catalog"/>;
  const names=['Discover on Voidplay','Tools & utilities','Picture & sound'],entries=visible(state);
  return <>
-  <Label x={80} y={175} size={19} color={muted}>DISCOVER</Label><Label x={80} y={225} w={950} size={66}>{wrap(hero.title||hero.id,28,2)}</Label>
-  <Label x={80} y={423} w={900} size={26} color="#DDDDDD">{wrap(hero.summary||hero.description||'Explore the published collection.',60,2)}</Label>
-  <Button x={80} y={535} w={280} label="View application" primary focused={state.zone==='hero'&&state.button===0}/><Round x={382} y={535} name="heart" focused={state.zone==='hero'&&state.button===1} filled={state.favorites.includes(hero.id)}/>
-  <Label x={80} y={617} size={18} color={muted}>{cut([hero.author,hero.version&&'Version '+hero.version].filter(Boolean).join(' / '),100)}</Label>
-  <Label x={80} y={690} size={30}>{names[state.shelf]}</Label><Label x={1340} y={700} w={500} size={19} color={muted}>{state.shelf+1} / 3 shelves    Down: next shelf</Label>
-  {entries.length?<Cards entries={entries} state={state} y={755} limit={6}/>:<Label x={80} y={820} size={27} color={muted}>No published entries in this category yet.</Label>}
+  <Label x={80} y={145} size={19} color={muted}>DISCOVER</Label><Label x={80} y={195} w={950} size={60}>{wrap(hero.title||hero.id,28,2)}</Label>
+  <Label x={80} y={350} w={900} size={26} color="#DDDDDD">{wrap(hero.summary||hero.description||'Explore the published collection.',60,2)}</Label>
+  <Button x={80} y={445} w={280} label="View application" primary focused={state.zone==='hero'&&state.button===0}/><Round x={382} y={445} name="heart" focused={state.zone==='hero'&&state.button===1} filled={state.favorites.includes(hero.id)}/>
+  <Label x={80} y={525} size={18} color={muted}>{cut([hero.author,hero.version&&'Version '+hero.version].filter(Boolean).join(' / '),100)}</Label>
+  <Label x={80} y={600} size={30}>{names[state.shelf]}</Label><Label x={1340} y={610} w={500} size={19} color={muted}>{state.shelf+1} / 3 shelves    Down: next shelf</Label>
+  {entries.length?<Cards entries={entries} state={state} y={655} limit={6}/>:<Label x={80} y={740} size={27} color={muted}>No published entries in this category yet.</Label>}
  </>;
 }
 export function Catalog({state}){
@@ -42,7 +42,7 @@ export function Catalog({state}){
    <Button x={1280} y={292} w={290} label={state.sort==='title'?'Title A-Z':'Curated order'} focused={state.zone==='filters'&&state.filter===2}/>
    <Button x={1590} y={292} w={245} label="Clear filters" focused={state.zone==='filters'&&state.filter===3}/>
   </>}
-  {entries.length?<Cards entries={entries} state={state} y={420}/>:<Empty title={isCollection?'Nothing saved here yet.':'No matching applications'} message={isCollection?'Open a listing and use its favorite or library action to save it here.':'Try another title or category. Choose Clear filters to see all entries.'} button={isCollection?'Browse applications':'Edit filters'} focused={state.zone==='content'}/>}
+  {entries.length?<Cards entries={entries} state={state} y={380}/>:<Empty title={isCollection?'Nothing saved here yet.':'No matching applications'} message={isCollection?'Open a listing and use its favorite or library action to save it here.':'Try another title or category. Choose Clear filters to see all entries.'} button={isCollection?'Browse applications':'Edit filters'} focused={state.zone==='content'}/>}
  </>;
 }
 export function Details({state}){

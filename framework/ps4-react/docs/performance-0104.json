@@ -1,0 +1,53 @@
+{
+  "scope": "Native Mac CPU only. Does not measure PS4 FPS, GPU, VideoOut or physical controller latency.",
+  "baselineSource": "aaac1cf / 01.03",
+  "before": {
+    "host": "Mac CPU render only; not PS4 FPS",
+    "samples": 120,
+    "startup_ms": 21.402,
+    "mean_ms": 6.151,
+    "median_ms": 5.358,
+    "p95_ms": 8.373,
+    "max_ms": 8.999
+  },
+  "after": {
+    "host": "Mac CPU render only; not PS4 FPS",
+    "samples": 120,
+    "startup_ms": 38.263,
+    "mean_ms": 1.421,
+    "median_ms": 1.164,
+    "p95_ms": 2.704,
+    "max_ms": 4.004,
+    "focus_blend_p95_ms": 0.077,
+    "full_hd_blend_p95_ms": 1.599
+  },
+  "artwork": [
+    {
+      "id": "my-home",
+      "coverSource": [
+        284,
+        351
+      ],
+      "hero": {
+        "landscape": false,
+        "sourceSize": [
+          284,
+          351
+        ],
+        "region": [
+          1278,
+          185,
+          284,
+          351
+        ],
+        "enlarged": false
+      },
+      "heroOutput": [
+        1920,
+        1080
+      ],
+      "pixelFormat": "ARGB8888",
+      "fallback": "contained source-sized cover; no fullscreen poster enlargement"
+    }
+  ]
+}

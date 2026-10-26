@@ -193,13 +193,13 @@ def compile_target(target, native_only=False, sanitize=False):
     else:
         if platform.system() != 'Darwin': raise ValueError('Desktop host currently qualified on macOS only.')
         cc=tool('clang');cxx=tool('clang++'); flags=[]
-    flags += ['-O1','-g','-fno-omit-frame-pointer','-I',ROOT/'runtime','-I',BUILD]
+    flags += ['-O1' if sanitize else '-O3','-g','-fno-omit-frame-pointer','-I',ROOT/'runtime','-I',BUILD]
     if sanitize: flags+=['-fsanitize=address,undefined']
     objects=[]
     project=[ROOT/'renderer/canvas.cpp',ROOT/'renderer/media.cpp',ROOT/'runtime/preferences.cpp',ROOT/'runtime/main.cpp',ROOT/f'platform/{"ps4" if target=="ps4" else "desktop"}/host.cpp']
     if native_only: flags+=['-DPS4_REACT_NATIVE_ONLY']
     else:
-        qjs=quickjs();flags+=['-isystem',qjs];project+=[ROOT/'runtime/quickjs.cpp']
+        qjs=quickjs();flags+=['-isystem',qjs];project+=[ROOT/'runtime/quickjs.cpp',ROOT/'runtime/scene.cpp']
         for file in ['dtoa.c','libregexp.c','libunicode.c','quickjs.c']:
             out=directory/(file+'.o')
             run([cc,*flags,'-std=c11','-D_GNU_SOURCE','-D__STDC_NO_ATOMICS__=1','-DNDEBUG','-MD','-MF',str(out)+'.d','-c',qjs/file,'-o',out]);objects.append(out)
@@ -348,9 +348,17 @@ def tests():
     print(run([cc,'-std=c++17','-g','-fsanitize=address,undefined','-fno-omit-frame-pointer','-I',ROOT/'runtime','-I',BUILD,ROOT/'tests/runtime.cpp',*objects,'-o',binary]))
     print(run([binary]))
 
+
+def benchmark():
+    compile_target('desktop')
+    directory=BUILD/'desktop';binary=BUILD/'render-benchmark'
+    objects=[p for p in directory.glob('*.o') if p.name not in ['runtime-main.cpp.o','desktop-host.cpp.o']]
+    print(run([tool('clang++'),'-std=c++17','-O3','-I',ROOT/'runtime','-I',BUILD,ROOT/'tests/benchmark.cpp',*objects,'-o',binary]))
+    result=run([binary]);(BUILD/'performance-after.json').write_text(result+'\n');print(result)
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('operation',choices=['doctor','bundle','native','desktop','preview','ps4','verify','test','smoke'])
+    parser.add_argument('operation',choices=['doctor','bundle','native','desktop','preview','ps4','verify','test','smoke','benchmark'])
     options=parser.parse_args();BUILD.mkdir(exist_ok=True)
     with (BUILD/'.lock').open('a') as lock:
         try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -361,6 +369,7 @@ def main():
         elif op=='native':package(True)
         elif op=='ps4':package()
         elif op=='verify':verify()
+        elif op=='benchmark':benchmark()
         elif op=='desktop':print(compile_target('desktop'))
         elif op=='preview':subprocess.run([compile_target('desktop')],check=True)
         elif op=='smoke':smoke()

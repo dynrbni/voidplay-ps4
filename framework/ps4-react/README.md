@@ -1,13 +1,13 @@
 # Voidplay [BETA] — PS4 React
 
 A standalone native React/QuickJS application with an SDL macOS preview and
-OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.03**:
+OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.04**:
 the public web store's hero/shelves, filtered catalog, complete detail sections,
 saved Favorites/Library, controller search, Downloads and Settings.
 It uses the white `voidplay.` wordmark and bundled Manrope/artwork.
 
 The owner reports that **01.01 and Voidplay 01.02 run on the actual PS4**.
-Version 01.03 preserves their source-built bootstrap modules and VideoOut path,
+Version 01.04 preserves their source-built bootstrap modules and VideoOut path,
 but the expanded UI requires a new console run. Local checks cannot promise zero
 runtime errors or firmware-wide compatibility.
 
@@ -91,7 +91,7 @@ npm test              # layout/build tests and native ASan/UBSan runtime checks
 
 Enter / controller Cross opens or confirms. Backspace / Circle returns.
 D-pad and the **left analog stick** move focus; held directions repeat after a
-350 ms delay at 140 ms intervals, with an analog deadzone. Up from the first
+280 ms delay at 100 ms intervals, with an analog deadzone. Up from the first
 content item selects the header. Circle never exits the console application.
 Triangle toggles a focused listing favorite (Mac: F). In details, Up selects the
 section tabs; Left/Right chooses Overview, About, Information, Sources,
@@ -182,3 +182,17 @@ performed by the build command.
 See [actual results](docs/verification.md). Local checks and owner-reported hardware results are distinguished.
 The exact 01.02 package still needs console acceptance. GPL-3.0-only source and corresponding dependency/build
 materials are supplied; third-party MIT/OFL terms remain in their notices.
+
+## 01.04 quality and performance correction
+
+The current package is **01.04**. It replaces the 01.03 full redraw/three-step fade
+with native damage rendering and 120 ms eased transitions, display-sized text,
+full-color ARGB artwork and cached resizing. The Mac preview supports Retina.
+Run `npm run react:benchmark` from the repo root for a reproducible native CPU
+workload; results are explicitly Mac-only, not PS4 FPS. Keep Reduce motion **Off**
+for transitions. Existing saved preferences are preserved.
+
+Small covers are no longer enlarged into full-screen heroes. Source/output sizes
+are recorded in `build/artwork-quality.json`; a real HD hero requires a sufficiently
+large source image. The current 284x351 cover is contained sharply on a neutral
+1080p surface. See the [recorded correction results](docs/verification.md#render-quality-and-motion-correction-0104).

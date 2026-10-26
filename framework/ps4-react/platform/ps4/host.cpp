@@ -17,7 +17,7 @@ DirectionRepeat directions;
 }
 void platform_log(const char* stage,const char* message){char line[512];int n=std::snprintf(line,sizeof line,"[ps4-react][%s] %s\n",stage,message);if(n>0)sceKernelWrite(2,line,static_cast<std::size_t>(n)<sizeof line?static_cast<std::size_t>(n):sizeof line-1);}
 double platform_now(){return static_cast<double>(sceKernelGetProcessTime())/1000.0;}
-void platform_sleep(){sceKernelUsleep(16000);}
+void platform_sleep(double milliseconds){if(milliseconds>0)sceKernelUsleep(static_cast<unsigned>(milliseconds*1000));}
 bool platform_open(){
     video=sceVideoOutOpen(ORBIS_VIDEO_USER_MAIN,ORBIS_VIDEO_OUT_BUS_MAIN,0,nullptr);
     if(video<0){platform_log("video","open failed");return false;}

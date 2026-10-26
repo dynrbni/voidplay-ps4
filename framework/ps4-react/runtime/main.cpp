@@ -42,7 +42,11 @@ int main(int argc,char** argv){
     Runtime runtime;ok=runtime.start(canvas,reinterpret_cast<const char*>(app_bundle),app_bundle_length);
 #endif
     int frame=0;bool running=true;
+#if defined(__PS4__) && !defined(PS4_REACT_NATIVE_ONLY)
+    int samples=0;double cpuTotal=0,cpuMax=0,presentTotal=0;
+#endif
     while(running){
+        double frameStart=platform_now();
         const char* action=platform_input();
 #ifdef PS4_REACT_NATIVE_ONLY
         (void)action;
@@ -53,9 +57,18 @@ int main(int argc,char** argv){
 #ifndef PS4_REACT_NATIVE_ONLY
         if(ok)ok=runtime.tick(action);
         if(!ok){native_frame(canvas);text(canvas,128,440,"JavaScript error - see host log",28,0xffff9090);}
-        if(runtime.dirty||!ok){if(!platform_present(canvas))ok=false;runtime.dirty=false;}
+        if(runtime.dirty||!ok){
+#ifdef __PS4__
+            double cpu=platform_now()-frameStart,presentStart=platform_now();
 #endif
-        ++frame;if(frames&&frame>=frames)running=false;platform_sleep();
+            if(!platform_present(canvas))ok=false;runtime.dirty=false;
+#ifdef __PS4__
+            cpuTotal+=cpu;if(cpu>cpuMax)cpuMax=cpu;presentTotal+=platform_now()-presentStart;
+            if(++samples==30){char report[180];std::snprintf(report,sizeof report,"30 changed frames: CPU mean %.2f ms max %.2f ms; present mean %.2f ms (not idle FPS)",cpuTotal/samples,cpuMax,presentTotal/samples);platform_log("performance",report);samples=0;cpuTotal=cpuMax=presentTotal=0;}
+#endif
+        }
+#endif
+        ++frame;if(frames&&frame>=frames)running=false;platform_sleep(16.667-(platform_now()-frameStart));
     }
     if(capture)save_frame(canvas,capture);
 #ifndef PS4_REACT_NATIVE_ONLY

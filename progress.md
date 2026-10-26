@@ -166,3 +166,19 @@ content validation pass. Artifact is 9,109,504 bytes, SHA-256
 Downloads copy `Voidplay-BETA-01.03-e760a40db755.pkg` was independently hashed and
 matches. Hosted run 40327352804 had no steps; its annotation confirms account
 billing prevented startup. No 01.03 console transfer, installation or run occurred.
+
+## Native quality/performance correction 01.04
+
+Owner rejects 01.03 blur and rigidity. Found a 284x351 cover stretched into a hero,
+720p/RGB565 baking, repeated glyph sampling, full React redraws/JS fade steps and
+an extra 16ms sleep after rendering. Added native-size glyphs/wordmark, ARGB assets,
+bounded resize caching, retained scene/damage painting, native eased geometry/color
+and structural crossfades, O3 release builds, remaining-budget pacing and Retina
+preview. Tightened hero spacing/square posters. Source-sized poster fallback avoids
+fake HD; owner catalog/private data remain untouched.
+
+PASS: 12 JS + 11 Python tests, native ASan/UBSan lifecycle/image/input/preferences
+plus scene no-op/damage/subcanvas/motion tests, SDL smoke, root lint/types/32 tests,
+store/admin builds/public checks. Mac CPU 120-action mean 6.151 -> 1.421 ms, p95
+8.373 -> 2.704 ms; initialization 21.402 -> 38.263 ms. Raw report is tracked. These
+are not PS4 FPS. Cross-build passed; exact final clean-source handoff follows.

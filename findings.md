@@ -115,3 +115,9 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - Native port adds web-style compact header/utility icons, rounded/translucent surfaces, hero/shelves, filter/sort/clear/search, full detail metadata/source/gallery/trailer/related sections and persistent collections/preferences. Admin remains separate.
 - Native preferences use only a fixed owned file with a 64 KiB limit, temporary write/flush/fsync/rename and visible failure/session fallback. OpenOrbis exposes fileno only behind its POSIX feature macro; declaring that feature resolves the cross-build error.
 - Build-time public catalog sync uses shared validation and checked/pinned public DNS for bounded image requests. Console HTTP/video/transfers/install/storage-capacity integrations remain unavailable and labeled. No owner data or live publication was changed.
+
+## 01.04 quality diagnosis
+
+- The catalog image is only 284x351. Enlarging it to full HD introduced unavoidable blur; the correction contains it at source size rather than claiming upscaling is genuine HD. Native assets now retain ARGB8888 and report source/output decisions.
+- Actual UI font sizes avoid per-draw glyph resampling. Retained command comparison/damage clips and a bounded resize cache remove repeated full-frame scaling. Native tween/crossfade replaces JS shade steps; release O3 and remaining-frame pacing lower active-frame cost.
+- Final 120-action Mac CPU mean is 1.421 ms versus 6.151 ms baseline, with p95 2.704 versus 8.373 ms; startup is slower at 38.263 versus 21.402 ms. No console FPS is inferred. Physical PS4 quality/performance remains a separate acceptance gate.

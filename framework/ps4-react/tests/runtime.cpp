@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "host.hpp"
 #include "input.hpp"
+#include "scene.hpp"
 #include "app_bundle.h"
 #include <cassert>
 #include <chrono>
@@ -34,6 +35,14 @@ int main(){
  rect(small,0,0,4,4,0xff000000);rounded_box(small,-2,-2,8,8,0x80ffffff,3);
  assert(guard[0]==0x12345678&&guard[19]==0x12345678);assert((small.pixels[5]&255)==128);
  assert(image(small,-2,-2,8,8,"icon-heart"));
+ assert(Canvas({guard+2,2,4,4,14}).valid());
+ {
+  std::uint32_t scenePixels[64]{},expected[64]{};Canvas surface{scenePixels,8,8,8,64},reference{expected,8,8,8,64};Scene scene;scene.set_motion(false);
+  auto draw=[&](int x){scene.begin(surface,0xff000000);assert(scene.add(0,0,0,8,8,0,0,0xff112233));assert(scene.add(0,x,2,2,2,0,0,0xffeeeeee));return scene.finish(0);};
+  assert(draw(2));assert(!draw(2));assert(draw(5));rect(reference,0,0,8,8,0xff112233);rect(reference,5,2,2,2,0xffeeeeee);assert(!std::memcmp(scenePixels,expected,sizeof expected));
+  scene.set_motion(true);assert(draw(2));assert(!std::memcmp(scenePixels,expected,sizeof expected));assert(scene.animate(60));assert(std::memcmp(scenePixels,expected,sizeof expected));assert(scene.animate(120));rect(reference,0,0,8,8,0xff112233);rect(reference,2,2,2,2,0xffeeeeee);assert(!std::memcmp(scenePixels,expected,sizeof expected));assert(!scene.animate(140));
+  assert(draw(5));assert(scene.set_motion(false));rect(reference,0,0,8,8,0xff112233);rect(reference,5,2,2,2,0xffeeeeee);assert(!std::memcmp(scenePixels,expected,sizeof expected));
+ }
  char directory[]="/tmp/voidplay-preferences-XXXXXX";assert(mkdtemp(directory));assert(setenv("VOIDPLAY_STATE_DIR",directory,1)==0);
  char saved[65537];assert(preferences_read(saved,sizeof saved)==0);
  const char* preferences="{\"version\":1,\"favorites\":[],\"library\":[],\"reduceMotion\":true}";

@@ -3,7 +3,7 @@
 #include <cstdint>
 namespace ps4react {
 template<class T> static T bounded(T value,T lower,T upper){return value<lower?lower:value>upper?upper:value;}
-bool Canvas::valid() const { return pixels && w > 0 && h > 0 && w <= 4096 && h <= 2160 && stride >= w && stride <= 8192 && static_cast<std::size_t>(stride) * h <= capacity; }
+bool Canvas::valid() const { return pixels && w > 0 && h > 0 && w <= 4096 && h <= 2160 && stride >= w && stride <= 8192 && static_cast<std::size_t>(stride) * (h-1) + w <= capacity; }
 void rect(Canvas f, int x, int y, int w, int h, std::uint32_t color) {
     if (!f.valid() || w <= 0 || h <= 0) return;
     int left = bounded(x, 0, f.w), top = bounded(y, 0, f.h);

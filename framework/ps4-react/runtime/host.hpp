@@ -8,6 +8,7 @@ struct Canvas { std::uint32_t* pixels; int w, h, stride; std::size_t capacity; b
 void rect(Canvas, int x, int y, int w, int h, std::uint32_t color);
 void text(Canvas, int x, int y, const char*, int size, std::uint32_t color);
 bool image(Canvas, int x, int y, int w, int h, const char* asset);
+bool has_image(const char* asset);
 bool font_text(Canvas, int x, int y, const char*, int size, std::uint32_t color);
 void rounded_box(Canvas, int x, int y, int w, int h, std::uint32_t color, int radius);
 int preferences_read(char*, std::size_t capacity);
@@ -19,7 +20,7 @@ const char* platform_input();
 void platform_close();
 void platform_log(const char* stage, const char* message);
 double platform_now();
-void platform_sleep();
+void platform_sleep(double milliseconds=16.667);
 class Runtime {
 public:
     bool start(Canvas, const char* source, std::size_t length);

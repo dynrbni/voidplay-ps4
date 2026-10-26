@@ -160,3 +160,24 @@ service states. No download, package install or automatic cleanup bridge exists.
 `transfers.mjs` is a separate, explicitly opt-in simulation for Downloads UI tests.
 It never invokes a file/network/install API, never adds Library entries, and is
 not persisted. Its fake sizes/speeds/progress are labeled DEMO on screen.
+
+## Retained native compositor, 01.04
+
+Each React commit records at most 2048 draw commands. Consecutive commands are
+compared, and the renderer replays only the changed region through a clipped
+Canvas subview. Identical frames are not presented. Compatible focus changes
+interpolate geometry/colors natively with 120 ms cubic easing; structural changes
+crossfade cached pixels. React is not rerun per animation frame. Interrupted
+transitions start from displayed pixels, and Reduce motion settles to the target.
+
+Manrope glyphs are baked at actual UI sizes with fractional advances, instead of
+resampling a large fixed-cell atlas per draw. Images use ARGB8888 and a 32 MiB LRU
+resize cache; opaque native-size rows use memcpy. Raw local artwork is capped at
+96 MiB. Two scene command arrays occupy about 8.6 MiB; optional pixel-transition
+buffers occupy two 1080p surfaces. Runtime lifetime frees those scene allocations.
+This remains a CPU compositor, not a new GPU/DOM/CSS runtime.
+
+Frame pacing subtracts rendering and presentation time before sleeping. Physical
+PS4 timing is logged from the actual host when tested; Mac benchmark numbers do
+not establish console frame rates. Working OpenOrbis bootstrap modules and buffer
+ownership/flip-completion guards are unchanged.

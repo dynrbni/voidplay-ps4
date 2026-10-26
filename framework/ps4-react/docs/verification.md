@@ -218,3 +218,55 @@ content/empty states PASS (published r9 plus filtered empty catalog); visual
 identity PASS (web Manrope/wordmark/neutrals and native captures); interaction
 PASS for the implemented controls (filters, keyboard, collections, metadata and
 simulation); capability labels PASS (no mock speed/storage represented as real).
+
+## Render quality and motion correction 01.04
+
+The owner rejects 01.03's blur and rigid/sluggish motion. Its 1920x1080 scanout
+alone did not guarantee quality: the 284x351 source poster was enlarged into a
+full-screen hero, artwork was reduced to 720p/RGB565, and glyphs were repeatedly
+resampled from a 64px atlas. Each input and JS fade repainted the full scene;
+the loop also slept 16 ms after doing its rendering/presentation work.
+
+01.04 adds display-sized native font masks and fractional advances, full-color
+ARGB8888 assets, a bounded resized-image cache, retained draw commands with clipped
+damage repaint, and native cubic-eased geometry/color transitions. Structural
+page changes use a native crossfade. The JS three-step shade is removed. Release
+builds use O3; frame sleep uses only the remaining budget. Direction repeat is
+280/100 ms with a smaller 36/128 analog deadzone. The Mac window has a real Retina
+drawable rather than an OS-upscaled low-DPI surface. Hero/card spacing is tighter,
+with square covers matching the web's composition.
+
+Measured workload: same 120 native React input actions on this Mac, reduced motion
+on to isolate CPU render cost. The actual public r9 has one listing. These numbers
+exclude PS4/GPU/VideoOut/physical input and **are not console FPS**.
+
+| Mac CPU metric | 01.03 baseline | 01.04 final |
+| --- | ---: | ---: |
+| Mean input/render time | 6.151 ms | 1.421 ms |
+| Median | 5.358 ms | 1.164 ms |
+| p95 | 8.373 ms | 2.704 ms |
+| Maximum | 8.999 ms | 4.004 ms |
+| Initial runtime start | 21.402 ms | 38.263 ms |
+
+The larger cached renderer trades additional initialization/memory for lower
+interactive cost. Separate native animation workloads measured p95 0.077 ms for
+a focus-sized region and 1.599 ms for full HD on this Mac. Raw results and source
+quality decisions are in [performance-0104.json](performance-0104.json).
+
+Artwork tests reject enlarging small portraits/720p sources and verify 4K sources
+are downsampled to 1920x1080. Existing tests plus new scene tests cover unchanged
+frames, dirty-region restoration, subcanvas bounds, animation midpoints/endpoints
+and Reduce motion. Actual Mac inspection exercises motion-enabled navigation and
+sharp native text. The corrected package still needs a PS4 run for measured console
+performance. Klog now reports CPU/present costs after 30 changed frames; it does
+not manufacture an FPS reading while the UI is idle.
+
+A tiny cover cannot become a genuine HD landscape. 01.04 contains it at its source
+size and uses a neutral 1080p backdrop. A real high-resolution hero can be supplied
+through the existing owner catalog; the public/private catalog was not changed.
+
+Final actual Mac captures use the Retina drawable; motion was explicitly enabled
+for navigation testing. These are native preview windows, not PS4 screenshots:
+
+![Native 01.04 compact home and sharp text](images/voidplay-native-0104-home.png)
+![Native 01.04 square catalog and focus ring](images/voidplay-native-0104-catalog.png)

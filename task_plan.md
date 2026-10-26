@@ -150,3 +150,21 @@ Physical console acceptance is a separate owner test, not a local build claim.
 - [x] Clean-source 01.03 PKG verified and copied to Downloads with matching SHA-256.
 - [x] Native Mac screenshots, build/sync workflow, parity and service gaps documented.
 - [ ] Owner acceptance of exact 01.03 PS4 package, including preferences persistence.
+
+## Native quality/performance correction 01.04
+
+Owner rejects 01.03 motion and blur. Fix the renderer, not just visible copy.
+Measure an actual native React input benchmark before/after. Bake text at display
+sizes, use native-resolution ARGB assets/cached scaled sprites, dirty-region scene
+rendering and native timed transitions without repeated React frame commits.
+Preserve working PS4 bootstrap. Never enlarge the current 284x351 cover into a
+1920x1080 hero or label upscaling as HD. Use a sharp contained cover fallback;
+real landscape artwork must have sufficient source pixels. Validate clipping,
+scene diffs, animation/input, preview and exact new PKG, then push the correction.
+
+01.04 implementation verified locally: 12 JS and 11 Python checks, native
+ASan/UBSan scene/clipping/motion/lifecycle guards, release benchmark/smoke and root
+checks passed. Actual native Retina preview checked with motion enabled. Final
+120-action CPU mean is 1.421 ms (baseline 6.151), p95 2.704 ms (baseline 8.373).
+Remaining: commit/push, clean-source final 01.04 PKG and checksum handoff. Console
+quality/performance acceptance remains pending the owner's actual PS4 test.

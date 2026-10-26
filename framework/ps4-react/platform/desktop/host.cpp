@@ -9,9 +9,11 @@ namespace { SDL_Window* window; SDL_Renderer* renderer; SDL_Texture* texture; SD
 namespace { DirectionRepeat directions; }
 bool platform_open() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) return false;
-    window = SDL_CreateWindow("Voidplay [BETA] - native Mac preview", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280,720, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Voidplay [BETA] - native Mac preview", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960,540, SDL_WINDOW_RESIZABLE|SDL_WINDOW_ALLOW_HIGHDPI);
     if (!window) return false;
-    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,"1");
+    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
+    if(!renderer)renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE);
     if (!renderer) return false;
     SDL_RenderSetLogicalSize(renderer,width,height);
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width,height);
@@ -64,5 +66,5 @@ const char* platform_input() {
 void platform_close() { if(controller) SDL_GameControllerClose(controller); if(texture)SDL_DestroyTexture(texture);if(renderer)SDL_DestroyRenderer(renderer);if(window)SDL_DestroyWindow(window);SDL_Quit(); }
 void platform_log(const char* stage,const char* message){std::fprintf(stderr,"[ps4-react][%s] %s\n",stage,message);}
 double platform_now(){return SDL_GetTicks64();}
-void platform_sleep(){SDL_Delay(16);}
+void platform_sleep(double milliseconds){if(milliseconds>0)SDL_Delay(static_cast<unsigned>(milliseconds));}
 }

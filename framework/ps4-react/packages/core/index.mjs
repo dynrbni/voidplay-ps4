@@ -12,6 +12,7 @@ globalThis.queueMicrotask=fn=>{if(microtasks.length>=256)throw new Error('Microt
 globalThis.console={log:(...args)=>native.log(args.join(' ')),warn:(...args)=>native.log(args.join(' ')),error:(...args)=>native.log(args.join(' '))};
 export const View='View',Text='Text',Image='Image';
 export const Preferences=Object.freeze({load:()=>native.loadPreferences(),save:value=>native.savePreferences(value)});
+export const Motion=Object.freeze({setEnabled:value=>native.motion(Boolean(value))});
 export const Controller=Object.freeze({subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);}});
 const container={children:[]};
 function append(parent,child){remove(parent,child);parent.children.push(child);}

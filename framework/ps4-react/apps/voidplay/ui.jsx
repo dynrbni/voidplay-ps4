@@ -20,9 +20,9 @@ export function HeroArt({entry}){return <Image source={binding(entry)?.asset?bin
 export function Cards({entries,state,y=415,index=state.index,columns=6,limit=12}){
  const start=Math.floor(index/limit)*limit;
  return entries.slice(start,start+limit).map((entry,i)=>{
-  const x=80+i%columns*296,top=y+Math.floor(i/columns)*300,focused=state.zone==='content'&&index===start+i,w=264,h=225,lift=focused&&!state.reduceMotion?4:0;
-  return <View key={entry.id} style={at(x,top-lift,w,288)}>
-   {focused&&<Box x={-9} y={-9} w={w+18} h={h+18} radius={14} color="#FFFFFF18"/>}
+  const x=80+i%columns*296,top=y+Math.floor(i/columns)*330,focused=state.zone==='content'&&index===start+i,w=264,h=264,lift=focused&&!state.reduceMotion?4:0;
+  return <View key={entry.id} style={at(x,top-lift,w,322)}>
+   <Box x={-9} y={-9} w={w+18} h={h+18} radius={14} color={focused?'#FFFFFF18':'#FFFFFF00'}/>
    <Box x={-4} y={-4} w={w+8} h={h+8} radius={10} color={focused?white:'#292929'}/><Cover entry={entry} x={0} y={0} w={w} h={h}/>
    <Label x={0} y={h+14} w={w-25} size={21}>{cut(entry.title||entry.id,23)}</Label>
    <Label x={0} y={h+44} w={w-30} size={18} color={muted}>{cut(entry.category,25)}</Label>

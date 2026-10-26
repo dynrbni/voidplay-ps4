@@ -40,6 +40,7 @@
     "react:test": "npm --prefix framework/ps4-react test",
     "react:preview": "npm --prefix framework/ps4-react run preview",
     "react:smoke": "npm --prefix framework/ps4-react run smoke",
+    "react:benchmark": "npm --prefix framework/ps4-react run benchmark",
     "react:ps4:build": "npm --prefix framework/ps4-react run build:ps4",
     "react:ps4:verify": "npm --prefix framework/ps4-react run verify:ps4"
   },
