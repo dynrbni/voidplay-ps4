@@ -1,0 +1,20 @@
+PS4 React - Voidplay project, 2026. New framework source: GPL-3.0-only.
+Architectural references only (no PS5 native/framework code copied):
+PS5 React — created by half144 and PS5 React contributors.
+https://github.com/half144/ps5-react ; continuation https://github.com/JVK3R/ps5-react
+References pinned at 65691ac70c814edd01b6f7174ad208748b503a17 and Overdrive
+264f78e6b92e5eed1415490b003944eb97ed4f8b. The original attribution is preserved here.
+Embedded React cf5dfe4fae966fe21a265acc3dd3b054d245f981 (Apache-2.0) was evaluated;
+its larger engine/patch stack was not imported for this minimal renderer.
+QuickJS-ng 0.15.0: MIT, bundled notice licenses/QuickJS-MIT.txt.
+React 18.3.1, react-reconciler 0.29.2 and scheduler: MIT; notices accompany builds.
+OpenOrbis toolchain v0.5.4 and its public graphics example informed the VideoOut
+implementation. Static musl is linked under its own MIT notice; supplementary
+third-party math notices are in licenses/musl-math-notices.txt. No Sony runtime
+PRX/SPRX modules are copied into this package. System import stubs are link inputs.
+The bundled 5x7 ASCII font is original project bitmap data adapted from Voidplay's
+native diagnostic font, GPL-3.0-only. The package icon is derived from Voidplay's
+original orbit-workshop concept artwork (../../docs/artwork.md).
+Corresponding source/build tools are distributed in this repository; dependency
+sources are pinned in dependencies.lock.json and package-lock.json. No proprietary
+SDK source or executable is redistributed. Firmware compatibility remains unverified.

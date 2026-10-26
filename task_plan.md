@@ -75,3 +75,23 @@ User explicitly requests immediate repairs. Preserve owner workspace (currently 
 - [x] Optional metadata and resilient store rendering, preview/artwork diagnostics and regression coverage.
 - [x] Native crash evidence and targeted candidate build/verification; owner cannot install 01.01 yet, so hardware acceptance remains pending.
 - [x] Preserve private data, run checks/browser tests, push source and redeploy Pages preserving live catalog.
+
+## PS4 React Hello World — master prompt, 2026-10-26
+
+User selects a real embedded React runtime with a visible PS4 Hello World, replacing the preceding C++-only direction. Implement in framework/ps4-react on codex/ps4-react-hello-world, stacked on existing PR #6. Keep owner backend/data and live Pages intact. Use skills for planning, code quality and evidence-based verification; implementation is explicitly authorized by the master prompt.
+
+Architecture: pinned React 18/reconciler + QuickJS-ng interpreter; a small mutation renderer emits bounded rectangles/text into a shared CPU framebuffer. SDL2 hosts the Mac preview; verified OpenOrbis VideoOut/Pad/UserService declarations drive the PS4 target. No PS5 native source, proprietary modules, browser/DOM runtime, store migration, download/install adapter or invented hardware success.
+
+1. Audit source/licenses/toolchain, pin dependencies and write compatibility/implementation notes.
+2. Build native visible frame and complete PS4 presenter/package workflow; validate locally before embedding JS.
+3. Embed bounded QuickJS, bundle real JSX/React/reconciler and connect the renderer. Test lifecycle/errors/updates.
+4. Exercise the same UI in native Mac preview and cross-build PS4 PKG; verify metadata/extracted bytes/notices.
+5. Document limitations/hardware procedure, commit and push coherent work, provide exact package/hash and native screenshot. Hardware acceptance remains separate until installed/launched on the actual console.
+
+Highest risks: existing untraced CE-34878-0, OpenOrbis startup/exit, VideoOut buffer lifetime, JS libc dependencies, malformed native bridge input and package provenance. The user has been unable to install the previous candidate; all locally verifiable work should still be completed.
+
+Local implementation and validation completed through Mac native interaction,
+sanitizers, cross-build/package inspection and reproducible command documentation.
+Source publication/final clean-source receipt are the remaining handoff steps.
+Physical PS4 installation, display, input and lifecycle acceptance remain pending;
+the new Hello World package has no console result yet.

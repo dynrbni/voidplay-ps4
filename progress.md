@@ -81,3 +81,12 @@ Remote handoff: 9db3eb2 and 486dd57 pushed and remote HEAD matched. PR #5 create
 - Repaired only artwork in existing private/public snapshots, published live r9 in b2a0d5e. Pages asset commit 3876665 built and preserved the exact catalog blob. No fixture content or unrelated draft changes published.
 - PASS: 32 tests, lint/types/builds, public-output checks, two admin/publication browser scenarios (minimal metadata and image fallback included), four store regressions. Mac owner backend restarted; old sessions require login again.
 - Native candidate 4b78134 (01.01) stays alive instead of returning through libc exit; local sanitizer/11 Python tests and package/receipt/extracted checks pass. Klog establishes a VPLY00002 crash but no faulting instruction. FTP full-size writes have failed read-back; candidate not ready/installed/launched. Owner cannot install the replacement yet; no console fix/success is claimed.
+
+## PS4 React Hello World — 2026-10-26
+
+- Audited current source/main and all six open PR dependencies. New branch `codex/ps4-react-hello-world` starts from f517ab6 on PR #6; no merge, owner data or live Pages publication changed.
+- Implemented actual React 18/reconciler in pinned QuickJS-ng, a two-component mutation renderer, deterministic layout and bounded CPU rasterizer. Native Mac SDL and PS4 VideoOut adapters share the app, engine and renderer. No PS5 platform source or proprietary runtime modules copied.
+- Independent native graphics PS4 package validated locally before adding JS. Full React ELF/SELF/PKG cross-built and structurally checked, including extraction and exact executable/notice/icon/SFO comparison. Hardware launch remains unverified.
+- PASS: 3 layout tests, 5 build/error tests, real React state/reset/lifecycle/error/timeout and ASCII/framebuffer guards under ASan/UBSan. Mac smoke passed after repeated rebuild; actual OS window verified Enter counter update, Backspace reset and clean Escape shutdown.
+- Found and fixed a Mac rebuild code-signature failure: atomic executable replacement plus local ad-hoc bundle signing/verification. Root lint/types/32 tests/catalog/store/admin builds and public-artifact checks pass.
+- Documented architecture/license compatibility, exact build/preview commands, manual FTP read-back verification/installer/log workflow and honest physical-console acceptance steps. Final source and artifact identities are recorded in the handoff and generated receipt.

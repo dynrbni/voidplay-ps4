@@ -1,0 +1,11 @@
+{
+  "name": "ps4-react-hello-world", "version": "0.1.0", "private": true, "type": "module", "license": "GPL-3.0-only",
+  "scripts": {
+    "doctor": "python3 tools/build.py doctor", "bundle": "node tools/bundle.mjs",
+    "build:desktop": "python3 tools/build.py desktop", "preview": "python3 tools/build.py preview",
+    "test": "python3 tools/build.py test", "build:ps4": "python3 tools/build.py ps4",
+    "verify:ps4": "python3 tools/build.py verify", "smoke": "python3 tools/build.py smoke"
+  },
+  "dependencies": { "react": "18.3.1", "react-reconciler": "0.29.2" },
+  "devDependencies": { "esbuild": "0.25.12" }
+}

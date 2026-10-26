@@ -147,3 +147,15 @@ Commits, push to `https://github.com/dynrbni/voidplay-ps4.git`, then open a PR. 
 No Overdrive/Netflix source or assets were copied. Dependency/font notices are documented in
 [dependencies](docs/dependencies.md). No project-wide distribution license has been selected. Native diagnostic source has its own GPL-3.0-only license for the OpenOrbis-linked experiment.
 Actual PS4 execution must be proven before choosing a console renderer or exposing installation.
+
+
+## PS4 React starter
+
+[PS4 React](framework/ps4-react/README.md) adds a separate React 18/QuickJS-ng
+runtime, a two-component native renderer, Mac SDL preview and PS4 VideoOut
+package target. It displays PS4 React / Hello World with a counter; it is not
+the full Voidplay store. Install its pinned dependencies inside that directory.
+Root aliases: `react:doctor`, `react:test`, `react:smoke`, `react:preview`,
+`react:ps4:build`, `react:ps4:verify`. Set `OO_PS4_TOOLCHAIN` to the verified
+OpenOrbis release. Actual build, native preview and package checks are separate
+from console installation/launch; see its verification report for hardware status.

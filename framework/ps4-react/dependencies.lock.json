@@ -1,0 +1,8 @@
+{
+  "quickjs": {
+    "version": "0.15.0", "revision": "433941b99fb3c5e7f98b7ebd78727972bcf467ee",
+    "url": "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/433941b99fb3c5e7f98b7ebd78727972bcf467ee",
+    "sha256": "ecfb5211b82c1f3bf30e07f20f906f13f857e3f795cb220933009c82e5574db2"
+  },
+  "react": "18.3.1", "react-reconciler": "0.29.2", "esbuild": "0.25.12"
+}

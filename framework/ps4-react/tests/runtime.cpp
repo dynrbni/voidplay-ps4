@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: GPL-3.0-only
+#include "host.hpp"
+#include "app_bundle.h"
+#include <cassert>
+#include <chrono>
+#include <cstdio>
+#include <cstdlib>
+#include <climits>
+#include <cstring>
+namespace ps4react {
+void platform_log(const char* stage,const char* message){std::fprintf(stderr,"[test][%s] %s\n",stage,message);}
+double platform_now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
+}
+static std::uint64_t hash(ps4react::Canvas f){std::uint64_t n=1469598103934665603ULL;for(int i=0;i<f.w*f.h;i++){n^=f.pixels[i];n*=1099511628211ULL;}return n;}
+int main(){
+ using namespace ps4react;
+ std::uint32_t guard[20];for(auto& n:guard)n=0x12345678;
+ Canvas small{guard+2,4,4,4,16};rect(small,-10,-10,INT_MAX,INT_MAX,0xffffffff);
+ assert(guard[0]==0x12345678&&guard[1]==0x12345678&&guard[18]==0x12345678&&guard[19]==0x12345678);
+ assert(!Canvas({guard,5,5,5,20}).valid());
+ std::uint32_t glyph_pixels[7*7]{};Canvas glyph_frame{glyph_pixels,7,7,7,49};
+ for(int c=33;c<=126;++c){
+  rect(glyph_frame,0,0,7,7,0);char value[]={static_cast<char>(c),0};text(glyph_frame,0,0,value,7,0xffffffff);
+  bool visible=false;for(auto pixel:glyph_pixels)visible=visible||pixel!=0;assert(visible);
+ }
+ Canvas f{static_cast<std::uint32_t*>(std::calloc(width*height,4)),width,height,width,static_cast<std::size_t>(width)*height};assert(f.valid());
+ Runtime runtime;
+ assert(runtime.start(f,reinterpret_cast<const char*>(app_bundle),app_bundle_length));
+ auto initial=hash(f);assert(runtime.tick("confirm"));auto updated=hash(f);assert(initial!=updated);
+ assert(runtime.tick("back"));assert(hash(f)==initial);runtime.stop();assert(!runtime.state);
+ for(int i=0;i<3;i++){assert(runtime.start(f,reinterpret_cast<const char*>(app_bundle),app_bundle_length));runtime.stop();}
+ const char* syntax="function broken(";assert(!runtime.start(f,syntax,std::strlen(syntax)));runtime.stop();
+ const char* loop="while(true){}";assert(!runtime.start(f,loop,std::strlen(loop)));runtime.stop();
+ const char* bad="__ps4Native.text(0,0,'text',999,0)";assert(!runtime.start(f,bad,std::strlen(bad)));runtime.stop();
+ std::free(f.pixels);std::puts("Runtime PASS: real React registration/update/reset, repeated lifecycle, errors, interrupt budget and canvas guards.");
+}

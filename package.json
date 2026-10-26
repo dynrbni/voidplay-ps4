@@ -34,7 +34,13 @@
     "owner:serve": "npm run admin:build && node server/owner.ts",
     "pages:build": "node scripts/pages.ts build",
     "pages:deploy": "node scripts/pages.ts deploy",
-    "test:owner": "node --test server/*.test.ts"
+    "test:owner": "node --test server/*.test.ts",
+    "react:doctor": "npm --prefix framework/ps4-react run doctor",
+    "react:test": "npm --prefix framework/ps4-react test",
+    "react:preview": "npm --prefix framework/ps4-react run preview",
+    "react:smoke": "npm --prefix framework/ps4-react run smoke",
+    "react:ps4:build": "npm --prefix framework/ps4-react run build:ps4",
+    "react:ps4:verify": "npm --prefix framework/ps4-react run verify:ps4"
   },
   "dependencies": {
     "react": "^19.3.1",
