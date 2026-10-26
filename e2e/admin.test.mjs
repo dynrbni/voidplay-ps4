@@ -33,7 +33,7 @@ test('password login, private authoring, three sources, trailers and publication
     import { writeFile } from 'node:fs/promises';
     import { join, resolve } from 'node:path';
     const directory=process.env.VP_TEST_DIRECTORY;
-    const app=await startOwnerServer({directory,assets:resolve('admin-dist'),port:0,publish:async manifest=>{
+    const app=await startOwnerServer({directory,assets:resolve('admin-dist'),port:0,resolveArtwork:async()=>({url:'https://example.com/resolved-cover.webp',fromPage:true}),publish:async manifest=>{
       await writeFile(join(directory,'submitted.json'),JSON.stringify(manifest));
       return {revision:manifest.revision,commit:'fixture-commit',catalogUrl:'https://example.com/catalog.json',storeUrl:'https://example.com/',state:'committed'};
     }});
@@ -53,7 +53,11 @@ test('password login, private authoring, three sources, trailers and publication
     assert.equal(evaluate('localStorage.length + sessionStorage.length'), 0);
     browser('find', 'label', 'New entry ID', 'fill', 'first-entry'); click('Create'); click('Save draft');
     wait('document.querySelector(".notice")?.textContent.includes("Draft saved")');
+    browser('fill', '#releaseDate', '');
+    browser('fill', '#coverUrl', 'javascript:invalid');
     click('Stage published snapshot'); wait('document.querySelector(".validation")');
+    browser('fill', '#coverUrl', 'https://example.com/artwork-page'); click('Check cover artwork url');
+    wait('document.querySelector("#coverUrl")?.value === "https://example.com/resolved-cover.webp"');
     const fixture = testEntry('first-entry');
     for (const key of ['title', 'summary', 'description', 'author', 'version', 'coverUrl', 'heroUrl', 'fileFormat', 'releaseNotes', 'license']) browser('fill', `#${key}`, fixture[key]);
     evaluate('(()=>{const input=document.querySelector("#releaseDate");Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(input,"2026-10-25");input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));return true;})()');
@@ -92,6 +96,11 @@ test('password login, private authoring, three sources, trailers and publication
     click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
     assert.deepEqual(JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8')).entries, []);
     browser('set', 'viewport', '390', '844'); assert.equal(evaluate('document.documentElement.scrollWidth <= innerWidth'), true); screenshot('mobile');
+    browser('find', 'label', 'New entry ID', 'fill', 'minimal-entry'); click('Create');
+    click('Stage published snapshot'); wait('document.querySelector(".notice")?.textContent.includes("snapshot is ready")');
+    click('Publish to Pages'); wait('document.querySelector(".notice")?.textContent.includes("Catalog committed")');
+    const minimal = JSON.parse(await readFile(join(directory, 'submitted.json'), 'utf8')).entries[0];
+    assert.equal(minimal.title, 'minimal-entry'); assert.equal(minimal.fileSize, 0); assert.deepEqual(minimal.sources, []);
     click('Sign out'); wait('document.querySelector("#owner-password")');
     browser('reload'); wait('document.querySelector("#owner-password")');
   } finally {
@@ -138,5 +147,14 @@ test('one published catalog supplies Discover, Browse, Search and direct detail 
     click('View application'); wait('Boolean(document.querySelector(".detail-page"))');
     assert.equal(evaluate('document.querySelector(".detail-information p").textContent.length'), longEntry.description.trim().length);
     assert.equal(evaluate('document.documentElement.scrollWidth <= innerWidth'), true);
+    browser('network', 'route', '**/not-an-image', '--abort');
+    browser('network', 'unroute', '**/catalog.json');
+    browser('network', 'route', '**/catalog.json', '--body', JSON.stringify({ ...manifest, revision: 4, entries: [{ id: 'minimal-entry', coverUrl: '/art/orbit-workshop-hero.webp', heroUrl: 'https://example.com/not-an-image' }] }));
+    browser('open', store + '#/item/minimal-entry'); browser('reload');
+    wait('document.querySelector(".detail-page")');
+    wait('Array.from(document.querySelectorAll(".hero-art img")).some(image => image.complete && image.naturalWidth > 0 && image.src.includes("orbit-workshop"))');
+    assert.equal(evaluate('document.querySelector("#detail-title").textContent'), 'minimal-entry');
+    assert.equal(evaluate('document.querySelector(".item-metadata").textContent.includes("Size unknown")'), true);
+    assert.equal(evaluate('document.querySelector(".download-sources").textContent.includes("No download links")'), true);
   } finally { browser('close'); }
 });

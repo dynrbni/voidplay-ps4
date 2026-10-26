@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { workspaceSchema } from '../shared/catalog.ts';
+import { httpsUrl, workspaceSchema } from '../shared/catalog.ts';
 import type { Draft, Workspace } from '../shared/catalog.ts';
 
 const publicationSchema = z.strictObject({ revision: z.number().int().nonnegative(), commit: z.string(), catalogUrl: z.string().url(), storeUrl: z.string().url(), state: z.enum(['committed', 'live']) });
@@ -17,6 +17,7 @@ export function createOwnerApi(base: string, token: string, expired: () => void)
     return value;
   }
   return {
+    async resolveArtwork(url: string) { return z.strictObject({ url: httpsUrl, fromPage: z.boolean() }).parse(await request('/api/artwork/resolve', { url })); },
     async load() { return workspaceSchema.parse(await request('/api/workspace')); },
     async action(expectedRevision: number, draft: Draft, action: 'save' | 'publish' | 'unpublish') { return workspaceSchema.parse(await request('/api/action', { expectedRevision, draft, action })); },
     async import(expectedRevision: number, workspace: Workspace) { return workspaceSchema.parse(await request('/api/import', { expectedRevision, workspace })); },

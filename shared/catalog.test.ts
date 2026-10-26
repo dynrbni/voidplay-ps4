@@ -10,7 +10,6 @@ import { importCatalog } from '../scripts/catalog-cli.ts';
 test('draft edits cannot leak into published snapshots; unpublish removes the final entry', () => {
   let workspace = updateWorkspace(emptyWorkspace(), 0, newDraft('first'), 'save');
   assert.deepEqual(exportManifest(workspace).entries, []);
-  assert.throws(() => updateWorkspace(workspace, 1, newDraft('first'), 'publish'));
   workspace = updateWorkspace(workspace, 1, testEntry('first'), 'publish');
   assert.equal(exportManifest(workspace).entries[0]?.title, 'Authorized test tool');
   workspace = updateWorkspace(workspace, 2, { ...testEntry('first'), title: 'Unpublished edit', sources: [] }, 'save');
@@ -20,11 +19,11 @@ test('draft edits cannot leak into published snapshots; unpublish removes the fi
   assert.equal(exportManifest(workspace).previewMode, false);
   assert.deepEqual(exportManifest(workspace).entries, []);
 });
-test('publication rejects unsafe sources, missing authorization, metadata, size, checksum and fake verification', () => {
+test('publication accepts incomplete metadata but rejects unsafe values and fake verification', () => {
   const entry = testEntry();
   assert.equal(metadataSchema.parse(entry).id, entry.id);
   for (const url of ['javascript:alert(1)', 'http://example.com/a', 'https://user:password@example.com/a', 'https://127.0.0.1/a', 'https://192.168.1.1/a', 'https://localhost/a', 'https://[::1]/a', 'https://example.com/a?token=secret', 'https://example.com/a?X-Amz-Signature=secret', 'https://example.com/a#password']) assert.equal(metadataSchema.safeParse({ ...entry, sources: [{ ...entry.sources[0], url }] }).success, false, url);
-  for (const patch of [{ redistribution: { authorized: false, statement: 'No.' } }, { author: '' }, { releaseDate: '2026-02-30' }, { sources: [] }, { sources: Array(4).fill(entry.sources[0]) }, { sources: [{ ...entry.sources[0], sha256: 'abc' }] }, { sources: [{ ...entry.sources[0], expectedSize: 0 }] }, { compatibility: { ...entry.compatibility, status: 'verified' } }, { sources: [{ ...entry.sources[0], authentication: { required: true, instructions: '' } }] }, { githubToken: 'secret' }, { description: 'github_pat_' + 'x'.repeat(30) }]) assert.equal(metadataSchema.safeParse({ ...entry, ...patch }).success, false, JSON.stringify(patch));
+  for (const patch of [{ releaseDate: '2026-02-30' }, { sources: Array(4).fill(entry.sources[0]) }, { sources: [{ ...entry.sources[0], sha256: 'abc' }] }, { compatibility: { ...entry.compatibility, status: 'verified' } }, { githubToken: 'secret' }, { description: 'github_pat_' + 'x'.repeat(30) }]) assert.equal(metadataSchema.safeParse({ ...entry, ...patch }).success, false, JSON.stringify(patch));
 });
 test('workspace rejects duplicate or mismatched IDs, stale edits, conflicting backups and invalid revisions', () => {
   const workspace = updateWorkspace(emptyWorkspace(), 0, testEntry(), 'publish');
@@ -62,4 +61,16 @@ test('one to three sources retain independent sizes, checksums and access requir
   const parsed = metadataSchema.parse({ ...draft, sources: [draft.sources[0], { ...draft.sources[0], id: 'archive', expectedSize: 2048, sha256: 'b'.repeat(64), authentication: { required: true, instructions: 'Sign in at the provider.' } }] });
   assert.equal(parsed.sources[1]?.expectedSize, 2048);
   assert.equal(parsed.sources[1]?.authentication.required, true);
+});
+
+test('an ID-only catalog entry publishes with honest empty defaults and optional mirrors', () => {
+  const minimal = metadataSchema.parse({ id: 'minimal-entry' });
+  assert.equal(minimal.title, 'minimal-entry'); assert.equal(minimal.fileSize, 0);
+  assert.equal(minimal.redistribution.authorized, false); assert.deepEqual(minimal.sources, []);
+  assert.deepEqual(minimal.languages.interface, []); assert.equal(minimal.compatibility.status, 'unverified');
+  const workspace = updateWorkspace(emptyWorkspace(), 0, newDraft('minimal-entry'), 'publish');
+  assert.equal(exportManifest(workspace).entries[0]?.title, 'minimal-entry');
+  const source = metadataSchema.parse({ id: 'with-link', sources: [{ url: 'https://example.com/file.pkg' }] }).sources[0]!;
+  assert.equal(source.id, 'mirror-1'); assert.equal(source.expectedSize, 0); assert.equal(source.sha256, '');
+  assert.deepEqual(metadataSchema.parse({ id: 'blank-row', sources: [{ id: 'mirror-1', url: '' }] }).sources, []);
 });

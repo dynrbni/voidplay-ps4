@@ -9,6 +9,7 @@ import { draftSchema, exportManifest, updateWorkspace, validateImport } from '..
 import type { Manifest } from '../shared/catalog.ts';
 import { passwordRecordSchema, verifyPassword } from './password.ts';
 import { loadWorkspace, withWorkspaceLock, writePrivateJson } from './storage.ts';
+import { resolveArtwork } from './artwork.ts';
 import { CatalogConflict, checkPublication, publicationSchema, publishCatalog } from './github.ts';
 import type { Publication } from './github.ts';
 
@@ -41,7 +42,7 @@ function send(response: ServerResponse, status: number, value: unknown) {
   response.end(JSON.stringify(value));
 }
 
-type Options = { directory?: string; assets?: string; port?: number; publish?: (manifest: Manifest) => Promise<Publication>; checkPublication?: (current: Publication) => Promise<Publication>; now?: () => number };
+type Options = { directory?: string; assets?: string; port?: number; publish?: (manifest: Manifest) => Promise<Publication>; checkPublication?: (current: Publication) => Promise<Publication>; now?: () => number; resolveArtwork?: typeof resolveArtwork };
 
 export async function startOwnerServer(options: Options = {}) {
   const directory = options.directory ?? join(root, '.owner-data');
@@ -122,6 +123,10 @@ export async function startOwnerServer(options: Options = {}) {
             return result;
           });
           send(response, 200, latest); return;
+        }
+        if (path === '/api/artwork/resolve' && request.method === 'POST') {
+          const body = z.strictObject({ url: z.string().min(1).max(2000) }).parse(await jsonBody(request, 4096));
+          send(response, 200, await (options.resolveArtwork ?? resolveArtwork)(body.url)); return;
         }
         if (path === '/api/action' && request.method === 'POST') {
           const body = actionSchema.parse(await jsonBody(request));

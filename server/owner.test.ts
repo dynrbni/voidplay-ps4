@@ -29,6 +29,7 @@ test('private workspace and publication reject unauthenticated access and foreig
   const app = await setup(t);
   assert.equal((await app.request('/api/workspace')).status, 401);
   assert.equal((await app.request('/api/publish', { expectedRevision: 0 })).status, 401);
+  assert.equal((await app.request('/api/artwork/resolve', { url: 'https://example.com/' })).status, 401);
   assert.equal((await app.request('/api/login', { password }, undefined, 'https://evil.example')).status, 403);
   assert.equal((await app.request('/.owner-data/credentials.json')).status, 404);
   assert.equal((await app.request('/api/login', { password: 'wrong' })).status, 401);
@@ -44,7 +45,7 @@ test('authenticated editing persists privately; stale revisions and invalid meta
   const draft = { ...testEntry(), genres: ['Adventure'], trailerUrl: 'https://youtu.be/M7lc1UVf-VE' };
   assert.equal((await app.request('/api/action', { expectedRevision: 0, draft, action: 'save' }, token)).status, 200);
   assert.equal((await app.request('/api/action', { expectedRevision: 0, draft, action: 'publish' }, token)).status, 409);
-  assert.equal((await app.request('/api/action', { expectedRevision: 1, draft: { ...draft, redistribution: { authorized: false, statement: '' } }, action: 'publish' }, token)).status, 400);
+  assert.equal((await app.request('/api/action', { expectedRevision: 1, draft: { ...draft, releaseDate: 'invalid' }, action: 'publish' }, token)).status, 400);
   assert.equal((await app.request('/api/action', { expectedRevision: 1, draft, action: 'publish' }, token)).status, 200);
   assert.equal((await app.request('/api/action', { expectedRevision: 2, draft: { ...draft, title: 'Private draft edit' }, action: 'save' }, token)).status, 200);
   const response = await app.request('/api/publish', { expectedRevision: 3 }, token);

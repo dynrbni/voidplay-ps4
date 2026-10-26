@@ -22,3 +22,7 @@
 .publication-status a { margin-right: 20px; font-size: 12px; }
 .editor-content { border: 0; padding: 0; margin: 0; min-width: 0; }
 @media(max-width:600px) { .publication-status { margin-inline: 22px; } .publication-status a { display: block; margin-bottom: 10px; } }
+.artwork-field { min-width: 0; }
+.artwork-field img { display: block; width: 100%; max-width: 240px; max-height: 180px; object-fit: contain; margin: 12px 0; }
+.artwork-field img[hidden] { display: none; }
+.artwork-field p { overflow-wrap: anywhere; }

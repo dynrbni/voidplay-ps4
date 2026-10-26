@@ -46,7 +46,7 @@ export function sortCatalog(entries: CatalogEntry[], order: string): CatalogEntr
 
 export async function loadCatalog(signal: AbortSignal, request: typeof fetch = fetch): Promise<CatalogEntry[]> {
   const manifest = manifestSchema.parse(await httpCatalog(publicAsset('/catalog.json'), request).fetchCatalog(signal));
-  if (!manifest.previewMode) return manifest.entries.map(entry => ({ ...entry, mock: false, compatibilityNotes: entry.compatibility.notes }));
+  if (!manifest.previewMode) return manifest.entries.map(entry => ({ ...entry, mock: false, compatibilityNotes: entry.compatibility.notes || 'Compatibility has not been verified.' }));
   const fixture = await request(publicAsset('/catalog.mock.json'), { signal, credentials: 'omit' });
   if (!fixture.ok) throw new Error(`Preview catalog request failed (${fixture.status}).`);
   return parseCatalog(await fixture.json());
