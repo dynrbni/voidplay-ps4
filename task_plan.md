@@ -145,3 +145,8 @@ Local reducer/layout/build/sanitizer/smoke/root checks and actual Mac interactio
 pass, including restart persistence. PS4 cross-build passes. Remaining handoff:
 commit/push, build from clean framework source, verify/copy exact 01.03 PKG.
 Physical console acceptance is a separate owner test, not a local build claim.
+
+- [x] 01.03 implementation committed/pushed as 54807c9 on existing PR #7.
+- [x] Clean-source 01.03 PKG verified and copied to Downloads with matching SHA-256.
+- [x] Native Mac screenshots, build/sync workflow, parity and service gaps documented.
+- [ ] Owner acceptance of exact 01.03 PS4 package, including preferences persistence.

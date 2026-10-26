@@ -158,3 +158,11 @@ check annotation confirms account billing prevented the hosted job from starting
 - Public Pages catalog/artwork sync validates through the shared schema and bounded DNS-pinned HTTPS fetches; actual public r9 sync succeeded. Console HTTP/video, measured capacity and real package transfer/install remain unavailable and explicitly labeled.
 - PASS: 12 framework layout/store/preference/queue tests, 8 Python guards, native ASan/UBSan renderer/input/preferences/lifecycle/error checks, SDL smoke. Root lint/types/32 tests/catalog/store/admin builds/public checks pass. PS4 cross-build/structural/extracted-byte checks passed after enabling the SDK's actual POSIX declaration for fileno.
 - Actual native Mac testing covered details/sources, browse keyboard/query/clear, Settings toggle, saved favorites/library and paused simulation. Restart restored preferences. Final native screenshots are recorded in docs/images. Final clean-source build/hash and GitHub handoff follow; 01.03 hardware acceptance is pending.
+
+Final 01.03 implementation `54807c9139fa0602c9ff36f3687593ce612d92e1` is pushed on
+`codex/ps4-react-hello-world`, existing PR #7. Clean-source package and extracted
+content validation pass. Artifact is 9,109,504 bytes, SHA-256
+`e760a40db755f73c1aab1421cd05d2c8d503f190171021ab6c4080fdb17cf4e7`.
+Downloads copy `Voidplay-BETA-01.03-e760a40db755.pkg` was independently hashed and
+matches. Hosted run 40327352804 had no steps; its annotation confirms account
+billing prevented startup. No 01.03 console transfer, installation or run occurred.
