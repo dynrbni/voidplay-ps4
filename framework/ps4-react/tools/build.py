@@ -12,6 +12,7 @@ import plistlib
 import re
 import shlex
 import shutil
+import struct
 import subprocess
 import sys
 import tarfile
@@ -28,6 +29,60 @@ LOCK = json.loads((ROOT / 'dependencies.lock.json').read_text())
 sys.path.insert(0, str(REPO / 'framework/voidplay-native/tools'))
 from artifacts import sha256, validate_elf, validate_self, read_sfo, write_receipt, verify_receipt
 import cli as baseline
+
+RUNTIME_MODULES = ('sce_module/libc.prx', 'sce_module/libSceFios2.prx')
+
+
+def bootstrap_inputs(sdk):
+    inputs = []
+    for name, expected in LOCK['openorbisBootstrap']['files'].items():
+        path = sdk / name
+        if not path.is_file() or sha256(path) != expected:
+            raise ValueError('Wrong/missing OpenOrbis bootstrap input: ' + name)
+        inputs.append(path)
+    return inputs
+
+
+def validate_module(path):
+    validate_self(path)
+    data = path.read_bytes()
+    count = struct.unpack_from('<H', data, 24)[0]
+    elf = 32 + count * 32
+    if (len(data) < elf+64 or data[elf:elf+6] != b'\x7fELF\x02\x01'
+            or struct.unpack_from('<HH', data, elf+16) != (0xfe18, 62)):
+        raise ValueError('Expected a PS4 dynamic PRX bootstrap module: ' + str(path))
+
+
+def require_runtime_modules(directory, paths):
+    missing = set(RUNTIME_MODULES) - set(paths)
+    if missing:
+        raise ValueError('Package omits required bootstrap module(s): ' + ', '.join(sorted(missing)))
+    for name in RUNTIME_MODULES:
+        validate_module(directory / name)
+
+
+def build_runtime_modules(directory, environment):
+    sdk, compiler, linker, converter, *_ = environment
+    bootstrap_inputs(sdk)
+    target = directory / 'sce_module'
+    target.mkdir(exist_ok=True)
+    for name, source in [('libc', 'libc.c'), ('libSceFios2', 'fios2.c')]:
+        obj = target / (name + '.o')
+        run([compiler.parent/'clang', '--target=x86_64-pc-freebsd12-elf', '-std=c11',
+             '-fPIC', '-fno-stack-protector', '-Wall', '-Wextra', '-Werror',
+             '-isysroot', sdk, '-isystem', sdk/'include', '-MD', '-MF', str(obj)+'.d',
+             '-c', ROOT/'platform/ps4/modules'/source, '-o', obj])
+        elf = target / (name + '.elf')
+        run([linker, '-m', 'elf_x86_64', '-pie', '--no-rosegment', '-e', '_init',
+             '-z', 'max-page-size=0x4000', '-z', 'common-page-size=0x4000',
+             '--script', sdk/'link.x', '--eh-frame-hdr', '-L', sdk/'lib',
+             obj, sdk/'lib/crtlib.o', '-lSceLibcInternal', '-lkernel', '-o', elf])
+        validate_elf(elf)
+        module = target / (name + '.prx')
+        run([converter, '-in='+str(elf), '-out='+str(target/(name+'.oelf')),
+             '--lib', module, '--paid', '0x3800000000000011'])
+        validate_module(module)
+    return list(RUNTIME_MODULES)
 
 
 def run(args, cwd=ROOT, env=None):
@@ -101,6 +156,7 @@ def doctor():
     print(run([tool('clang++'),'--version']).splitlines()[0])
     print('SDL2 '+run([tool('sdl2-config'),'--version']))
     sdk, compiler, *_ = baseline.ps4_environment()
+    bootstrap_inputs(sdk)
     print(f'OpenOrbis {baseline.LOCK["openorbis"]["version"]}: pinned inputs PASS; '+run([compiler,'--version']).splitlines()[0])
     if not all((sdk/'lib'/name).is_file() for name in ['libSceVideoOut.so','libScePad.so','libSceUserService.so']):raise ValueError('Required PS4 display/input imports are missing.')
     for dependency in ['react','react-reconciler','esbuild']:
@@ -121,7 +177,7 @@ def bundle():
 
 
 def sources():
-    return sorted([*ROOT.glob('runtime/*.cpp'), *ROOT.glob('runtime/*.hpp'), *ROOT.glob('renderer/*.cpp'), *ROOT.glob('platform/**/*.cpp'), *ROOT.glob('platform/**/*.h'), *ROOT.glob('packages/**/*.mjs'), *ROOT.glob('apps/**/*.*'), *ROOT.glob('tools/*.*'), ROOT/'dependencies.lock.json', ROOT/'package-lock.json'])
+    return sorted([*ROOT.glob('runtime/*.cpp'), *ROOT.glob('runtime/*.hpp'), *ROOT.glob('renderer/*.cpp'), *ROOT.glob('platform/**/*.cpp'), *ROOT.glob('platform/**/*.c'), *ROOT.glob('platform/**/*.h'), *ROOT.glob('packages/**/*.mjs'), *ROOT.glob('apps/**/*.*'), *ROOT.glob('tools/*.*'), ROOT/'dependencies.lock.json', ROOT/'package-lock.json'])
 
 
 def compile_target(target, native_only=False, sanitize=False):
@@ -180,7 +236,9 @@ def package(native_only=False):
     for name in ['QuickJS-MIT.txt','React-MIT.txt','Reconciler-MIT.txt','Scheduler-MIT.txt','musl-MIT.txt']:
         if not (ROOT/'licenses'/name).is_file():raise ValueError('Missing required dependency notice: '+name)
     directory=compile_target('ps4',native_only)
-    sdk, compiler, linker, converter, packer, gp4=baseline.ps4_environment()
+    environment=baseline.ps4_environment()
+    sdk, compiler, linker, converter, packer, gp4=environment
+    modules=build_runtime_modules(directory, environment)
     sce=directory/'sce_sys';sce.mkdir(exist_ok=True)
     sfo=sce/'param.sfo';content='IV0000-'+app['titleId']+'_00-PS4REACTHELLO001'
     run([packer,'sfo_new',sfo])
@@ -191,7 +249,8 @@ def package(native_only=False):
     notices=directory/'notices';notices.mkdir(exist_ok=True)
     for name in ['LICENSE','NOTICE']:shutil.copyfile(ROOT/name,notices/name)
     for source in (ROOT/'licenses').glob('*.txt'):shutil.copyfile(source,notices/source.name)
-    paths=['eboot.bin','sce_sys/param.sfo','sce_sys/icon0.png']+[str(p.relative_to(directory)) for p in notices.iterdir()]
+    paths=['eboot.bin','sce_sys/param.sfo','sce_sys/icon0.png',*modules]+[str(p.relative_to(directory)) for p in notices.iterdir()]
+    require_runtime_modules(directory, paths)
     run([gp4,'-out','pkg.gp4','--content-id='+content,'--files',' '.join(paths)],cwd=directory)
     project=ET.parse(directory/'pkg.gp4');rootdir=project.getroot().find('rootdir');rootdir.clear()
     for name in paths:
@@ -212,18 +271,21 @@ def package(native_only=False):
     (directory/'packaged-param.sfo').write_bytes(packaged_sfo)
     shutil.copyfile(pkg,target)
     input_files=[*sources(),*ROOT.glob('licenses/*.txt'),ROOT/'LICENSE',ROOT/'NOTICE',REPO/'public/art/orbit-workshop-hero.webp',*([BUILD/'app.js'] if not native_only else []),compiler,linker,converter,packer,gp4,sdk/'link.x',sdk/'lib/crt1.o',sdk/'lib/libc.a',sdk/'lib/libm.a',*[sdk/'lib'/name for name in ['libkernel.so','libSceVideoOut.so','libScePad.so','libSceUserService.so']],*[sdk/'include/orbis'/name for name in ['VideoOut.h','Pad.h','UserService.h','libkernel.h']]]
-    for dependency in directory.glob('*.d'):
+    input_files.extend(bootstrap_inputs(sdk))
+    for dependency in directory.rglob('*.d'):
         text=dependency.read_text().replace('\\\n','')
         input_files.extend(Path(name).resolve() for name in shlex.split(text.split(':',1)[1]))
     input_files.extend([REPO/'framework/voidplay-native/tools/cli.py',REPO/'framework/voidplay-native/tools/artifacts.py'])
     input_files=sorted(set(input_files))
     if not native_only:input_files+=sorted(quickjs().glob('*.h'))+sorted(quickjs().glob('*.c'))
-    write_receipt(receipt,input_files,[target,directory/'app.elf',directory/'eboot.bin',sfo,directory/'packaged-param.sfo',directory/'pkg.gp4'],{'app':app,'native_only':native_only,'source_commit':run(['git','rev-parse','HEAD'],cwd=REPO),'framework_sources_dirty':bool(run(['git','status','--porcelain','--untracked-files=all','--','framework/ps4-react'],cwd=REPO)),'console_launch':'unverified','package_sha256':sha256(target),'package_bytes':target.stat().st_size})
+    module_outputs=[directory/'sce_module'/(name+suffix) for name in ['libc','libSceFios2'] for suffix in ['.elf','.oelf','.prx']]
+    write_receipt(receipt,input_files,[target,directory/'app.elf',directory/'eboot.bin',sfo,directory/'packaged-param.sfo',directory/'pkg.gp4',*module_outputs],{'app':app,'native_only':native_only,'source_commit':run(['git','rev-parse','HEAD'],cwd=REPO),'framework_sources_dirty':bool(run(['git','status','--porcelain','--untracked-files=all','--','framework/ps4-react'],cwd=REPO)),'console_launch':'unverified','package_sha256':sha256(target),'package_bytes':target.stat().st_size})
     target.with_suffix('.pkg.sha256').write_text(sha256(target)+'  '+target.name+'\n')
     print(f'PACKAGE {target}\nSHA256 {sha256(target)}\nLocal structural checks PASS; console launch UNVERIFIED.')
 
 
 def verify_extracted(packer,package,directory,paths):
+    require_runtime_modules(directory, paths)
     with tempfile.TemporaryDirectory(prefix='ps4react-extract-') as temp:
         root=Path(temp)
         run([packer,'pkg_extract',package,root])

@@ -96,3 +96,9 @@ Source 1a692a2 is pushed in PR #7 against PR #6. The final clean-source receipt
 and Downloads copy were hash-verified; GitHub CI could not start due to billing.
 Physical PS4 installation, display, input and lifecycle acceptance remain pending;
 the new Hello World package has no console result yet.
+
+Update: 01.00 has now failed on the actual console before main. Klog establishes
+a missing bootstrap PRX module error. Implement and locally verify 01.01 with
+source-built GPL OpenOrbis bootstrap modules and regressions, publish the candidate,
+then re-test the exact new package on the console. Do not reuse 01.00's acceptance
+status for 01.01 or infer firmware-wide success from local checks.

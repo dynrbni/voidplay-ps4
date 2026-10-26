@@ -106,3 +106,19 @@ Unique staged upload reached the exact package size, but passive/active/REST-res
 and buffered read-back failed (426/timeouts). Full destination integrity is unknown;
 the staged file is not marked ready, renamed or installed. Owner was asked to use
 the verified Downloads package via an installer-supported USB/manual transfer.
+
+## React 01.00 console loader failure and 01.01 correction
+
+Owner reports immediate launch failure after manual installation. Klog confirms
+RCTX00001 01.00 fails before main with 0xa0020102 / PRX_SCE_MODULE_LOAD_ERROR and
+explicit missing `/app0/sce_module` diagnostics. This establishes the failure
+stage for the React package; no fault location for the older VPLY test is inferred.
+
+01.01 builds the GPL OpenOrbis libc/FIOS bootstrap shims from small source files
+and pinned crtlib.o/import stubs, adds them to GP4, and validates required paths,
+dynamic PRX type, SELF structure and extracted bytes. No proprietary Sony module
+is copied. Three new regressions reject the original omission, wrong module type
+and wrong/missing bootstrap inputs. PASS: 8 Python + 3 layout tests, ASan/UBSan,
+SDL smoke, root 32 tests/lint/types/builds/public checks. Final candidate hash and
+fresh console acceptance follow; do not claim that correcting the omission proves
+the whole application now runs.

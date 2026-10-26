@@ -81,6 +81,20 @@ fixed template omitted the notices directory). The package contains the app's
 own executable/icon and license notices. No proprietary PRX/SPRX file is copied.
 Static OpenOrbis musl and system import stubs remain separately licensed inputs.
 
+The owner's first 01.00 console run failed before `main` with the loader's
+`PRX_SCE_MODULE_LOAD_ERROR` and explicit missing `/app0/sce_module` diagnostic.
+Static musl in the executable does not remove the system bootstrap's requirement
+for application module files. From 01.01, the build compiles the small GPL
+[OpenOrbis libc shim](https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/blob/b458dfd9d2f5c40aa249b127c9b9b4488afdc686/src/modules/libc/libc/lib.c)
+and corresponding FIOS shim using the pinned OpenOrbis `crtlib.o` and import
+stubs, then converts each with the SDK's `--lib` workflow. No prebuilt sample
+PRX or proprietary Sony module is copied. Their complete GPL source/build inputs
+and hashes are retained. These are bootstrap compatibility modules; they expose
+no application FIOS service. The required module paths, SELF structure and PS4
+dynamic-module type are checked before packaging and during extracted verification.
+The old module-free 01.00 package is now rejected by this guard. Console launch
+for the corrected package is a new, still-pending hardware acceptance test.
+
 The QuickJS FreeBSD include expects `malloc_np.h`; OpenOrbis musl declares the
 same `malloc_usable_size` in `malloc.h`. A small target-only compatibility header
 selects that actual declaration; no invented allocator implementation is used.

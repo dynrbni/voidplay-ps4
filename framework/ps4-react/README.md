@@ -6,6 +6,12 @@ an OpenOrbis PS4 package target. The first application displays **PS4 React** an
 Voidplay store. PS4 launch and firmware 12.00 display/input remain unverified
 until the exact package is tested on the console.
 
+Version 01.00 failed on the owner's PS4 before `main`: Klog reported
+`0xa0020102 (PRX_SCE_MODULE_LOAD_ERROR)` and missing `/app0/sce_module` files.
+Version 01.01 adds source-built OpenOrbis GPL bootstrap modules and rejects
+packages missing them. This correction still requires a new hardware run;
+the Mac preview and local package checks cannot qualify console launch.
+
 ## Build on this Mac
 
 Requires Node >=22.18, Python >=3.12 with Pillow, Command Line Tools/Apple Clang,
@@ -32,6 +38,9 @@ builds use that local source. Dependency versions and notices are in
 `dependencies.lock.json`, `package-lock.json`, `NOTICE` and `licenses/`.
 `npm run build:ps4` bundles JSX, compiles/links the interpreter/renderer/host,
 converts ELF to SELF, creates SFO/icon/GP4, builds and verifies the package.
+It also compiles the GPL `libc.prx`/`libSceFios2.prx` bootstrap shims and includes
+them under `sce_module/`. They are OpenOrbis modules, not Sony SDK binaries or
+an implementation of the FIOS API.
 
 Outputs:
 

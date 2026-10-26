@@ -29,13 +29,13 @@ publication are preserved. Dependencies/build outputs are ignored.
 | React 18.3.1 / reconciler 0.29.2 / esbuild 0.25.12 | Isolated lockfile; JSX bundle executes in the interpreter. |
 | QuickJS-ng 0.15.0 | Source archive hash verified; source revision recorded in dependency lock. |
 | `npm run doctor` in framework | PASS: pinned inputs, tools, npm dependencies, display/input imports and Pillow. |
-| `npm test` in framework | PASS: 3 layout tests, 5 build tests, native ASan/UBSan integration executable. |
+| `npm test` in framework | PASS after 01.01 correction: 3 layout tests, 8 build tests, native ASan/UBSan integration executable. |
 | `npm run smoke` in framework | PASS after repeated rebuild: real SDL window/texture, injected SDL key event, 8 frames, framebuffer capture and clean shutdown. |
 | Root `npm run check` | PASS: lint, types, 32 existing tests, catalog validation, store and admin production builds. |
 | Root `npm run verify:public` | PASS: valid public catalog; no private workspace/admin/package/credential markers. |
 | Native-only PS4 graphics target | Cross-build and package structural checks passed before JS integration; physical display not tested. |
 | React PS4 target | Cross-build and package/extracted-byte checks exercised. Final artifact identity is recorded by `dist/receipt.json` and its `.pkg.sha256` sibling. |
-| Physical PS4 firmware 12.00 / GoldHEN | **UNVERIFIED** for this package. No install, launch, display, controller, storage or network success claimed. |
+| Physical PS4 firmware 12.00 / GoldHEN | **01.00 FAIL** before `main`: missing bootstrap module files. Corrected **01.01 UNVERIFIED** until reinstalled and tested. Display/controller/storage/network success is not claimed. |
 
 The sanitizer integration executes the actual bundled React app, verifies a
 pixel change from state update and exact reset, repeats runtime startup/shutdown,
@@ -86,7 +86,8 @@ Re-run `npm run verify:ps4` before transferring. Follow the exact
 FTP moves bytes; only the user's installer registers the app. Previous full-size
 FTP writes failed read-back, so no such copy is accepted as verified. The owner
 previously could not install the replacement Boot Test; it is a different artifact.
-No new PS4 React hardware result has been received.
+The subsequent 01.00 console result is recorded below; the corrected 01.01 build
+requires its own launch test.
 
 The owner subsequently enabled FTP/Klog for this package. Both endpoints were
 reachable and the read-only Klog capture received 38,629 bytes, with no PS4 React
@@ -98,6 +99,39 @@ copy remains `ready=false`, was not renamed to `.pkg` and was not installed or
 launched by the agent. Raw logs/transfer receipts stay in the ignored local build
 directory. The verified Downloads artifact can instead be copied using a USB
 device already supported by the owner's installer, or a successful manual transfer.
+
+## Confirmed 01.00 loader failure and 01.01 candidate
+
+After the owner installed 01.00 manually, Klog for `RCTX00001`, application version
+`01.00`, captured two launch failures before any `[ps4-react][startup]` marker:
+
+```text
+# exception: 0xa0020102 (PRX_SCE_MODULE_LOAD_ERROR)
+# === Lack of a .prx file in /app0/sce_module is detected!!! ===
+```
+
+The package had no application bootstrap PRX files. Static musl linkage does not
+satisfy the console's separate module preload requirement. This is a packaging
+defect in 01.00; its passing Mac and integrity checks did not detect this runtime
+requirement. A generic “cannot continue” message or immediate exit can accompany
+the loader killing the process. No React, rendering or controller execution was
+established by these failed launches.
+
+Version 01.01 compiles the small GPL OpenOrbis libc and FIOS bootstrap shims, links
+the pinned GPL `crtlib.o` plus public import stubs and converts them to dynamic
+PRX modules. It includes both files under `sce_module/`. No proprietary Sony
+module or prebuilt sample PRX is copied. The package validator now rejects the
+old module-free file list, invalid SELF files and an executable substituted for
+a dynamic module. Hash checks cover the extra toolchain inputs; receipts and
+extracted-byte comparison cover the generated modules.
+
+Fresh local checks pass: 8 build/error tests (including 3 bootstrap regressions),
+3 layout tests, real React integration under ASan/UBSan, SDL smoke, root 32 tests,
+lint/types, store/admin builds and public-output validation. Both generated PRXs
+have the SDK module type `0xfe18` and the expected import libraries. Package
+conversion/validation/extraction passed. This fixes the locally verified omission;
+it does not establish successful PS4 startup for 01.01. The exact final package
+hash/source commit remain in its generated receipt and checksum file.
 
 The next smallest milestone is to install the exact HelloWorld hash on the actual
 console, capture startup logs, verify both headings for at least 30 seconds,

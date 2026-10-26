@@ -12,6 +12,11 @@ OpenOrbis toolchain v0.5.4 and its public graphics example informed the VideoOut
 implementation. Static musl is linked under its own MIT notice; supplementary
 third-party math notices are in licenses/musl-math-notices.txt. No Sony runtime
 PRX/SPRX modules are copied into this package. System import stubs are link inputs.
+The GPL bootstrap shims libc.prx and libSceFios2.prx are built from the tiny
+OpenOrbis module sources and pinned GPL crtlib.o, not Sony's libc or FIOS runtime.
+Sources: OpenOrbis-PS4-Toolchain src/modules/libc, src/modules/libSceFios2 and
+src/crt/crtlib.c at b458dfd9d2f5c40aa249b127c9b9b4488afdc686. The SDK release
+archive and bootstrap input hashes are recorded in the dependency locks.
 The bundled 5x7 ASCII font is original project bitmap data adapted from Voidplay's
 native diagnostic font, GPL-3.0-only. The package icon is derived from Voidplay's
 original orbit-workshop concept artwork (../../docs/artwork.md).
