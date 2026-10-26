@@ -168,3 +168,8 @@ checks passed. Actual native Retina preview checked with motion enabled. Final
 120-action CPU mean is 1.421 ms (baseline 6.151), p95 2.704 ms (baseline 8.373).
 Remaining: commit/push, clean-source final 01.04 PKG and checksum handoff. Console
 quality/performance acceptance remains pending the owner's actual PS4 test.
+
+
+- [x] 01.04 implementation a018496 pushed, final clean-source cross-build and package checks pass.
+- [x] Hash-verified 01.04 Downloads package/checksum; PR #7 updated without merging.
+- [ ] Owner test of exact 01.04 on PS4, including motion quality and console timing logs.

@@ -182,3 +182,16 @@ plus scene no-op/damage/subcanvas/motion tests, SDL smoke, root lint/types/32 te
 store/admin builds/public checks. Mac CPU 120-action mean 6.151 -> 1.421 ms, p95
 8.373 -> 2.704 ms; initialization 21.402 -> 38.263 ms. Raw report is tracked. These
 are not PS4 FPS. Cross-build passed; exact final clean-source handoff follows.
+
+
+## 01.04 final artifact handoff
+
+Implementation a01849609cce7261d15fded1fef641e113676079 pushed on
+`codex/ps4-react-hello-world`. Clean-framework-source PS4 build and extracted
+receipt/ELF/SELF/SFO/bootstrap validation pass. Final package is 25,034,752 bytes,
+SHA-256 `2ab27b21b97272ece7406ab7423c85c0b61d19f50a3b6c7e5524f684657d927c`.
+Hash-verified copy: `/Users/dyn/Downloads/Voidplay-BETA-01.04-2ab27b21b972.pkg`
+with adjacent checksum. Existing PR #7 updated, preserving its #6 base.
+GitHub source run 40339155937 could not start due to account billing lock.
+Physical 01.04 PS4 acceptance remains pending; no console FPS or launch success
+is inferred from local tests and Mac measurements.
