@@ -81,3 +81,117 @@ Remote handoff: 9db3eb2 and 486dd57 pushed and remote HEAD matched. PR #5 create
 - Repaired only artwork in existing private/public snapshots, published live r9 in b2a0d5e. Pages asset commit 3876665 built and preserved the exact catalog blob. No fixture content or unrelated draft changes published.
 - PASS: 32 tests, lint/types/builds, public-output checks, two admin/publication browser scenarios (minimal metadata and image fallback included), four store regressions. Mac owner backend restarted; old sessions require login again.
 - Native candidate 4b78134 (01.01) stays alive instead of returning through libc exit; local sanitizer/11 Python tests and package/receipt/extracted checks pass. Klog establishes a VPLY00002 crash but no faulting instruction. FTP full-size writes have failed read-back; candidate not ready/installed/launched. Owner cannot install the replacement yet; no console fix/success is claimed.
+
+## PS4 React Hello World — 2026-10-26
+
+- Audited current source/main and all six open PR dependencies. New branch `codex/ps4-react-hello-world` starts from f517ab6 on PR #6; no merge, owner data or live Pages publication changed.
+- Implemented actual React 18/reconciler in pinned QuickJS-ng, a two-component mutation renderer, deterministic layout and bounded CPU rasterizer. Native Mac SDL and PS4 VideoOut adapters share the app, engine and renderer. No PS5 platform source or proprietary runtime modules copied.
+- Independent native graphics PS4 package validated locally before adding JS. Full React ELF/SELF/PKG cross-built and structurally checked, including extraction and exact executable/notice/icon/SFO comparison. Hardware launch remains unverified.
+- PASS: 3 layout tests, 5 build/error tests, real React state/reset/lifecycle/error/timeout and ASCII/framebuffer guards under ASan/UBSan. Mac smoke passed after repeated rebuild; actual OS window verified Enter counter update, Backspace reset and clean Escape shutdown.
+- Found and fixed a Mac rebuild code-signature failure: atomic executable replacement plus local ad-hoc bundle signing/verification. Root lint/types/32 tests/catalog/store/admin builds and public-artifact checks pass.
+- Documented architecture/license compatibility, exact build/preview commands, manual FTP read-back verification/installer/log workflow and honest physical-console acceptance steps. Final source and artifact identities are recorded in the handoff and generated receipt.
+
+Final local handoff: implementation `1a692a2cf888b2ba3092cfb81c7db7639ca7c9e1`
+pushed with matching remote HEAD; stacked PR https://github.com/dynrbni/voidplay-ps4/pull/7
+created/attached against #6. Final HelloWorld package is 6,619,136 bytes, SHA-256
+`07209b3b21be74718d7e01d636125805ede894d0550fa61ebe25085884d8fbdc`.
+Its receipt records that implementation commit and `framework_sources_dirty=false`.
+The uniquely named Downloads copy was independently hashed and matches. GitHub run
+40298691151 had no steps: check annotation confirms the account billing lock.
+No PS4 React installation/launch result has been received; hardware remains pending.
+
+Owner then enabled hardware access. FTP/Klog endpoints were reachable; a bounded
+read-only Klog capture collected 38,629 bytes with no HelloWorld startup marker.
+Unique staged upload reached the exact package size, but passive/active/REST-resume
+and buffered read-back failed (426/timeouts). Full destination integrity is unknown;
+the staged file is not marked ready, renamed or installed. Owner was asked to use
+the verified Downloads package via an installer-supported USB/manual transfer.
+
+## React 01.00 console loader failure and 01.01 correction
+
+Owner reports immediate launch failure after manual installation. Klog confirms
+RCTX00001 01.00 fails before main with 0xa0020102 / PRX_SCE_MODULE_LOAD_ERROR and
+explicit missing `/app0/sce_module` diagnostics. This establishes the failure
+stage for the React package; no fault location for the older VPLY test is inferred.
+
+01.01 builds the GPL OpenOrbis libc/FIOS bootstrap shims from small source files
+and pinned crtlib.o/import stubs, adds them to GP4, and validates required paths,
+dynamic PRX type, SELF structure and extracted bytes. No proprietary Sony module
+is copied. Three new regressions reject the original omission, wrong module type
+and wrong/missing bootstrap inputs. PASS: 8 Python + 3 layout tests, ASan/UBSan,
+SDL smoke, root 32 tests/lint/types/builds/public checks. Final candidate hash and
+fresh console acceptance follow; do not claim that correcting the omission proves
+the whole application now runs.
+
+Final 01.01 candidate: implementation `086ecdd1079d942e8308ae4ae3cd3be92c286659`
+pushed to the existing branch/PR #7; clean-source receipt, ELF/SELF/SFO/module type,
+package validation and exact extracted module bytes pass. Downloads copy is
+6,619,136 bytes, SHA-256
+`34d48ecee4ccf2f87d529f9e4600b130dc7f4d53192c5b7e6a06f3bf6f9047bc`.
+Owner is testing manually; no 01.01 console success has been observed yet.
+
+## Native Voidplay 01.02 — 2026-10-26
+
+- Owner reports the corrected React 01.01 runs smoothly on the actual console. Preserved its source-built bootstrap modules and display host; do not transfer that acceptance to the expanded 01.02 UI.
+- Added Voidplay [BETA] with the current white wordmark icon, Manrope atlas and reviewed local artwork. Discover/Browse/details read one published r9 JSON snapshot. Favorites/Library are session collections, Search uses a controller keyboard, Settings exposes actual build/catalog information. Downloads/trailer actions describe unavailable capabilities and never transfer/install files.
+- Shared input supports Cross confirm, Circle back, D-pad and left stick with deadzone/repeat and disconnect reset. Native renderer adds bounded baked images and absolute layout, with clipping and ASan/UBSan guard coverage.
+- Actual Mac native interaction verified routes, details, favorites/library, on-screen query/result opening, Settings information, Downloads empty state and Browse. Saved native screenshots; these are not PS4 captures.
+- Root lint/types/32 tests/catalog/store/admin builds and public-output checks passed. Framework state/layout/Python/native sanitizer and SDL smoke checks passed; final source-package identity follows in the handoff. No private owner workspace or live Pages publication changed.
+- Version 01.02 still needs manual installation and controller/display acceptance on PS4. Native online catalog refresh, storage, networking, download/install and video playback remain unavailable.
+
+Final native 01.02 implementation `06ce756b8a746f79ebd7b6207c27fbea0259db3d`
+is pushed on `codex/ps4-react-hello-world` / PR #7 (base #6 preserved).
+Build receipt records clean framework source at that commit. Final package is
+6,815,744 bytes, SHA-256
+`9414585567fd91b90644baec539fbf30003623c3777e818ea02f6d30edeadf9b`.
+Receipt/ELF/SELF/SFO/modules/icon and all extracted package bytes pass verification.
+Downloads copy `Voidplay-BETA-01.02-9414585567fd.pkg` was independently hashed and
+matches. No console transfer/install was performed for this build. Console
+acceptance remains pending. Source Actions run 40321159365 had no steps; the
+check annotation confirms account billing prevented the hosted job from starting.
+
+## Public web experience port 01.03 — 2026-10-26
+
+- Owner confirms native 01.02 runs well; preserved its bootstrap/title ID/VideoOut path and continued existing PR #7 without merging the stack.
+- Ported compact public header/utility icons, artwork hero and category shelves, query/category/sort/clear, full detail sections/metadata/sources/gallery/trailer/related, saved collections, Downloads test queue and Settings. No browser/DOM engine is embedded. Admin/private workspace stays separate.
+- Added fixed-file bounded preference persistence and visible session fallback, rounded/translucent native surfaces, alpha icons, small-font averaging, reduced-motion controls and a Triangle/F favorite shortcut.
+- Public Pages catalog/artwork sync validates through the shared schema and bounded DNS-pinned HTTPS fetches; actual public r9 sync succeeded. Console HTTP/video, measured capacity and real package transfer/install remain unavailable and explicitly labeled.
+- PASS: 12 framework layout/store/preference/queue tests, 8 Python guards, native ASan/UBSan renderer/input/preferences/lifecycle/error checks, SDL smoke. Root lint/types/32 tests/catalog/store/admin builds/public checks pass. PS4 cross-build/structural/extracted-byte checks passed after enabling the SDK's actual POSIX declaration for fileno.
+- Actual native Mac testing covered details/sources, browse keyboard/query/clear, Settings toggle, saved favorites/library and paused simulation. Restart restored preferences. Final native screenshots are recorded in docs/images. Final clean-source build/hash and GitHub handoff follow; 01.03 hardware acceptance is pending.
+
+Final 01.03 implementation `54807c9139fa0602c9ff36f3687593ce612d92e1` is pushed on
+`codex/ps4-react-hello-world`, existing PR #7. Clean-source package and extracted
+content validation pass. Artifact is 9,109,504 bytes, SHA-256
+`e760a40db755f73c1aab1421cd05d2c8d503f190171021ab6c4080fdb17cf4e7`.
+Downloads copy `Voidplay-BETA-01.03-e760a40db755.pkg` was independently hashed and
+matches. Hosted run 40327352804 had no steps; its annotation confirms account
+billing prevented startup. No 01.03 console transfer, installation or run occurred.
+
+## Native quality/performance correction 01.04
+
+Owner rejects 01.03 blur and rigidity. Found a 284x351 cover stretched into a hero,
+720p/RGB565 baking, repeated glyph sampling, full React redraws/JS fade steps and
+an extra 16ms sleep after rendering. Added native-size glyphs/wordmark, ARGB assets,
+bounded resize caching, retained scene/damage painting, native eased geometry/color
+and structural crossfades, O3 release builds, remaining-budget pacing and Retina
+preview. Tightened hero spacing/square posters. Source-sized poster fallback avoids
+fake HD; owner catalog/private data remain untouched.
+
+PASS: 12 JS + 11 Python tests, native ASan/UBSan lifecycle/image/input/preferences
+plus scene no-op/damage/subcanvas/motion tests, SDL smoke, root lint/types/32 tests,
+store/admin builds/public checks. Mac CPU 120-action mean 6.151 -> 1.421 ms, p95
+8.373 -> 2.704 ms; initialization 21.402 -> 38.263 ms. Raw report is tracked. These
+are not PS4 FPS. Cross-build passed; exact final clean-source handoff follows.
+
+
+## 01.04 final artifact handoff
+
+Implementation a01849609cce7261d15fded1fef641e113676079 pushed on
+`codex/ps4-react-hello-world`. Clean-framework-source PS4 build and extracted
+receipt/ELF/SELF/SFO/bootstrap validation pass. Final package is 25,034,752 bytes,
+SHA-256 `2ab27b21b97272ece7406ab7423c85c0b61d19f50a3b6c7e5524f684657d927c`.
+Hash-verified copy: `/Users/dyn/Downloads/Voidplay-BETA-01.04-2ab27b21b972.pkg`
+with adjacent checksum. Existing PR #7 updated, preserving its #6 base.
+GitHub source run 40339155937 could not start due to account billing lock.
+Physical 01.04 PS4 acceptance remains pending; no console FPS or launch success
+is inferred from local tests and Mac measurements.

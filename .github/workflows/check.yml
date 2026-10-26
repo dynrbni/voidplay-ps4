@@ -19,3 +19,7 @@ jobs:
       - run: npm run verify:public
       - run: ./native/diagnostic/test-host.sh
       - run: sh framework/voidplay-native/tools/test-portable.sh
+      - run: npm ci --prefix framework/ps4-react --ignore-scripts
+      - run: npm --prefix framework/ps4-react run bundle
+      - run: node --test framework/ps4-react/tests/layout.test.mjs framework/ps4-react/tests/store.test.mjs
+      - run: python3 -B -m unittest discover -s framework/ps4-react/tests -p 'test_*.py'

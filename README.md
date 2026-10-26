@@ -147,3 +147,23 @@ Commits, push to `https://github.com/dynrbni/voidplay-ps4.git`, then open a PR. 
 No Overdrive/Netflix source or assets were copied. Dependency/font notices are documented in
 [dependencies](docs/dependencies.md). No project-wide distribution license has been selected. Native diagnostic source has its own GPL-3.0-only license for the OpenOrbis-linked experiment.
 Actual PS4 execution must be proven before choosing a console renderer or exposing installation.
+
+
+## Native Voidplay [BETA]
+
+[PS4 React](framework/ps4-react/README.md) adds a separate React 18/QuickJS-ng
+runtime, View/Text/Image renderer, Mac SDL preview and PS4 VideoOut package
+target. Version 01.04 ports the public hero/shelves, catalog filters, complete
+detail sections, saved Favorites/Library, controller Search, Downloads and Settings.
+Cross confirms, Circle returns, D-pad and the
+left stick move focus. The package title/icon are Voidplay [BETA] / `voidplay.`.
+Catalog r9 is bundled offline; real download/install/video and console online
+refresh are not enabled. Downloads offers an explicitly labeled test simulation.
+Run `npm run react:catalog:sync` after publishing to update catalog/artwork before
+rebuilding. The owner reports 01.01/01.02 run on PS4 and rejected 01.03's quality.
+The 01.04 renderer/performance correction needs its own console test. Install
+pinned dependencies inside that directory.
+Root aliases: `react:doctor`, `react:test`, `react:smoke`, `react:preview`,
+`react:ps4:build`, `react:ps4:verify`. Set `OO_PS4_TOOLCHAIN` to the verified
+OpenOrbis release. Actual build, native preview and package checks are separate
+from console installation/launch; see its verification report for hardware status.
