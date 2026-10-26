@@ -19,6 +19,8 @@ JSValue native(JSContext* ctx,JSValueConst,int argc,JSValueConst* argv,int magic
     if(magic==5)return JS_NewFloat64(ctx,platform_now());
     if(magic==4){if(argc!=1)return JS_ThrowTypeError(ctx,"log needs one argument");const char* message=JS_ToCString(ctx,argv[0]);if(!message)return JS_EXCEPTION;platform_log("app",message);JS_FreeCString(ctx,message);return JS_UNDEFINED;}
     if(magic==3){state->owner->dirty=true;return JS_UNDEFINED;}
+    if(magic==8){char buffer[65537];int count=preferences_read(buffer,sizeof buffer);if(count<0)return JS_ThrowInternalError(ctx,"Cannot read Voidplay preferences");return JS_NewStringLen(ctx,buffer,count);}
+    if(magic==9){std::size_t length=0;if(argc!=1)return JS_ThrowTypeError(ctx,"save needs one JSON string");const char* value=JS_ToCStringLen(ctx,&length,argv[0]);if(!value)return JS_EXCEPTION;bool ok=preferences_write(value,length);JS_FreeCString(ctx,value);if(!ok)return JS_ThrowInternalError(ctx,"Cannot save Voidplay preferences; session changes remain usable");return JS_UNDEFINED;}
     if(++state->commands>2048)return JS_ThrowRangeError(ctx,"Frame command budget exceeded");
     if(magic==2){std::uint32_t color;if(argc!=1||JS_ToUint32(ctx,&color,argv[0])<0)return JS_ThrowTypeError(ctx,"clear needs a color");rect(state->canvas,0,0,state->canvas.w,state->canvas.h,color);state->commands=0;return JS_UNDEFINED;}
     if(magic==6){
@@ -27,6 +29,12 @@ JSValue native(JSContext* ctx,JSValueConst,int argc,JSValueConst* argv,int magic
         std::size_t length=0;const char* name=JS_ToCStringLen(ctx,&length,argv[4]);if(!name)return JS_EXCEPTION;
         bool ok=length<=80&&image(state->canvas,values[0],values[1],values[2],values[3],name);JS_FreeCString(ctx,name);
         return ok?JS_UNDEFINED:JS_ThrowTypeError(ctx,"Unknown image or invalid bounds");
+    }
+    if(magic==7){
+        if(argc!=6)return JS_ThrowTypeError(ctx,"box needs six arguments");int values[4]{},radius=0;std::uint32_t color;
+        for(int i=0;i<4;++i)if(JS_ToInt32(ctx,&values[i],argv[i])<0||values[i]<-8192||values[i]>8192)return JS_ThrowRangeError(ctx,"Box bounds invalid");
+        if(JS_ToUint32(ctx,&color,argv[4])<0||JS_ToInt32(ctx,&radius,argv[5])<0||radius<0||radius>512)return JS_ThrowRangeError(ctx,"Box radius invalid");
+        rounded_box(state->canvas,values[0],values[1],values[2],values[3],color,radius);return JS_UNDEFINED;
     }
     if(argc!=5)return JS_ThrowTypeError(ctx,"Drawing command needs five arguments");
     int a[4]={};std::uint32_t color=0;
@@ -60,8 +68,8 @@ bool Runtime::start(Canvas canvas,const char* source,std::size_t length){
     JS_SetMemoryLimit(s->rt,32*1024*1024);JS_SetMaxStackSize(s->rt,512*1024);JS_SetInterruptHandler(s->rt,interrupt,s);
     s->ctx=JS_NewContext(s->rt);if(!s->ctx){stop();return false;}JS_SetContextOpaque(s->ctx,s);
     JSValue global=JS_GetGlobalObject(s->ctx),api=JS_NewObject(s->ctx);
-    const char* names[]={"rect","text","clear","commit","log","now","image"};
-    for(int i=0;i<7;i++)JS_SetPropertyStr(s->ctx,api,names[i],JS_NewCFunctionMagic(s->ctx,native,names[i],5,JS_CFUNC_generic_magic,i));
+    const char* names[]={"rect","text","clear","commit","log","now","image","box","loadPreferences","savePreferences"};
+    for(int i=0;i<10;i++)JS_SetPropertyStr(s->ctx,api,names[i],JS_NewCFunctionMagic(s->ctx,native,names[i],5,JS_CFUNC_generic_magic,i));
     JS_SetPropertyStr(s->ctx,global,"__ps4Native",api);JS_FreeValue(s->ctx,global);
     s->deadline=platform_now()+2000;JS_UpdateStackTop(s->rt);
     JSValue result=JS_Eval(s->ctx,source,length,"hello-world.bundle.js",JS_EVAL_TYPE_GLOBAL);

@@ -32,6 +32,7 @@ const char* platform_input() {
             if(event.key.keysym.sym==SDLK_ESCAPE) return "exit";
             if(event.key.keysym.sym==SDLK_RETURN) return "confirm";
             if(event.key.keysym.sym==SDLK_BACKSPACE) return "back";
+            if(event.key.keysym.sym==SDLK_f) return "favorite";
             auto key=event.key.keysym.sym;
             if(key==SDLK_LEFT||key==SDLK_RIGHT||key==SDLK_UP||key==SDLK_DOWN)
                 return directions.update(key==SDLK_LEFT,key==SDLK_RIGHT,key==SDLK_UP,key==SDLK_DOWN,0,0,platform_now());
@@ -42,6 +43,7 @@ const char* platform_input() {
         if(event.type==SDL_CONTROLLERBUTTONDOWN) {
             if(event.cbutton.button==SDL_CONTROLLER_BUTTON_A) return "confirm";
             if(event.cbutton.button==SDL_CONTROLLER_BUTTON_B) return "back";
+            if(event.cbutton.button==SDL_CONTROLLER_BUTTON_Y) return "favorite";
             auto key=event.cbutton.button;
             if(key>=SDL_CONTROLLER_BUTTON_DPAD_UP&&key<=SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
                 return directions.update(key==SDL_CONTROLLER_BUTTON_DPAD_LEFT,key==SDL_CONTROLLER_BUTTON_DPAD_RIGHT,

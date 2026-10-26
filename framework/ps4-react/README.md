@@ -1,20 +1,43 @@
 # Voidplay [BETA] — PS4 React
 
 A standalone native React/QuickJS application with an SDL macOS preview and
-OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.02**:
-Discover, Browse, details, Favorites, Library, on-screen search and Settings.
+OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.03**:
+the public web store's hero/shelves, filtered catalog, complete detail sections,
+saved Favorites/Library, controller search, Downloads and Settings.
 It uses the white `voidplay.` wordmark and bundled Manrope/artwork.
 
-The owner reports that Hello World **01.01 runs smoothly on the actual PS4**.
-Version 01.02 preserves its source-built bootstrap modules and VideoOut path,
-but the larger UI requires a new console run. Local checks cannot promise zero
+The owner reports that **01.01 and Voidplay 01.02 run on the actual PS4**.
+Version 01.03 preserves their source-built bootstrap modules and VideoOut path,
+but the expanded UI requires a new console run. Local checks cannot promise zero
 runtime errors or firmware-wide compatibility.
 
-This first native store shell bundles the published catalog revision 9. It does
-not fetch updates online yet. Favorites and Library last for the current session.
-Downloads, installation, console storage queries and YouTube playback are not
-implemented; their screens explain the current state without simulated transfers.
+This native store bundles the published catalog revision 9. It does not fetch
+updates online yet. Favorites, Library and Reduce motion use a bounded native
+preferences file (Mac Application Support/Voidplay; PS4 `/data/voidplay`). Failed
+saves show a banner and retain session changes. PS4 file persistence needs console
+validation. Real downloads, installation, console capacity queries and YouTube
+playback are not implemented. Downloads has an explicitly opt-in simulation with
+pause/resume/cancel/retry/clear; its numbers are not network measurements.
 The web/admin catalog application remains independent and unchanged.
+
+## Updating the native catalog
+
+After publishing entries from the owner studio, run from the repository root:
+
+```sh
+npm run react:catalog:sync
+export OO_PS4_TOOLCHAIN="$PWD/artifacts/OpenOrbis/PS4Toolchain"
+npm run react:ps4:build
+npm run react:ps4:verify
+```
+
+Sync reads only the public Pages manifest, validates it through the shared schema,
+and downloads bounded direct image resources over public HTTPS with checked/pinned
+DNS. No GitHub credential or owner workspace is copied. Up to 24 artwork sets are
+bundled; other listings use text fallbacks. Missing images are reported, and the
+baker rejects more than 64 MiB of raw artwork. Hero art falls back to the cover.
+Screenshots keep their catalog ordering even when an image is unavailable. Native
+assets are local at build/run time; no console network integration is implied.
 
 ## Build on this Mac
 
@@ -70,6 +93,11 @@ Enter / controller Cross opens or confirms. Backspace / Circle returns.
 D-pad and the **left analog stick** move focus; held directions repeat after a
 350 ms delay at 140 ms intervals, with an analog deadzone. Up from the first
 content item selects the header. Circle never exits the console application.
+Triangle toggles a focused listing favorite (Mac: F). In details, Up selects the
+section tabs; Left/Right chooses Overview, About, Information, Sources,
+Screenshots, Trailer or Related; Down enters the selected section. Up/Down reads
+long metadata, and Left/Right changes screenshots. Browse/Search have query,
+category, sort and clear controls. X opens the on-screen query keyboard.
 Escape/window-close exits on Mac; use the PS menu on PS4.
 
 Application entry: `apps/voidplay/index.jsx`; metadata: `apps/voidplay/app.json`;

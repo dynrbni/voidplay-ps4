@@ -196,7 +196,7 @@ def compile_target(target, native_only=False, sanitize=False):
     flags += ['-O1','-g','-fno-omit-frame-pointer','-I',ROOT/'runtime','-I',BUILD]
     if sanitize: flags+=['-fsanitize=address,undefined']
     objects=[]
-    project=[ROOT/'renderer/canvas.cpp',ROOT/'renderer/media.cpp',ROOT/'runtime/main.cpp',ROOT/f'platform/{"ps4" if target=="ps4" else "desktop"}/host.cpp']
+    project=[ROOT/'renderer/canvas.cpp',ROOT/'renderer/media.cpp',ROOT/'runtime/preferences.cpp',ROOT/'runtime/main.cpp',ROOT/f'platform/{"ps4" if target=="ps4" else "desktop"}/host.cpp']
     if native_only: flags+=['-DPS4_REACT_NATIVE_ONLY']
     else:
         qjs=quickjs();flags+=['-isystem',qjs];project+=[ROOT/'runtime/quickjs.cpp']

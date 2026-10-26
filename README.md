@@ -153,12 +153,15 @@ Actual PS4 execution must be proven before choosing a console renderer or exposi
 
 [PS4 React](framework/ps4-react/README.md) adds a separate React 18/QuickJS-ng
 runtime, View/Text/Image renderer, Mac SDL preview and PS4 VideoOut package
-target. Version 01.02 opens Discover/Browse/details, session Favorites/Library,
-on-screen Search and Settings. Cross confirms, Circle returns, D-pad and the
+target. Version 01.03 ports the public hero/shelves, catalog filters, complete
+detail sections, saved Favorites/Library, controller Search, Downloads and Settings.
+Cross confirms, Circle returns, D-pad and the
 left stick move focus. The package title/icon are Voidplay [BETA] / `voidplay.`.
-Catalog r9 is bundled offline; download/install/video and online refresh are not
-enabled. The owner reports Hello World 01.01 runs on PS4; expanded 01.02 still
-needs its own console test. Install pinned dependencies inside that directory.
+Catalog r9 is bundled offline; real download/install/video and console online
+refresh are not enabled. Downloads offers an explicitly labeled test simulation.
+Run `npm run react:catalog:sync` after publishing to update catalog/artwork before
+rebuilding. The owner reports 01.01 and 01.02 run on PS4; expanded 01.03 needs its
+own console test. Install pinned dependencies inside that directory.
 Root aliases: `react:doctor`, `react:test`, `react:smoke`, `react:preview`,
 `react:ps4:build`, `react:ps4:verify`. Set `OO_PS4_TOOLCHAIN` to the verified
 OpenOrbis release. Actual build, native preview and package checks are separate

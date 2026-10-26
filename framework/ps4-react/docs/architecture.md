@@ -122,3 +122,41 @@ and records build input/output hashes. This is local structural verification,
 not a Sony signature, installation test or assurance of firmware 12.00 support.
 Package timestamps can change the final hash across rebuilds. Identify a hardware
 run by the report's exact SHA-256, title ID and version.
+
+## Public web experience port, 01.03
+
+The public React DOM/CSS store was audited page by page. Its visual identity and
+interaction state are ported to native components in `apps/voidplay/ui.jsx` and
+`screens.jsx`; the owner dashboard stays on Mac/web. A controller focus state
+replaces browser scrolling/tab order. A compact four-route header and utility
+icons, artwork hero, six-item shelves/grids, all detail sections and full optional
+metadata use the same published JSON. No DOM/WebView, iframe or CSS engine is
+embedded. See the [parity plan](../../../docs/superpowers/plans/2026-10-26-native-web-parity.md).
+
+The renderer adds rounded ARGB surfaces, translucent header/panels, a visible
+focus ring, RGBA icon assets and averaged small-font sampling. Native bridge
+arguments, radii and coordinates stay bounded. Local image tables have a 64 MiB
+raw budget. Manrope, white/black neutrals and the existing wordmark follow the web
+store. Hero shading protects text contrast; only the focused card gets a glow.
+A short artwork transition and focus lift are disabled by Reduce motion.
+
+A fixed-file preferences bridge exposes load/save JSON strings, not arbitrary
+paths or file descriptors. It limits content to 64 KiB, writes a temporary file,
+flushes/fsyncs and renames after success. JS validates collection IDs and version
+before hydration. Invalid files are preserved and enter session mode. Read/write
+failures are visible without killing the UI. The path is `/data/voidplay` on PS4
+and Application Support/Voidplay on Mac; this is preferences storage, never an
+internal disk capacity measurement. Console file permissions and persistence need
+physical acceptance. The PS4 SDK declares fileno behind its POSIX feature macro;
+the implementation enables that declaration rather than inventing an API.
+
+The build-time catalog sync uses the existing shared manifest schema and public
+address checks, pins checked DNS answers for HTTPS image requests, bounds bytes,
+redirects and timeouts, and writes content-addressed local artwork. It cannot
+publish the private owner workspace. Console runtime catalog refresh is still
+unimplemented. Source links/trailer URLs remain metadata with explicit missing
+service states. No download, package install or automatic cleanup bridge exists.
+
+`transfers.mjs` is a separate, explicitly opt-in simulation for Downloads UI tests.
+It never invokes a file/network/install API, never adds Library entries, and is
+not persisted. Its fake sizes/speeds/progress are labeled DEMO on screen.

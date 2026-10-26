@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <climits>
 #include <cstring>
+#include <unistd.h>
 namespace ps4react {
 void platform_log(const char* stage,const char* message){std::fprintf(stderr,"[test][%s] %s\n",stage,message);}
 double platform_now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
@@ -27,9 +28,17 @@ int main(){
  assert(!directions.update(false,false,false,false,-100,0,400));
  assert(!std::strcmp(directions.update(false,false,true,false,-100,0,410),"up"));
  directions.reset();assert(!std::strcmp(directions.update(false,true,false,false,0,0,420),"right"));
- assert(image(small,-3,-3,8,8,"cover"));
+ assert(image(small,-3,-3,8,8,"backdrop"));
  assert(!image(small,0,0,4,4,"unknown"));
  assert(guard[0]==0x12345678&&guard[19]==0x12345678);
+ rect(small,0,0,4,4,0xff000000);rounded_box(small,-2,-2,8,8,0x80ffffff,3);
+ assert(guard[0]==0x12345678&&guard[19]==0x12345678);assert((small.pixels[5]&255)==128);
+ assert(image(small,-2,-2,8,8,"icon-heart"));
+ char directory[]="/tmp/voidplay-preferences-XXXXXX";assert(mkdtemp(directory));assert(setenv("VOIDPLAY_STATE_DIR",directory,1)==0);
+ char saved[65537];assert(preferences_read(saved,sizeof saved)==0);
+ const char* preferences="{\"version\":1,\"favorites\":[],\"library\":[],\"reduceMotion\":true}";
+ assert(preferences_write(preferences,std::strlen(preferences)));assert(preferences_read(saved,sizeof saved)==static_cast<int>(std::strlen(preferences)));assert(!std::strcmp(saved,preferences));
+ assert(!preferences_write(preferences,65537));assert(!preferences_write(nullptr,0));
  std::uint32_t glyph_pixels[7*7]{};Canvas glyph_frame{glyph_pixels,7,7,7,49};
  for(int c=33;c<=126;++c){
   rect(glyph_frame,0,0,7,7,0);char value[]={static_cast<char>(c),0};text(glyph_frame,0,0,value,7,0xffffffff);
@@ -44,5 +53,6 @@ int main(){
  const char* syntax="function broken(";assert(!runtime.start(f,syntax,std::strlen(syntax)));runtime.stop();
  const char* loop="while(true){}";assert(!runtime.start(f,loop,std::strlen(loop)));runtime.stop();
  const char* bad="__ps4Native.text(0,0,'text',999,0)";assert(!runtime.start(f,bad,std::strlen(bad)));runtime.stop();
- std::free(f.pixels);std::puts("Runtime PASS: real React registration/update/reset, repeated lifecycle, errors, interrupt budget and canvas guards.");
+ char file[256];std::snprintf(file,sizeof file,"%s/preferences.json",directory);assert(unlink(file)==0);assert(rmdir(directory)==0);
+ std::free(f.pixels);std::puts("Runtime PASS: React navigation/lifecycle/errors, direction repeat, rounded alpha/image bounds and atomic preferences round trip.");
 }

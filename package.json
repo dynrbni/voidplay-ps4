@@ -35,6 +35,7 @@
     "pages:build": "node scripts/pages.ts build",
     "pages:deploy": "node scripts/pages.ts deploy",
     "test:owner": "node --test server/*.test.ts",
+    "react:catalog:sync": "node scripts/sync-native-catalog.ts",
     "react:doctor": "npm --prefix framework/ps4-react run doctor",
     "react:test": "npm --prefix framework/ps4-react test",
     "react:preview": "npm --prefix framework/ps4-react run preview",

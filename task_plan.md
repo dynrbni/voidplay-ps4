@@ -120,3 +120,28 @@ interaction and package contents; build and deliver a distinct 01.02 package.
 - [x] Local state/layout/build/sanitizer tests and actual native Mac interaction.
 - [x] Final clean-source PKG and hash-verified Downloads handoff; implementation 06ce756 pushed to existing PR #7.
 - [ ] Separate 01.02 physical-console acceptance by owner (not a local-build claim).
+
+## Native web experience migration 01.03, 2026-10-26
+
+Owner confirms native 01.02 works. Continue on the existing clean PR #7 branch,
+preserving the proven bootstrap. Port the public web experience (not the owner
+admin) to native View/Text/Image primitives. Keep platform operations explicit.
+
+1. Audit web pages and current native gaps; record the parity matrix and design.
+2. Add bounded rounded/alpha surfaces and native icon assets matching the web.
+3. Port hero/shelves, filters/sort/search, full detail metadata/sources/gallery,
+   related listings, favorites/library, Downloads and Settings/controller flows.
+4. Persist collections/preferences through one bounded owned-file bridge with
+   visible errors; no automatic installation or invented network/storage values.
+5. Verify reducer/state/renderer/storage tests, native Mac interaction, root checks
+   and PS4 package contents. Commit/push and hand off exact 01.03 PKG/hash.
+
+Online refresh and YouTube playback require native service integrations; report
+actual support and remaining gaps, never imply that CSS/DOM run in the PS4 host.
+
+01.03 audit and implementation complete; public view parity and actual service
+limits are documented in docs/superpowers/plans/2026-10-26-native-web-parity.md.
+Local reducer/layout/build/sanitizer/smoke/root checks and actual Mac interactions
+pass, including restart persistence. PS4 cross-build passes. Remaining handoff:
+commit/push, build from clean framework source, verify/copy exact 01.03 PKG.
+Physical console acceptance is a separate owner test, not a local build claim.

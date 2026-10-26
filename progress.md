@@ -149,3 +149,12 @@ Downloads copy `Voidplay-BETA-01.02-9414585567fd.pkg` was independently hashed a
 matches. No console transfer/install was performed for this build. Console
 acceptance remains pending. Source Actions run 40321159365 had no steps; the
 check annotation confirms account billing prevented the hosted job from starting.
+
+## Public web experience port 01.03 — 2026-10-26
+
+- Owner confirms native 01.02 runs well; preserved its bootstrap/title ID/VideoOut path and continued existing PR #7 without merging the stack.
+- Ported compact public header/utility icons, artwork hero and category shelves, query/category/sort/clear, full detail sections/metadata/sources/gallery/trailer/related, saved collections, Downloads test queue and Settings. No browser/DOM engine is embedded. Admin/private workspace stays separate.
+- Added fixed-file bounded preference persistence and visible session fallback, rounded/translucent native surfaces, alpha icons, small-font averaging, reduced-motion controls and a Triangle/F favorite shortcut.
+- Public Pages catalog/artwork sync validates through the shared schema and bounded DNS-pinned HTTPS fetches; actual public r9 sync succeeded. Console HTTP/video, measured capacity and real package transfer/install remain unavailable and explicitly labeled.
+- PASS: 12 framework layout/store/preference/queue tests, 8 Python guards, native ASan/UBSan renderer/input/preferences/lifecycle/error checks, SDL smoke. Root lint/types/32 tests/catalog/store/admin builds/public checks pass. PS4 cross-build/structural/extracted-byte checks passed after enabling the SDK's actual POSIX declaration for fileno.
+- Actual native Mac testing covered details/sources, browse keyboard/query/clear, Settings toggle, saved favorites/library and paused simulation. Restart restored preferences. Final native screenshots are recorded in docs/images. Final clean-source build/hash and GitHub handoff follow; 01.03 hardware acceptance is pending.

@@ -108,3 +108,10 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - The native renderer can show local RGB565 artwork and a baked Manrope ASCII atlas without a browser, font runtime, proprietary PRX or new graphics dependency. Asset preparation is offline; original source/attribution and OFL notice are tracked.
 - Shared public snapshot r9 feeds every native catalog view. No private authoring workspace or duplicate component-level catalog is bundled. Session collections and metadata do not imply installed packages or verified compatibility.
 - Native directions use SDK left-stick fields and the same bounded D-pad/analog repeat filter exercised under sanitizers. Absolute layout is independent of flow siblings, and Discover pagination keeps its second page above the footer.
+
+## Native web experience 01.03
+
+- Owner reports 01.02 runs well. Public web audit confirms real entries already disable console transfer and the only web queue implementation is a simulation; do not fabricate native downloads or installation.
+- Native port adds web-style compact header/utility icons, rounded/translucent surfaces, hero/shelves, filter/sort/clear/search, full detail metadata/source/gallery/trailer/related sections and persistent collections/preferences. Admin remains separate.
+- Native preferences use only a fixed owned file with a 64 KiB limit, temporary write/flush/fsync/rename and visible failure/session fallback. OpenOrbis exposes fileno only behind its POSIX feature macro; declaring that feature resolves the cross-build error.
+- Build-time public catalog sync uses shared validation and checked/pinned public DNS for bounded image requests. Console HTTP/video/transfers/install/storage-capacity integrations remain unavailable and labeled. No owner data or live publication was changed.

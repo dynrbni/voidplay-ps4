@@ -27,3 +27,9 @@ test('absolute artwork uses baked IDs and does not displace flow siblings',()=>{
  assert.deepEqual(native.commands.filter(c=>c[0]==='text').map(c=>c.slice(1,3)),[[0,0],[0,36]]);
  assert.throws(()=>layout({children:[{type:'Image',props:{source:'https://example.com/image.png',style:{width:10,height:10}},children:[]}]},native),/asset ID/);
 });
+test('rounded translucent surfaces retain border geometry and RGBA alpha',()=>{
+ const native=canvas();native.box=(...args)=>native.commands.push(['box',...args]);
+ layout({children:[{type:'View',props:{style:{width:100,height:60,borderRadius:20,borderWidth:2,borderColor:'#FFFFFF',backgroundColor:'#05050580'}},children:[]}]},native);
+ assert.deepEqual(native.commands.filter(c=>c[0]==='box'),[['box',0,0,100,60,0xffffffff,20],['box',2,2,96,56,0x80050505,18]]);
+ assert.equal(color('#FFFFFF00'),0x00ffffff);
+});

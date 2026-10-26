@@ -56,6 +56,7 @@ const char* platform_input(){
         static_cast<int>(data.leftStick.x)-128,static_cast<int>(data.leftStick.y)-128,platform_now());
     if(pressed&ORBIS_PAD_BUTTON_CROSS)return "confirm";
     if(pressed&ORBIS_PAD_BUTTON_CIRCLE)return "back";
+    if(pressed&ORBIS_PAD_BUTTON_TRIANGLE)return "favorite";
     return move;
 }
 void platform_close(){

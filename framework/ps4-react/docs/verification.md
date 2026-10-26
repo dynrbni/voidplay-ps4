@@ -171,3 +171,50 @@ renderer is a fixed 1080p ASCII subset. The next console acceptance is to instal
 the exact 01.02 artifact, observe Discover for 30 seconds, navigate each route
 with D-pad/left stick, confirm with Cross and return with Circle. No agent-side
 01.02 installation or console test has been performed.
+
+## Native web experience 01.03
+
+The owner subsequently confirms native 01.02 runs well on the actual PS4. This
+owner-reported result qualifies that previous artifact, not the expanded 01.03.
+
+The public web store's compact header, hero/category shelves, query/category/sort
+filters, separate saved collections, full detail tabs/metadata/source fields,
+screenshot/trailer states, related listings, Downloads and Settings now have
+native implementations. Preferences and reduced motion have a bounded owned-file
+bridge. There is an explicit opt-in transfer simulation; it does not perform real
+network/file/package operations. Gallery images must be included by catalog sync;
+this current r9 entry has no screenshots or trailer, so those empty states are
+what can be exercised with the owner's actual catalog.
+
+Local verification includes 5 layout tests, 7 store/persistence/queue state tests,
+8 Python build guards, native ASan/UBSan direction/image/rounded-alpha bounds,
+atomic preferences read/write and React lifecycle/error/timeout checks, plus SDL
+smoke. Root lint/types/32 tests/catalog/store/admin builds and public checks pass.
+The first integration rejected negative focus-ring coordinates; signed offsets
+are now bounded separately from positive dimensions. The first PS4 compilation
+found fileno hidden by the SDK's POSIX declaration guard; the source enables the
+actual declared interface. A subsequent cross-build and package extraction pass.
+
+Actual Mac UI inspection verifies full detail metadata/sources, query keyboard,
+Settings reduce motion, saved favorites/library JSON and paused simulation queue.
+A clean-source final artifact and exact checksum are recorded in the generated
+receipt and handoff. New PS4 display/input/performance/preferences behavior is
+**unverified** until the owner installs and tests the exact 01.03 package.
+
+Remaining service gaps: native catalog HTTP refresh, native YouTube playback,
+real downloads/install/cleanup, measured console capacity and Unicode shaping.
+The public view port is not a claim of those integrations or exact DOM/CSS parity.
+
+The latest native Mac preview was restarted after saving preferences: the filled
+favorite and Reduce motion preference survived. These final captures are native
+Mac windows, not PS4 screenshots or browser mockups:
+
+![Native 01.03 home](images/voidplay-native-0103-home.png)
+![Native 01.03 filtered catalog](images/voidplay-native-0103-catalog.png)
+![Native 01.03 detail information](images/voidplay-native-0103-details.png)
+
+UI delivery audit: focus/navigation PASS (state tests and actual keyboard input);
+content/empty states PASS (published r9 plus filtered empty catalog); visual
+identity PASS (web Manrope/wordmark/neutrals and native captures); interaction
+PASS for the implemented controls (filters, keyboard, collections, metadata and
+simulation); capability labels PASS (no mock speed/storage represented as real).
