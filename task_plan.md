@@ -118,5 +118,5 @@ interaction and package contents; build and deliver a distinct 01.02 package.
 - [x] Native Voidplay screens, shared catalog/artwork/font and package branding.
 - [x] Controller routing, session collections, search and honest unavailable states.
 - [x] Local state/layout/build/sanitizer tests and actual native Mac interaction.
-- [ ] Final clean-source PKG, hash-verified Downloads handoff and GitHub push.
+- [x] Final clean-source PKG and hash-verified Downloads handoff; implementation 06ce756 pushed to existing PR #7.
 - [ ] Separate 01.02 physical-console acceptance by owner (not a local-build claim).

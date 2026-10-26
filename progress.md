@@ -138,3 +138,14 @@ Owner is testing manually; no 01.01 console success has been observed yet.
 - Actual Mac native interaction verified routes, details, favorites/library, on-screen query/result opening, Settings information, Downloads empty state and Browse. Saved native screenshots; these are not PS4 captures.
 - Root lint/types/32 tests/catalog/store/admin builds and public-output checks passed. Framework state/layout/Python/native sanitizer and SDL smoke checks passed; final source-package identity follows in the handoff. No private owner workspace or live Pages publication changed.
 - Version 01.02 still needs manual installation and controller/display acceptance on PS4. Native online catalog refresh, storage, networking, download/install and video playback remain unavailable.
+
+Final native 01.02 implementation `06ce756b8a746f79ebd7b6207c27fbea0259db3d`
+is pushed on `codex/ps4-react-hello-world` / PR #7 (base #6 preserved).
+Build receipt records clean framework source at that commit. Final package is
+6,815,744 bytes, SHA-256
+`9414585567fd91b90644baec539fbf30003623c3777e818ea02f6d30edeadf9b`.
+Receipt/ELF/SELF/SFO/modules/icon and all extracted package bytes pass verification.
+Downloads copy `Voidplay-BETA-01.02-9414585567fd.pkg` was independently hashed and
+matches. No console transfer/install was performed for this build. Console
+acceptance remains pending. Source Actions run 40321159365 had no steps; the
+check annotation confirms account billing prevented the hosted job from starting.
