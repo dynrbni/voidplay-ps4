@@ -122,3 +122,10 @@ and wrong/missing bootstrap inputs. PASS: 8 Python + 3 layout tests, ASan/UBSan,
 SDL smoke, root 32 tests/lint/types/builds/public checks. Final candidate hash and
 fresh console acceptance follow; do not claim that correcting the omission proves
 the whole application now runs.
+
+Final 01.01 candidate: implementation `086ecdd1079d942e8308ae4ae3cd3be92c286659`
+pushed to the existing branch/PR #7; clean-source receipt, ELF/SELF/SFO/module type,
+package validation and exact extracted module bytes pass. Downloads copy is
+6,619,136 bytes, SHA-256
+`34d48ecee4ccf2f87d529f9e4600b130dc7f4d53192c5b7e6a06f3bf6f9047bc`.
+Owner is testing manually; no 01.01 console success has been observed yet.
