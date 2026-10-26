@@ -88,6 +88,17 @@ FTP writes failed read-back, so no such copy is accepted as verified. The owner
 previously could not install the replacement Boot Test; it is a different artifact.
 No new PS4 React hardware result has been received.
 
+The owner subsequently enabled FTP/Klog for this package. Both endpoints were
+reachable and the read-only Klog capture received 38,629 bytes, with no PS4 React
+startup marker. FTP accepted all 6,619,136 bytes under a unique `.uploading` name.
+Full read-back failed with 426/timeouts in passive, active, advertised REST resume
+and an enlarged client receive-buffer attempt. A resumed prefix matched the local
+source byte-for-byte, but a full destination SHA-256 was not obtained. The remote
+copy remains `ready=false`, was not renamed to `.pkg` and was not installed or
+launched by the agent. Raw logs/transfer receipts stay in the ignored local build
+directory. The verified Downloads artifact can instead be copied using a USB
+device already supported by the owner's installer, or a successful manual transfer.
+
 The next smallest milestone is to install the exact HelloWorld hash on the actual
 console, capture startup logs, verify both headings for at least 30 seconds,
 test Cross/Circle and close from the PS menu. If startup fails, preserve the

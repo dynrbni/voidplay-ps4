@@ -99,3 +99,10 @@ Its receipt records that implementation commit and `framework_sources_dirty=fals
 The uniquely named Downloads copy was independently hashed and matches. GitHub run
 40298691151 had no steps: check annotation confirms the account billing lock.
 No PS4 React installation/launch result has been received; hardware remains pending.
+
+Owner then enabled hardware access. FTP/Klog endpoints were reachable; a bounded
+read-only Klog capture collected 38,629 bytes with no HelloWorld startup marker.
+Unique staged upload reached the exact package size, but passive/active/REST-resume
+and buffered read-back failed (426/timeouts). Full destination integrity is unknown;
+the staged file is not marked ready, renamed or installed. Owner was asked to use
+the verified Downloads package via an installer-supported USB/manual transfer.
