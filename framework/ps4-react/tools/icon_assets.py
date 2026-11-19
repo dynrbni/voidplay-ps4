@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw
 
 def icons():
     output=[]
-    for name in ['heart','heart-filled','search','settings','download','info','back','play','pause','close','library','check']:
+    for name in ['heart','heart-filled','search','settings','download','info','back','right','left','play','pause','close','retry','library','check','plus','grid']:
         image=Image.new('RGBA',(96,96));draw=ImageDraw.Draw(image)
         def line(points):draw.line([(x*4,y*4) for x,y in points],fill='white',width=7,joint='curve')
         if name.startswith('heart'):
@@ -27,6 +27,15 @@ def icons():
         elif name=='pause':line([(8,5),(8,19)]);line([(16,5),(16,19)])
         elif name=='close':line([(6,6),(18,18)]);line([(6,18),(18,6)])
         elif name=='check':line([(5,12),(9,16),(20,5)])
+        elif name=='right':line([(9,5),(16,12),(9,19)])
+        elif name=='left':line([(15,5),(8,12),(15,19)])
+        elif name=='plus':line([(12,5),(12,19)]);line([(5,12),(19,12)])
+        elif name=='retry':
+            arc=[(12+8.5*math.cos(math.radians(a)),12+8.5*math.sin(math.radians(a))) for a in range(205,606,8)]
+            draw.line([(x*4,y*4) for x,y in arc],fill='white',width=6,joint='curve')
+            line([(4,4),(4,11)]);line([(4,4),(11,4)])
+        elif name=='grid':
+            for x,y in [(3,3),(14,3),(3,14),(14,14)]:draw.rectangle((x*4,y*4,(x+7)*4,(y+7)*4),outline='white',width=6)
         elif name=='library':line([(4,4),(4,20),(9,20),(9,4),(4,4)]);line([(13,5),(18,4),(21,19),(16,20),(13,5)])
         output.append(('icon-'+name,image))
     return output

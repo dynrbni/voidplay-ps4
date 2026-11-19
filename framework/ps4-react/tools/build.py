@@ -177,7 +177,7 @@ def bundle():
 
 
 def sources():
-    return sorted([*ROOT.glob('runtime/*.cpp'), *ROOT.glob('runtime/*.hpp'), *ROOT.glob('renderer/*.cpp'), *ROOT.glob('platform/**/*.cpp'), *ROOT.glob('platform/**/*.c'), *ROOT.glob('platform/**/*.h'), *ROOT.glob('packages/**/*.mjs'), *ROOT.glob('apps/**/*.*'), *ROOT.glob('tools/*.*'), ROOT/'dependencies.lock.json', ROOT/'package-lock.json'])
+    return sorted([*ROOT.glob('runtime/*.cpp'), *ROOT.glob('runtime/*.hpp'), *ROOT.glob('renderer/*.cpp'), *ROOT.glob('platform/**/*.cpp'), *ROOT.glob('platform/**/*.c'), *ROOT.glob('platform/**/*.h'), *ROOT.glob('packages/**/*.mjs'), *ROOT.glob('packages/**/*.json'), *ROOT.glob('apps/**/*.*'), *ROOT.glob('tools/*.*'), ROOT/'dependencies.lock.json', ROOT/'package-lock.json'])
 
 
 def compile_target(target, native_only=False, sanitize=False):
@@ -342,6 +342,11 @@ def tests():
     print(run(['node','--test',ROOT/'tests/layout.test.mjs',ROOT/'tests/store.test.mjs']))
     print(run([sys.executable,'-B','-m','unittest','discover','-s',ROOT/'tests','-p','test_*.py']))
     compile_target('desktop',sanitize=True)
+    for name,path in [('overflow',ROOT/'tests/fixtures/app.json'),('counter',ROOT/'apps/hello-world/app.json')]:
+        print(run(['node',ROOT/'tools/bundle.mjs',path]))
+        data=(BUILD/'app.js').read_bytes()
+        (BUILD/(name+'_bundle.h')).write_text('static const unsigned char '+name+'_bundle[] = {'+','.join(str(b) for b in data)+',0};\nstatic const unsigned long '+name+'_bundle_length = '+str(len(data))+';\n')
+    bundle()
     directory=BUILD/'desktop-asan';binary=directory/'runtime-test'
     cc=tool('clang++');qjs=quickjs()
     objects=[p for p in directory.glob('*.o') if p.name not in ['runtime-main.cpp.o','desktop-host.cpp.o']]
