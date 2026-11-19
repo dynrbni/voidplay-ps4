@@ -5,62 +5,43 @@
   "previewMode": false,
   "entries": [
     {
-      "id": "my-home",
-      "title": "Grand Theft Auto V PS4",
-      "summary": "test",
-      "description": "test",
+      "id": "orbit-workshop",
+      "title": "Orbit Workshop",
+      "summary": "A fictional homebrew puzzle-game concept used to exercise the native store UI.",
+      "description": "Orbit Workshop is a fictional application entry bundled with the PS4React reference app. It exists so the native store can render a complete list, detail, collection and search flow without shipping or claiming any real game package. No executable, download source or console compatibility is implied.",
       "category": "Games",
-      "author": "Rockstar Games",
-      "version": "1.57",
+      "author": "Voidplay Labs",
+      "version": "1.0.0",
       "genres": [
-        "Action",
-        "Adventure",
-        "Open World"
+        "Puzzle",
+        "Exploration"
       ],
-      "releaseDate": "2013-09-17",
-      "coverUrl": "https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail_unscaled",
+      "releaseDate": "2026-10-26",
+      "coverUrl": "",
       "heroUrl": "",
       "screenshots": [],
       "languages": {
         "interface": [
-          "test"
+          "English"
         ],
-        "audio": [
-          "test"
-        ],
-        "subtitles": [
-          "test"
-        ]
+        "audio": [],
+        "subtitles": []
       },
-      "fileSize": 999,
-      "fileFormat": "PKG",
+      "fileSize": 0,
+      "fileFormat": "",
       "compatibility": {
-        "status": "verified",
-        "firmwares": [
-          "12.00"
-        ],
-        "notes": "test",
-        "evidence": "test"
+        "status": "unverified",
+        "firmwares": [],
+        "notes": "Fictional catalog fixture for the PS4React native UI. No package has been built or tested on a console.",
+        "evidence": ""
       },
-      "releaseNotes": "test",
-      "license": "test",
+      "releaseNotes": "Initial fictional fixture for the 01.05 web/native parity work.",
+      "license": "Demo metadata only. No application package is distributed.",
       "redistribution": {
-        "authorized": true,
-        "statement": "test"
+        "authorized": false,
+        "statement": "Fictional fixture. No game or application package is distributed or installable."
       },
-      "sources": [
-        {
-          "id": "mirror-1",
-          "provider": "bokepsin",
-          "url": "https://google.com",
-          "expectedSize": 999,
-          "sha256": "8a513a39e2e5195e76f24bcc9d30b3ffb6df367de1c8e6be72fe2f1569aafd69",
-          "authentication": {
-            "required": false,
-            "instructions": ""
-          }
-        }
-      ]
+      "sources": []
     }
   ]
 }

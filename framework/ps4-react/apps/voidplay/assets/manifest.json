@@ -5,13 +5,13 @@
     "license": "SIL Open Font License 1.1; see licenses/Manrope-OFL.txt"
   },
   "covers": {
-    "my-home": {
-      "asset": "entry-87487a524788c0fd",
-      "file": "catalog/6b4c311887d79f1f1752c5cd.img",
-      "heroFile": "catalog/6b4c311887d79f1f1752c5cd.img",
+    "orbit-workshop": {
+      "asset": "entry-orbit-workshop",
+      "file": "catalog/orbit-workshop-cover.png",
+      "heroFile": "catalog/orbit-workshop-hero.webp",
       "screenshots": [],
-      "source": "https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail_unscaled",
-      "credit": "Artwork from published owner catalog: Rockstar Games. Metadata reference only; no game package."
+      "source": "Original Voidplay concept art: public/art/orbit-workshop-hero.webp",
+      "credit": "Original Voidplay concept art. Fictional fixture; no third-party artwork or game package."
     }
   },
   "background": "Voidplay original concept art: public/art/orbit-workshop-hero.webp"
