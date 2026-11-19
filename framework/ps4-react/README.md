@@ -1,7 +1,7 @@
 # Voidplay [BETA] — PS4 React
 
 A standalone native React/QuickJS application with an SDL macOS preview and
-OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.04**:
+OpenOrbis PS4 package target. The default app is now **Voidplay [BETA] 01.05**:
 the public web store's hero/shelves, filtered catalog, complete detail sections,
 saved Favorites/Library, controller search, Downloads and Settings.
 It uses the white `voidplay.` wordmark and bundled Manrope/artwork.
@@ -11,8 +11,9 @@ Version 01.04 preserves their source-built bootstrap modules and VideoOut path,
 but the expanded UI requires a new console run. Local checks cannot promise zero
 runtime errors or firmware-wide compatibility.
 
-This native store bundles the published catalog revision 9. It does not fetch
-updates online yet. Favorites, Library and Reduce motion use a bounded native
+This native store bundles a fictional catalog fixture (revision 9) for UI
+exercises. It is not a real application listing and does not fetch updates online
+yet. Favorites, Library and Reduce motion use a bounded native
 preferences file (Mac Application Support/Voidplay; PS4 `/data/voidplay`). Failed
 saves show a banner and retain session changes. PS4 file persistence needs console
 validation. Real downloads, installation, console capacity queries and YouTube
@@ -120,8 +121,10 @@ AppRegistry.registerComponent('hello-world', () => App);
 ```
 
 See [the implemented architecture/subset](docs/architecture.md) for bounds,
-unsupported features and the reference compatibility matrix. No DOM/CSS or
-arbitrary React web application translation is provided.
+unsupported features and the reference compatibility matrix, and the
+[engineering baseline and roadmap](docs/engineering-roadmap.md) for the
+implemented/missing API matrix and milestone gates. No DOM/CSS or arbitrary React
+web application translation is provided.
 
 ## Transfer, install and test
 
@@ -182,6 +185,21 @@ performed by the build command.
 See [actual results](docs/verification.md). Local checks and owner-reported hardware results are distinguished.
 The exact 01.02 package still needs console acceptance. GPL-3.0-only source and corresponding dependency/build
 materials are supplied; third-party MIT/OFL terms remain in their notices.
+
+## 01.05 web/native parity baseline
+
+01.05 adds measured flex layout, weighted font baking, nested scroll regions,
+damage rendering and the complete native store views. The bundled catalog is now
+a fictional Orbit Workshop fixture with original concept art; the previous
+commercial test entry and its remote cover were removed. Root checks, the
+framework JS/Python/native tests, the SDL smoke run and `git diff --check` pass.
+No PS4 package from this tree has been installed or launched.
+
+The local OpenOrbis copy currently lacks `bin/macos/PkgTool.Core`, so
+`npm run doctor` and package creation fail on this host after the compiler checks.
+Mac preview and native tests do not require that packer. Do not describe a local
+package as release-ready until the packer is restored, a clean-source package is
+verified, and the exact artifact is tested on the console.
 
 ## 01.04 quality and performance correction
 

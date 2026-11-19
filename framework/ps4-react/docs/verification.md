@@ -270,3 +270,42 @@ for navigation testing. These are native preview windows, not PS4 screenshots:
 
 ![Native 01.04 compact home and sharp text](images/voidplay-native-0104-home.png)
 ![Native 01.04 square catalog and focus ring](images/voidplay-native-0104-catalog.png)
+
+## Web/native parity baseline 01.05
+
+Recorded 2026-11-19 on the owner's macOS ARM64 machine. This pass preserves the
+01.04 bootstrap/VideoOut path and the existing title ID. It does not create or
+claim a console acceptance result.
+
+| Check | Actual result |
+| --- | --- |
+| Root `npm run check` | PASS: ESLint, strict TypeScript, 32 JS tests, catalog validation, store build and admin build |
+| Root `npm run verify:public` | PASS: valid public catalog; no admin, workspace, package or credential markers |
+| Framework `npm test` | PASS: 32 JS tests, 13 Python tests, bundled fixture checks and native ASan/UBSan runtime |
+| Framework `npm run smoke` | PASS: real SDL window/texture, 8 frames, key injection, 1080p capture and clean shutdown |
+| `git diff --check` | PASS |
+| PS4 console install/launch | **Not performed** for 01.05 |
+| PS4 package build on this host | **Blocked**: local OpenOrbis copy has no `bin/macos/PkgTool.Core` |
+
+The 01.05 smoke capture shows the bundled fictional **Orbit Workshop** entry with
+the original Voidplay concept artwork:
+
+![Native 01.05 Orbit Workshop detail](images/native-0105-orbit-workshop.png)
+
+The previous commercial test entry, its remote Wikipedia cover and its local baked
+copy were removed. The catalog is now
+validated by the shared manifest schema with `redistribution.authorized: false`,
+no sources and `compatibility.status: unverified`. It is a UI fixture, not a
+product listing.
+
+The framework source now also records its actual API boundary, renderer choice and
+remaining milestones in the [engineering roadmap](engineering-roadmap.md). In
+particular, `Pressable`, `Button`, `FlatList`, `useController`, `useIsFocused`, a
+JS animation scheduler, GPU rendering, runtime networking and the target
+`ps4react` CLI are **not implemented** in core yet. They must not be described as
+available until their tests and platform behavior exist.
+
+The local packer gap is environment-specific and does not affect the Mac preview,
+root checks or framework tests. A package produced after restoring the packer
+still requires a clean-source build, exact hash verification, install and launch
+on the actual console before any firmware/performance claim.

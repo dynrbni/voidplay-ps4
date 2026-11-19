@@ -173,3 +173,10 @@ quality/performance acceptance remains pending the owner's actual PS4 test.
 - [x] 01.04 implementation a018496 pushed, final clean-source cross-build and package checks pass.
 - [x] Hash-verified 01.04 Downloads package/checksum; PR #7 updated without merging.
 - [ ] Owner test of exact 01.04 on PS4, including motion quality and console timing logs.
+
+
+## Framework web parity 01.05
+
+Active plan: docs/superpowers/plans/2026-10-27-framework-web-parity.md.
+Preserve inherited unfinished changes; baseline has three navigation test failures.
+Audit and repair shared typography/layout/scroll before app translation and packaging.
