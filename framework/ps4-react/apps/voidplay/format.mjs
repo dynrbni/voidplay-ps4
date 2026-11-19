@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-export const ascii=value=>Array.isArray(value)?value.map(ascii).join(''):String(value??'').normalize('NFKD').replace(/[^\x20-\x7e\n]/g,'');
+export const ascii=value=>Array.isArray(value)?value.map(ascii).join(''):String(value??'').normalize('NFC').split('').filter(character=>character==='\n'||character.charCodeAt(0)>=32&&character.charCodeAt(0)!==127).join('');
 export const cut=(value,max)=>ascii(value).slice(0,max)+(ascii(value).length>max?'...':'');
 export function lines(value,width){
  const output=[];

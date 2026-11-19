@@ -1,33 +1,150 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {View,Text,Image} from '@ps4-react/core';
-import {ascii,cut,wrap} from './format.mjs';
+import {View,Text,Image,ScrollView} from '@ps4-react/core';
+import {ascii,cut} from './format.mjs';
+import {color,type,layout,weight as fontWeight,content} from './theme.mjs';
 import artwork from './assets/manifest.json';
-export const white='#FFFFFF',muted='#B0B0B0';
+
+/* Absolute helpers stay available for overlays and full-bleed artwork; page
+   content uses the flow containers below so heights come from measurement. */
 export const at=(x,y,w,h,extra={})=>({position:'absolute',left:x,top:y,width:w,height:h,...extra});
-export function Label({x,y,w=1740,size=26,color=white,children}){return <Text style={at(x,y,w,200,{fontSize:size,color})}>{ascii(children)}</Text>;}
-export function Box({x=0,y=0,w,h,color='#171717',radius=0,border=0,borderColor=white,children}){return <View style={at(x,y,w,h,{backgroundColor:color,borderRadius:radius,borderWidth:border,borderColor})}>{children}</View>;}
-export function Icon({name,x,y,size=28}){return <Image source={'icon-'+name} style={at(x,y,size,size)}/>;}
-export function Button({x,y,w=280,h=60,label,focused=false,primary=false,icon}){
- return <Box x={x} y={y} w={w} h={h} radius={primary?30:8} border={focused?3:1} borderColor={focused?white:'#FFFFFF40'} color={primary?'#FFFFFF':'#242424'}>
-  {icon&&<Icon name={icon} x={20} y={Math.floor((h-26)/2)} size={26}/>}
-  <Label x={icon?60:22} y={Math.floor((h-26)/2)} w={w-35} size={24} color={primary?'#101010':white}>{label}</Label>
- </Box>;
+export const join=(...values)=>values.filter(Boolean).map(ascii).join(' ');
+/* Flow containers are the default: inside a centred page they inherit their
+   horizontal position from the page, so no screen repeats the gutter maths. */
+export function Column({x,y,w,h,gap=0,pad=0,align,justify,children,anchor}){
+  return <View anchor={anchor} style={{...(x===undefined&&y===undefined?{}:{position:'absolute',left:x??0,top:y??0}),width:w,height:h,padding:pad,gap,alignItems:align,justifyContent:justify,flexDirection:'column'}}>{children}</View>;
 }
-export function Round({x,y,name,focused=false,filled=false}){return <Box x={x} y={y} w={60} h={60} radius={30} border={focused?3:1} borderColor={focused?white:'#FFFFFF70'} color={focused?'#FFFFFF24':'#05050570'}><Icon name={filled?'heart-filled':name} x={16} y={16}/></Box>;}
-export const binding=entry=>artwork.covers[entry?.id];
-export function Cover({entry,x,y,w,h}){const asset=binding(entry)?.asset;return asset?<Image source={asset} style={at(x,y,w,h)}/>:<Box x={x} y={y} w={w} h={h}><Label x={20} y={40} w={w-40} size={25}>{wrap(entry?.title||entry?.id||'Artwork unavailable',18,4)}</Label></Box>;}
-export function HeroArt({entry}){return <Image source={binding(entry)?.asset?binding(entry).asset+'-hero':'backdrop'} style={at(0,0,1920,1080)}/>;}
-export function Cards({entries,state,y=415,index=state.index,columns=6,limit=12}){
- const start=Math.floor(index/limit)*limit;
- return entries.slice(start,start+limit).map((entry,i)=>{
-  const x=80+i%columns*296,top=y+Math.floor(i/columns)*330,focused=state.zone==='content'&&index===start+i,w=264,h=264,lift=focused&&!state.reduceMotion?4:0;
-  return <View key={entry.id} style={at(x,top-lift,w,322)}>
-   <Box x={-9} y={-9} w={w+18} h={h+18} radius={14} color={focused?'#FFFFFF18':'#FFFFFF00'}/>
-   <Box x={-4} y={-4} w={w+8} h={h+8} radius={10} color={focused?white:'#292929'}/><Cover entry={entry} x={0} y={0} w={w} h={h}/>
-   <Label x={0} y={h+14} w={w-25} size={21}>{cut(entry.title||entry.id,23)}</Label>
-   <Label x={0} y={h+44} w={w-30} size={18} color={muted}>{cut(entry.category,25)}</Label>
-   <Icon name={state.favorites.includes(entry.id)?'heart-filled':'heart'} x={w-27} y={h+19} size={22}/>
+export function Row({x,y,w,h,gap=0,align='flex-start',justify,children,anchor}){
+  return <View anchor={anchor} style={{...(x===undefined&&y===undefined?{}:{position:'absolute',left:x??0,top:y??0}),width:w,height:h,gap,alignItems:align,justifyContent:justify,flexDirection:'row'}}>{children}</View>;
+}
+export function Spacer({h}){return <View style={{height:h}}/>;}
+/* Passing x/y pins a label like the absolute helpers, so text can sit on the
+   fixed rails as well as in the measured page flow. */
+export function Label({children,style=type.body,w,h,lines,x,y,align,color:ink=color.white,anchor}){
+  const place=x===undefined&&y===undefined?{}:at(x??0,y??0,w,h);
+  return <Text anchor={anchor} style={{...style,...place,width:w,height:h,color:ink,numberOfLines:lines,textAlign:align}}>{ascii(children)}</Text>;
+}
+export function Body({children,w,lines,style=type.body,color:ink=color.secondary,anchor}){
+  return <Label style={style} w={w} h={undefined} lines={lines} color={ink} anchor={anchor}>{children}</Label>;
+}
+export function Rule({w=content.inner,color:ink=color.line}){return <View style={{width:w,height:1,backgroundColor:ink}}/>;}
+export function Surface({x,y,w,h,radius=layout.radius,tone=color.surface,borderWidth=0,borderColor=color.white,align,justify,children,anchor}){
+  return <View anchor={anchor} style={{...(x===undefined&&y===undefined?{}:{position:'absolute',left:x??0,top:y??0}),width:w,height:h,backgroundColor:tone,borderRadius:radius,borderWidth,borderColor,alignItems:align,justifyContent:justify}}>{children}</View>;
+}
+/* Focus ring mirrors the web's 3px white outline around the focused control. */
+export function Ring({x,y,w,h,radius=layout.radius,visible}){
+  if(!visible)return null;
+  return <View style={at(x-4,y-4,w+8,h+8,{borderRadius:radius+4,borderWidth:layout.focusWidth,borderColor:color.white})}/>;
+}
+export function Icon({name,x,y,size=20,filled=false}){
+  const source='icon-'+(name==='heart'&&filled?'heart-filled':name);
+  if(x===undefined&&y===undefined)return <View style={{width:size,height:size}}><Image source={source} style={{width:size,height:size}}/></View>;
+  return <Image source={source} style={at(x,y,size,size)}/>;
+}
+export function Button({w=280,h=46,label,icon,focused=false,primary=false,chip=false,transparent=false,textStyle,anchor}){
+  const tone=transparent?'#00000000':primary?color.white:color.raised, ink=primary?color.ink:color.white;
+  return <View anchor={anchor} style={{width:w,height:h}}>
+    <Surface w={w} h={h} radius={chip?20:primary?h/2:layout.radius} tone={tone} borderWidth={focused||primary||chip||transparent?0:1} borderColor="#FFFFFF29"
+      align='center' justify='center'>
+      {icon?<Icon name={icon} x={primary?22:18} y={Math.floor((h-20)/2)} size={20}/>:null}
+      <Label style={textStyle??{...type.nav,fontWeight:primary?550:fontWeight.medium}} w={w} align='center'
+        color={ink}>{label}</Label>
+    </Surface>
+    {focused?<Ring x={0} y={0} w={w} h={h} radius={chip?20:primary?h/2:layout.radius} visible/>:null}
   </View>;
- });
 }
-export function Empty({title,message,button='Browse applications',focused=true}){return <><Icon name="search" x={80} y={360} size={44}/><Label x={80} y={440} size={44}>{title}</Label><Label x={80} y={520} size={26} color={muted}>{wrap(message,90,3)}</Label><Button x={80} y={675} label={button} w={330} focused={focused} primary/></>;}
+export function Round({size=44,name,focused=false,filled=false,subtle=false,anchor}){
+  return <View anchor={anchor} style={{width:size,height:size}}>
+    <Surface w={size} h={size} radius={size/2} tone={subtle?'#00000000':'#05050566'} borderWidth={subtle?0:1} borderColor="#FFFFFF70">
+      <Icon name={name} x={Math.floor((size-20)/2)} y={Math.floor((size-20)/2)} size={20} filled={filled}/>
+    </Surface>
+    {focused?<Ring x={0} y={0} w={size} h={size} radius={size/2} visible/>:null}
+  </View>;
+}
+export function Progress({w,value}){
+  return <View style={{width:w,height:4}}>
+    <Surface w={w} h={4} radius={2} tone="#303030"/>
+    <View style={at(0,0,Math.max(4,Math.round(w*Math.max(0,Math.min(1,value)))),4)}>
+      <Surface w={Math.max(4,Math.round(w*Math.max(0,Math.min(1,value))))} h={4} radius={2} tone={color.white}/>
+    </View>
+  </View>;
+}
+export const binding=entry=>artwork.covers[entry?.id];
+export function Cover({entry,x=0,y=0,w,h}){
+  const asset=binding(entry)?.asset;
+  return asset
+    ? <Image source={asset} style={at(x,y,w,h)}/>
+    : <Surface x={x} y={y} w={w} h={h} radius={layout.radius} tone="#1C1C1C">
+        <Column w={w-40} x={20} y={20} gap={10}>
+          <Label style={{fontSize:22,lineHeight:30,fontWeight:fontWeight.medium}} w={w-40} h={30}>{cut(entry?.title||entry?.id||'Artwork unavailable',22)}</Label>
+          <Body w={w-40} lines={3}>Artwork unavailable for this listing.</Body>
+        </Column>
+      </Surface>;
+}
+export function HeroArt({entry}){return <Image source={binding(entry)?.asset?binding(entry).asset+'-hero':'backdrop'} style={at(0,0,layout.width,layout.height)}/>;}
+/* The focused cover carries the same inset 3px white border as the web card. */
+export function Poster({entry,w,h=w,focused=false,favorite=false,anchor}){
+  const inset=focused?layout.focusWidth:1;
+  return <View anchor={anchor} style={{width:w,height:h+58,gap:0}}>
+    {[12,9,6,3].map((spread,index)=><View key={spread} style={at(-spread,-spread,w+spread*2,h+spread*2,{borderRadius:layout.radius+spread,borderWidth:3,borderColor:focused?['#FFFFFF05','#FFFFFF09','#FFFFFF10','#FFFFFF19'][index]:'#FFFFFF00'})}/>)}
+    <Surface w={w} h={h} tone={color.surface} radius={layout.radius} borderWidth={inset} borderColor={focused?color.white:'#FFFFFF16'}>
+      <Cover entry={entry} x={inset} y={inset} w={w-inset*2} h={h-inset*2}/>
+    </Surface>
+    <Spacer h={10}/>
+    <Label style={type.itemTitle} w={w-42} h={24} lines={1}>{entry.title||entry.id}</Label>
+    <Label style={type.caption} w={w-42} h={18} color={color.secondary}>{cut([entry.category,entry.version].filter(Boolean).join(' / '),28)}</Label>
+    <Icon name="heart" x={w-26} y={h+16} size={16} filled={favorite}/>
+  </View>;
+}
+/* A shelf owns a heading row and its own horizontal scroll region: the page
+   keeps scrolling vertically while the row moves sideways on its own. */
+export function Shelf({title,entries,index,format='poster',focused,favorite,focusItem,action=-1}){
+  /* Mirrors the web grid: 5.9 poster columns and 4.1 landscape columns stay
+     partially visible at the row edge, which is also the shelf's scroll cue. */
+  const width=format==='landscape'?Math.floor((content.inner-3*layout.gap)/4.1):Math.floor((content.inner-5*layout.gap)/5.9);
+  const height=format==='landscape'?Math.round(width*9/16):width;
+  const start=Math.max(0,(focusItem>0?focusItem-1:0)-7),end=Math.min(entries.length,start+16);
+  return <Column w={content.inner} gap={0}>
+    <Row w={content.inner} h={44} gap={18} align='center'>
+      <Label style={type.heading} w={content.inner-240} h={30}>{title}</Label>
+      <Button w={118} h={36} label="View all" transparent focused={action===0} anchor={action===0}/>
+      <Round size={36} name="left" subtle focused={action===1} anchor={action===1}/>
+      <Round size={36} name="right" subtle focused={action===2} anchor={action===2}/>
+    </Row>
+    <Spacer h={15}/>
+    <ScrollView scrollKey={'shelf:'+index} axis='horizontal' style={{width:content.inner+40,height:height+58+36,padding:16,gap:layout.gap,marginTop:-16,marginLeft:-16}}>
+      {start>0?<View style={{width:start*(width+layout.gap)-layout.gap,height}}/>:null}
+      {entries.slice(start,end).map((entry,offset)=>{const position=start+offset;return <Poster key={entry.id} entry={entry} w={width} h={height}
+        focused={focused&&focusItem===position+1} favorite={favorite(entry)} anchor={focused&&focusItem===position+1}/>;})}
+      {end<entries.length?<View style={{width:(entries.length-end)*(width+layout.gap)-layout.gap,height}}/>:null}
+    </ScrollView>
+  </Column>;
+}
+export function PageHeading({eyebrow,title,count,countLabel}){
+  return <View style={{width:content.inner,height:92}}>
+    <Label style={type.eyebrow} w={900} h={18} color={color.muted}>{ascii(eyebrow).toUpperCase()}</Label>
+    <Spacer h={12}/>
+    <Label style={type.pageTitle} w={1150} h={42}>{ascii(title)}</Label>
+    {count!==undefined?<Column x={content.inner-420} y={18} w={420} gap={4} align='flex-end'>
+      <Label style={{fontSize:23,lineHeight:28,fontWeight:fontWeight.medium}} w={420} h={28} align="flex-end">{String(count)}</Label>
+      <Label style={type.caption} w={420} h={18} align="flex-end" color={color.secondary}>{countLabel}</Label>
+    </Column>:null}
+  </View>;
+}
+export function Notice({children,w=content.inner}){
+  return <Surface w={w} h={46} tone={color.raised} radius={layout.radius} align='center' justify='center'>
+    <Column w={w-48} gap={2}>
+      <Label style={type.secondary}>{ascii(children)}</Label>
+    </Column>
+  </Surface>;
+}
+export function Empty({title,message,action,focused,actionWidth=340}){
+  return <Column w={650} gap={0}>
+    <Icon name="info" size={40}/>
+    <Spacer h={22}/>
+    <Label style={type.pageTitle} w={650} h={42}>{ascii(title)}</Label>
+    <Spacer h={15}/>
+    <Body w={650} lines={5} style={{fontSize:15,lineHeight:26,fontWeight:fontWeight.regular}}>{message}</Body>
+    <Spacer h={24}/>
+    {action?<Button w={actionWidth} label={action} focused={focused} primary anchor={focused}/>:null}
+  </Column>;
+}
