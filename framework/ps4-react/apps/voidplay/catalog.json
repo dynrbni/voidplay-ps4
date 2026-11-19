@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "revision": 9,
+  "publishedAt": "2026-10-26T00:42:49.961Z",
+  "previewMode": false,
+  "entries": [
+    {
+      "id": "orbit-workshop",
+      "title": "Orbit Workshop",
+      "summary": "A fictional homebrew puzzle-game concept used to exercise the native store UI.",
+      "description": "Orbit Workshop is a fictional application entry bundled with the PS4React reference app. It exists so the native store can render a complete list, detail, collection and search flow without shipping or claiming any real game package. No executable, download source or console compatibility is implied.",
+      "category": "Games",
+      "author": "Voidplay Labs",
+      "version": "1.0.0",
+      "genres": [
+        "Puzzle",
+        "Exploration"
+      ],
+      "releaseDate": "2026-10-26",
+      "coverUrl": "",
+      "heroUrl": "",
+      "screenshots": [],
+      "languages": {
+        "interface": [
+          "English"
+        ],
+        "audio": [],
+        "subtitles": []
+      },
+      "fileSize": 0,
+      "fileFormat": "",
+      "compatibility": {
+        "status": "unverified",
+        "firmwares": [],
+        "notes": "Fictional catalog fixture for the PS4React native UI. No package has been built or tested on a console.",
+        "evidence": ""
+      },
+      "releaseNotes": "Initial fictional fixture for the 01.05 web/native parity work.",
+      "license": "Demo metadata only. No application package is distributed.",
+      "redistribution": {
+        "authorized": false,
+        "statement": "Fictional fixture. No game or application package is distributed or installable."
+      },
+      "sources": []
+    }
+  ]
+}

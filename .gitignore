@@ -13,3 +13,6 @@ framework/voidplay-native/build/
 framework/voidplay-native/**/__pycache__/
 .owner-data/
 pages-dist/
+framework/ps4-react/build/
+framework/ps4-react/.deps/
+framework/ps4-react/**/__pycache__/

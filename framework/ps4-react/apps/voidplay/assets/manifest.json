@@ -1,0 +1,18 @@
+{
+  "font": {
+    "file": "Manrope.ttf",
+    "source": "https://github.com/google/fonts/tree/main/ofl/manrope",
+    "license": "SIL Open Font License 1.1; see licenses/Manrope-OFL.txt"
+  },
+  "covers": {
+    "orbit-workshop": {
+      "asset": "entry-orbit-workshop",
+      "file": "catalog/orbit-workshop-cover.png",
+      "heroFile": "catalog/orbit-workshop-hero.webp",
+      "screenshots": [],
+      "source": "Original Voidplay concept art: public/art/orbit-workshop-hero.webp",
+      "credit": "Original Voidplay concept art. Fictional fixture; no third-party artwork or game package."
+    }
+  },
+  "background": "Voidplay original concept art: public/art/orbit-workshop-hero.webp"
+}

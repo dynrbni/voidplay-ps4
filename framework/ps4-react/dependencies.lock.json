@@ -1,0 +1,17 @@
+{
+  "quickjs": {
+    "version": "0.15.0", "revision": "433941b99fb3c5e7f98b7ebd78727972bcf467ee",
+    "url": "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/433941b99fb3c5e7f98b7ebd78727972bcf467ee",
+    "sha256": "ecfb5211b82c1f3bf30e07f20f906f13f857e3f795cb220933009c82e5574db2"
+  },
+  "react": "18.3.1", "react-reconciler": "0.29.2", "esbuild": "0.25.12",
+  "openorbisBootstrap": {
+    "revision": "b458dfd9d2f5c40aa249b127c9b9b4488afdc686",
+    "license": "GPL-3.0-only",
+    "files": {
+      "lib/crtlib.o": "0e4f27f1e88ded6c7f458e65c64c1a5cc70552bc7c31acb6b7818e4db3adae69",
+      "lib/libSceLibcInternal.so": "bb320b5b16601bd3a9a4a7ed7f4a2e68bd0138373838264909f349aedb3558a3",
+      "src/crt/crtlib.c": "f61b856cb9ec85c740e9b57acb3b5a39a1713aa61caee9444d9fb8c38e4e01bb"
+    }
+  }
+}

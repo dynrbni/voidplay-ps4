@@ -91,3 +91,33 @@ Owner reports package 01.00 fails with “cannot continue using this application
 - All descriptive metadata can be omitted; IDs/revisions remain structural. Supplied invalid URLs/dates/checksums still fail. Missing package size/hash never becomes verified install evidence.
 - An old owner tab displayed revision 1 while disk workspace had revision 8. Focus refresh applies newer server revisions only while no unsaved edits exist. Restarting the owner backend revokes memory-only sessions.
 - Klog/FTP are reachable now. A capture records VPLY00002 crash reporting and exception code 12; no trace identifies the failing instruction. The original probe's eight-second main return enters musl exit/_exit. Candidate 01.01 removes that return path; hardware outcome remains unknown because the owner cannot install it yet. Passive/active FTP read-back failed despite complete-size writes, so no partial file is marked ready.
+
+## PS4 React master-prompt implementation
+
+- New direction explicitly requires a real interpreted React/reconciler runtime and Hello World, replacing the C++-only client direction. Scoped to framework/ps4-react, based on clean f517ab6 and stacked PR #6; no earlier PR merged.
+- Reference source/licenses audited: PS5 React/Overdrive flow is useful, but PS5 CRT/EGL/platform code is not imported. A new two-component mutation renderer is smaller than Embedded React's larger patched engine; React 18.3.1/reconciler 0.29.2 and QuickJS-ng 0.15.0 are pinned dependencies with notices.
+- Native VideoOut/Pad/UserService are declared and linkable in the actual SDK. Native frame cross-build/PKG succeeded. The Mac SDL host executes the real React bundle and renders Hello World with a state counter; native integration tests confirm pixel changes/reset and bounded error handling under ASan/UBSan.
+- Corrected target C++ header leakage from the Mac SDK; avoided unrelated STL nanosleep dependency. Added target-only malloc_np.h compatibility using the allocator declaration actually provided by OpenOrbis musl. SDK GP4 generator omitted new notice directories, so the build derives its root directory tree from packaged file paths.
+- Native PS4 executable links QuickJS/React bundle and packages without any proprietary PRX/SPRX module. Console acceptance remains distinct from local package validity.
+- Repeated Mac app-bundle overwrites triggered a real kernel code-signature load failure before startup. Atomic inode replacement and local ad-hoc bundle signing/verification fixed the repeated-build smoke path; this is separate from the unknown PS4 crash.
+- Physical RCTX00001 01.00 failure is now identified: Klog reports 0xa0020102 / PRX_SCE_MODULE_LOAD_ERROR, explicitly missing application `.prx` files before main. OpenOrbis's GPL source modules are small bootstrap shims, not proprietary Sony runtime copies; compile them and include both libc.prx and libSceFios2.prx. The 01.01 package guards now reject the omitted-module layout. Actual launch remains a new acceptance test.
+
+## Native Voidplay shell
+
+- Owner-reported 01.01 console success establishes a working baseline after the missing-PRX correction. The larger 01.02 UI uses that startup path and requires its own hardware run.
+- The native renderer can show local RGB565 artwork and a baked Manrope ASCII atlas without a browser, font runtime, proprietary PRX or new graphics dependency. Asset preparation is offline; original source/attribution and OFL notice are tracked.
+- Shared public snapshot r9 feeds every native catalog view. No private authoring workspace or duplicate component-level catalog is bundled. Session collections and metadata do not imply installed packages or verified compatibility.
+- Native directions use SDK left-stick fields and the same bounded D-pad/analog repeat filter exercised under sanitizers. Absolute layout is independent of flow siblings, and Discover pagination keeps its second page above the footer.
+
+## Native web experience 01.03
+
+- Owner reports 01.02 runs well. Public web audit confirms real entries already disable console transfer and the only web queue implementation is a simulation; do not fabricate native downloads or installation.
+- Native port adds web-style compact header/utility icons, rounded/translucent surfaces, hero/shelves, filter/sort/clear/search, full detail metadata/source/gallery/trailer/related sections and persistent collections/preferences. Admin remains separate.
+- Native preferences use only a fixed owned file with a 64 KiB limit, temporary write/flush/fsync/rename and visible failure/session fallback. OpenOrbis exposes fileno only behind its POSIX feature macro; declaring that feature resolves the cross-build error.
+- Build-time public catalog sync uses shared validation and checked/pinned public DNS for bounded image requests. Console HTTP/video/transfers/install/storage-capacity integrations remain unavailable and labeled. No owner data or live publication was changed.
+
+## 01.04 quality diagnosis
+
+- The catalog image is only 284x351. Enlarging it to full HD introduced unavoidable blur; the correction contains it at source size rather than claiming upscaling is genuine HD. Native assets now retain ARGB8888 and report source/output decisions.
+- Actual UI font sizes avoid per-draw glyph resampling. Retained command comparison/damage clips and a bounded resize cache remove repeated full-frame scaling. Native tween/crossfade replaces JS shade steps; release O3 and remaining-frame pacing lower active-frame cost.
+- Final 120-action Mac CPU mean is 1.421 ms versus 6.151 ms baseline, with p95 2.704 versus 8.373 ms; startup is slower at 38.263 versus 21.402 ms. No console FPS is inferred. Physical PS4 quality/performance remains a separate acceptance gate.

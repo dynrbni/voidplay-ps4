@@ -1,0 +1,183 @@
+# Implemented architecture and compatibility
+
+Recorded 2026-10-26. Target: OpenOrbis v0.5.4 / LLVM 18, macOS ARM64 host.
+The PS4 executable is cross-built. Physical PS4 display/input/launch remain a
+separate acceptance gate; a valid package alone does not establish them.
+
+## Audited references
+
+- [PS5 React](https://github.com/JVK3R/ps5-react/tree/65691ac70c814edd01b6f7174ad208748b503a17): package/dependency locks, architecture, hardware records, desktop/PS5 hosts, bridge, bundler, NOTICE and attribution term.
+- [Overdrive](https://github.com/Ex-Communicad0/ps5overdrive/tree/264f78e6b92e5eed1415490b003944eb97ed4f8b/ps5-react): original framework lineage and notices. It is not an independent PS4 result.
+- [Embedded React](https://github.com/TheMasterCoder007/embedded-react/tree/cf5dfe4fae966fe21a265acc3dd3b054d245f981): Apache-2.0 engine/QuickJS bridge evaluated through upstream source and the reference integration. Its larger compositor, font/GL dependencies and patch stack are unnecessary for this two-component milestone; none was copied.
+- [OpenOrbis](https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/tree/b458dfd9d2f5c40aa249b127c9b9b4488afdc686): release inputs, `samples/_common/graphics.cpp`, VideoOut/Pad/UserService headers/imports and actual packaging tools were checked locally.
+
+| Component | Decision | Evidence / limits |
+| --- | --- | --- |
+| React 18.3.1 / reconciler 0.29.2 | Reuse MIT packages, pinned npm integrity | Real components/state execute in QuickJS; no React DOM. |
+| QuickJS-ng 0.15.0 | Reuse MIT interpreter, source/archive pinned | Same engine compiled for Mac and PS4. No qjs shell, filesystem/OS modules, worker runtime, SharedArrayBuffer/Atomics or JIT. |
+| PS5 React architectural flow | Reference only | No PS5 platform, payload, CRT, EGL, heap, service or renderer source imported. Required reference credit retained in NOTICE. |
+| Embedded React | Evaluated, not imported | A smaller newly written mutation renderer handles View/Text/Image. No compatibility claim with its API. |
+| JSX bundler | New esbuild script | Bundles JSX/React/reconciler into an IIFE and embeds source bytes in the executable. This is runtime interpretation, not JS-to-C++ compilation. |
+| Layout/raster/font | New portable implementation | Deterministic row/column layout and clipped CPU primitives; Manrope atlas, RGB565 artwork and a small-size bitmap fallback. |
+| Mac presentation | New SDL2 adapter | Real window, streaming ARGB texture, native keyboard/controller events and close/cleanup. Smoke injects an SDL key event. |
+| PS4 presentation | New VideoOut adapter | Direct memory, two scanout buffers, explicit flip completion before reuse, bounded waits. Actual SDK headers/stubs and link output verified; hardware not yet verified. |
+| PS4 controller | New Pad/UserService adapter | Polls confirm/back edges and shared D-pad/left-stick direction repeat. Initial device absence is logged and does not block display. Physical/reconnect qualification remains outstanding. |
+| HTTP/storage/download/install | Not exposed | No invented services or permissions; no automatic install/cleanup. Existing web/admin remain separate. |
+
+## Data and ownership
+
+`apps/voidplay/index.jsx` → esbuild IIFE → QuickJS → React reconciler →
+mutable host nodes → deterministic JS layout → bounded native text/rectangle
+commands → CPU framebuffer → SDL texture or PS4 VideoOut double buffer.
+
+The host first submits a C++ qualification frame, then evaluates React. A JS
+failure keeps a visible native error frame and logs the exception/stack rather
+than silently leaving a framebuffer that is never submitted. Startup failures
+before VideoOut are logged; a display cannot be promised if VideoOut itself fails.
+
+The renderer uses actual React commits. State updates repaint from the updated
+host tree. No HTML, CSS parser, browser, DOM, WebView, remote catalog fixture or
+server is needed. The script is interpreted at runtime by QuickJS. C/C++ owns the
+engine and the pixel buffers; JS receives no addresses, file descriptors or
+arbitrary native-call primitive.
+
+The engine is limited to 32 MiB, a 512 KiB JS stack, 2 seconds for initial script
+execution and 500 ms per host tick. At most 256 pending jobs, 256 timers, 512
+layout nodes, depth 32, 2048 draw commands and 2048 text characters are accepted.
+These bounds reduce avoidable runaway behavior; they are not firmware validation
+or a security certification. Drawing is clipped to the validated surface.
+
+Mac Escape/window-close unmounts React, flushes effects, clears timers/listeners,
+frees context/runtime, closes controllers/texture/renderer/window and releases
+pixels. PS4 stays running until closed using the PS menu; returning through the
+unqualified musl exit path is avoided. Circle returns within the UI and never terminates the console process. An OS
+forced termination does not promise execution of user-space cleanup callbacks.
+
+## Public subset
+
+Import `AppRegistry`, `View`, `Text`, `Image`, `Controller` from `@ps4-react/core`.
+Register one root component. Function components, ordinary React state/effects
+and native event listeners are exercised; this is not a complete React Native API.
+
+Style fields: `backgroundColor`, `color` (#RRGGBB), fixed numeric `width`/`height`,
+`padding`, `gap`, `flexDirection` (row/column), `fontSize` (7..112), and absolute
+`position` with numeric `left`/`top`. Absolute children do not consume flow space.
+`Image` accepts only a reviewed, baked asset ID; it cannot read paths or URLs.
+Text supports printable ASCII/newlines, with a build-time Manrope atlas for sizes
+14..112 and the original bitmap fallback for smaller sizes. There is no Unicode
+shaping, automatic wrapping, flex growth, CSS/className, browser, video playback,
+portals, Suspense/hydration or networking/file bridge. Unsupported styles fail
+visibly. Images/text are clipped to the framebuffer, not per-view boundaries.
+
+The fixed 1920x1080 Voidplay shell imports one published JSON snapshot, never the
+private owner workspace. Cover bindings are separate local assets keyed by entry
+ID. A pure reducer handles routes, focus, details, modal state and a 40-key search
+keyboard. Discover shows six entries per page; other grids show two rows of five.
+Favorites/Library are session state. No transfer, install or storage capability is
+implied by these collections. Source URLs in catalog metadata are not executed.
+
+The shared direction filter prioritizes D-pad input, chooses the dominant analog
+axis outside a 50/128 deadzone, emits immediately, then repeats after 350 ms every
+140 ms. Disconnect resets repeat. The same filter is tested on Mac; the SDK's
+actual left-stick fields are read on PS4. Physical analog/reconnect qualification
+of this larger build remains separate from those portable tests.
+
+New components belong in the core/layout/renderer layers. The host/platform layer
+does not need duplication. The controller service only dispatches named actions
+and knows nothing about React elements.
+
+## Packaging and provenance
+
+`tools/build.py` compiles shared/native source against the selected target,
+converts ELF using OpenOrbis create-fself, creates SFO/icon/GP4 and runs PkgTool.
+Generated GP4 directories are derived from real file paths (the SDK generator's
+fixed template omitted the notices directory). The package contains the app's
+own executable/icon and license notices. No proprietary PRX/SPRX file is copied.
+Static OpenOrbis musl and system import stubs remain separately licensed inputs.
+
+The owner's first 01.00 console run failed before `main` with the loader's
+`PRX_SCE_MODULE_LOAD_ERROR` and explicit missing `/app0/sce_module` diagnostic.
+Static musl in the executable does not remove the system bootstrap's requirement
+for application module files. From 01.01, the build compiles the small GPL
+[OpenOrbis libc shim](https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/blob/b458dfd9d2f5c40aa249b127c9b9b4488afdc686/src/modules/libc/libc/lib.c)
+and corresponding FIOS shim using the pinned OpenOrbis `crtlib.o` and import
+stubs, then converts each with the SDK's `--lib` workflow. No prebuilt sample
+PRX or proprietary Sony module is copied. Their complete GPL source/build inputs
+and hashes are retained. These are bootstrap compatibility modules; they expose
+no application FIOS service. The required module paths, SELF structure and PS4
+dynamic-module type are checked before packaging and during extracted verification.
+The old module-free 01.00 package is now rejected by this guard. The owner subsequently reported successful 01.01 launch. The expanded 01.02
+Voidplay UI requires its own hardware acceptance test.
+
+The QuickJS FreeBSD include expects `malloc_np.h`; OpenOrbis musl declares the
+same `malloc_usable_size` in `malloc.h`. A small target-only compatibility header
+selects that actual declaration; no invented allocator implementation is used.
+PS4 C++ includes use the SDK rather than the Mac libc++ headers. The rasterizer
+avoids an unrelated STL algorithm/thread dependency requiring missing nanosleep.
+
+Package validation checks reported PFS/body/header/signature results, verifies
+ELF/SELF structure, extracts and compares every executable/notice byte, compares
+icon and every SFO field while allowing PkgTool's two publication metadata fields,
+and records build input/output hashes. This is local structural verification,
+not a Sony signature, installation test or assurance of firmware 12.00 support.
+Package timestamps can change the final hash across rebuilds. Identify a hardware
+run by the report's exact SHA-256, title ID and version.
+
+## Public web experience port, 01.03
+
+The public React DOM/CSS store was audited page by page. Its visual identity and
+interaction state are ported to native components in `apps/voidplay/ui.jsx` and
+`screens.jsx`; the owner dashboard stays on Mac/web. A controller focus state
+replaces browser scrolling/tab order. A compact four-route header and utility
+icons, artwork hero, six-item shelves/grids, all detail sections and full optional
+metadata use the same published JSON. No DOM/WebView, iframe or CSS engine is
+embedded. See the [parity plan](../../../docs/superpowers/plans/2026-10-26-native-web-parity.md).
+
+The renderer adds rounded ARGB surfaces, translucent header/panels, a visible
+focus ring, RGBA icon assets and averaged small-font sampling. Native bridge
+arguments, radii and coordinates stay bounded. Local image tables have a 64 MiB
+raw budget. Manrope, white/black neutrals and the existing wordmark follow the web
+store. Hero shading protects text contrast; only the focused card gets a glow.
+A short artwork transition and focus lift are disabled by Reduce motion.
+
+A fixed-file preferences bridge exposes load/save JSON strings, not arbitrary
+paths or file descriptors. It limits content to 64 KiB, writes a temporary file,
+flushes/fsyncs and renames after success. JS validates collection IDs and version
+before hydration. Invalid files are preserved and enter session mode. Read/write
+failures are visible without killing the UI. The path is `/data/voidplay` on PS4
+and Application Support/Voidplay on Mac; this is preferences storage, never an
+internal disk capacity measurement. Console file permissions and persistence need
+physical acceptance. The PS4 SDK declares fileno behind its POSIX feature macro;
+the implementation enables that declaration rather than inventing an API.
+
+The build-time catalog sync uses the existing shared manifest schema and public
+address checks, pins checked DNS answers for HTTPS image requests, bounds bytes,
+redirects and timeouts, and writes content-addressed local artwork. It cannot
+publish the private owner workspace. Console runtime catalog refresh is still
+unimplemented. Source links/trailer URLs remain metadata with explicit missing
+service states. No download, package install or automatic cleanup bridge exists.
+
+`transfers.mjs` is a separate, explicitly opt-in simulation for Downloads UI tests.
+It never invokes a file/network/install API, never adds Library entries, and is
+not persisted. Its fake sizes/speeds/progress are labeled DEMO on screen.
+
+## Retained native compositor, 01.04
+
+Each React commit records at most 2048 draw commands. Consecutive commands are
+compared, and the renderer replays only the changed region through a clipped
+Canvas subview. Identical frames are not presented. Compatible focus changes
+interpolate geometry/colors natively with 120 ms cubic easing; structural changes
+crossfade cached pixels. React is not rerun per animation frame. Interrupted
+transitions start from displayed pixels, and Reduce motion settles to the target.
+
+Manrope glyphs are baked at actual UI sizes with fractional advances, instead of
+resampling a large fixed-cell atlas per draw. Images use ARGB8888 and a 32 MiB LRU
+resize cache; opaque native-size rows use memcpy. Raw local artwork is capped at
+96 MiB. Two scene command arrays occupy about 8.6 MiB; optional pixel-transition
+buffers occupy two 1080p surfaces. Runtime lifetime frees those scene allocations.
+This remains a CPU compositor, not a new GPU/DOM/CSS runtime.
+
+Frame pacing subtracts rendering and presentation time before sleeping. Physical
+PS4 timing is logged from the actual host when tested; Mac benchmark numbers do
+not establish console frame rates. Working OpenOrbis bootstrap modules and buffer
+ownership/flip-completion guards are unchanged.
