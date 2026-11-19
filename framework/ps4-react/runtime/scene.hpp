@@ -3,10 +3,18 @@
 #include "host.hpp"
 namespace ps4react {
 struct DrawCommand {
- int kind,x,y,w,h,size,radius;
+ int kind,x,y,w,h,size,weight,wrap,lineHeight,letterSpacing,radius;
+ int clipX,clipY,clipW,clipH,fit;
  std::uint32_t color;
  char value[2049];
 };
+inline TextStyle command_style(const DrawCommand& command){
+ TextStyle style;style.size=command.size;style.weight=command.weight;style.wrap=command.wrap;
+ style.lineHeight=command.lineHeight;style.letterSpacing=command.letterSpacing;return style;
+}
+inline Clip command_clip(const DrawCommand& command){
+ Clip clip;clip.x=command.clipX;clip.y=command.clipY;clip.w=command.clipW;clip.h=command.clipH;return clip;
+}
 class Scene {
  DrawCommand* previous=nullptr;DrawCommand* pending=nullptr;
  int previousCount=0,count=0;
@@ -18,10 +26,9 @@ class Scene {
 public:
  Scene();~Scene();
  void begin(Canvas,std::uint32_t);
- bool add(int kind,int x,int y,int w,int h,int size,int radius,std::uint32_t,const char* value="");
+ bool add(int kind,int x,int y,int w,int h,int size,int radius,std::uint32_t,const char* value="",const TextStyle& style=TextStyle{},const Clip& clip=Clip{},int fit=0);
  bool finish(double now);
  bool animate(double now);
  bool set_motion(bool enabled);
 };
-void text_extent(const char*,int size,int& w,int& h);
 }

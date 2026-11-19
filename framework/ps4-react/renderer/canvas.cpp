@@ -4,12 +4,37 @@
 namespace ps4react {
 template<class T> static T bounded(T value,T lower,T upper){return value<lower?lower:value>upper?upper:value;}
 bool Canvas::valid() const { return pixels && w > 0 && h > 0 && w <= 4096 && h <= 2160 && stride >= w && stride <= 8192 && static_cast<std::size_t>(stride) * (h-1) + w <= capacity; }
-void rect(Canvas f, int x, int y, int w, int h, std::uint32_t color) {
-    if (!f.valid() || w <= 0 || h <= 0) return;
-    int left = bounded(x, 0, f.w), top = bounded(y, 0, f.h);
-    auto right = bounded<std::int64_t>(static_cast<std::int64_t>(x) + w, 0, f.w);
+namespace {
+/* Intersect the requested span with the surface and the active clip rectangle. */
+struct Span { int left, right; bool empty() const { return right <= left; } };
+Span horizontal(Canvas f, int x, int w, const Clip& clip) {
+    Span span{bounded(x, 0, f.w), static_cast<int>(bounded<std::int64_t>(static_cast<std::int64_t>(x) + w, 0, f.w))};
+    if (clipped(clip)) {
+        if (clip.x > span.left) span.left = clip.x;
+        int clipRight = static_cast<int>(bounded<std::int64_t>(static_cast<std::int64_t>(clip.x) + clip.w, 0, f.w));
+        if (clipRight < span.right) span.right = clipRight;
+    }
+    return span;
+}
+bool outside(Canvas f, int y, int h, const Clip& clip) {
+    if (y >= f.h || y + h <= 0) return true;
+    if (!clipped(clip)) return false;
+    return static_cast<std::int64_t>(y) + h <= clip.y || y >= static_cast<std::int64_t>(clip.y) + clip.h;
+}
+}
+void rect(Canvas f, int x, int y, int w, int h, std::uint32_t color, Clip clip) {
+    if (!f.valid() || w <= 0 || h <= 0 || outside(f,y,h,clip)) return;
+    int top = bounded(y, 0, f.h);
     auto bottom = bounded<std::int64_t>(static_cast<std::int64_t>(y) + h, 0, f.h);
-    for (int row = top; row < bottom; ++row) if (right > left) for(int col=left;col<right;++col)f.pixels[row*f.stride+col]=color;
+    if (clipped(clip)) { if (top < clip.y) top = clip.y; if (bottom > static_cast<std::int64_t>(clip.y) + clip.h) bottom = static_cast<std::int64_t>(clip.y) + clip.h; }
+    Span span = horizontal(f, x, w, clip);
+    if (span.empty()) return;
+    for (int row = top; row < bottom; ++row) { std::uint32_t* pixels = f.pixels + row * f.stride; for (int col = span.left; col < span.right; ++col) {
+        unsigned alpha=color>>24;if(alpha==255)pixels[col]=color;else if(alpha){
+          unsigned weight=alpha+1,inverse=256-weight,old=pixels[col];
+          pixels[col]=0xff000000|((((old&0xff00ff)*inverse+(color&0xff00ff)*weight)>>8)&0xff00ff)|((((old&0x00ff00)*inverse+(color&0x00ff00)*weight)>>8)&0x00ff00);
+        }
+      } }
 }
 namespace {
 constexpr std::uint8_t glyphs[][7] = {
@@ -48,26 +73,27 @@ constexpr std::uint8_t punctuation[][7] = {
 {2,4,4,8,4,4,2},{4,4,4,4,4,4,4},{8,4,4,2,4,4,8},{0,0,9,22,0,0,0}};
 static_assert(sizeof(punctuation)/sizeof(punctuation[0]) == sizeof(symbols)-1);
 }
-void text(Canvas f, int x, int y, const char* value, int size, std::uint32_t color) {
-    if (!value || !f.valid() || size < 7 || size > 112) return;
-    if(font_text(f,x,y,value,size,color))return;
-    const int scale = size / 7, start = x;
+void text(Canvas f, int x, int y, const char* value, const TextStyle& style, std::uint32_t color, Clip clip) {
+    if (!value || !f.valid() || style.size < 7 || style.size > 112) return;
+    if(font_text(f,x,y,value,style,color,clip))return;
+    const int size = style.size, scale = size / 7, start = x;
+    const int lineHeight = style.lineHeight > 0 ? style.lineHeight : size + 8;
     for (int i = 0; value[i] && i < 2048; ++i) {
         unsigned char c = value[i]; const std::uint8_t* glyph = nullptr;
-        if (c == '\n') { x = start; y += size + 8; continue; }
+        if (c == '\n') { x = start; y += lineHeight; continue; }
         if (c >= 'a' && c <= 'z') glyph = lower[c-'a'];
         else if (c >= 'A' && c <= 'Z') glyph = glyphs[c-'A'];
         else if (c >= '0' && c <= '9') glyph = glyphs[26+c-'0'];
         else for (std::size_t symbol=0;symbol<sizeof(symbols)-1;++symbol)
             if(c==static_cast<unsigned char>(symbols[symbol])){glyph=punctuation[symbol];break;}
         if (glyph) for (int r = 0; r < 7; ++r) for (int col = 0; col < 5; ++col)
-            if (glyph[r] & (1 << (4-col))) rect(f, x+col*scale, y+r*scale, scale, scale, color);
-        x += 6*scale;
+            if (glyph[r] & (1 << (4-col))) rect(f, x+col*scale, y+r*scale, scale, scale, color, clip);
+        x += 6*scale + style.letterSpacing;
     }
 }
 void native_frame(Canvas f) {
     rect(f,0,0,f.w,f.h,0xff101216); rect(f,80,80,12,120,0xfff4f4f4);
-    text(f,128,92,"voidplay.",70,0xfff4f4f4); text(f,128,220,"Starting Voidplay [BETA]",42,0xfff4f4f4);
-    text(f,128,330,"Native console interface",28,0xffb9bec6);
+    text(f,128,92,"voidplay.",TextStyle{70,800,0,52},0xfff4f4f4); text(f,128,220,"Starting Voidplay [BETA]",TextStyle{42,600,0,34},0xfff4f4f4);
+    text(f,128,330,"Native console interface",TextStyle{28,400,0,22},0xffb9bec6);
 }
 }

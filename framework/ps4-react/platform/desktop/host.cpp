@@ -4,9 +4,27 @@
 #include <SDL.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 namespace ps4react {
 namespace { SDL_Window* window; SDL_Renderer* renderer; SDL_Texture* texture; SDL_GameController* controller; }
 namespace { DirectionRepeat directions; }
+namespace {
+/* Local Mac verification aid: PS4_REACT_SCRIPT="down,down,confirm" replays one
+   named action per frame so a screen can be captured at a chosen state. It has
+   no effect on PS4 input and no effect unless the variable is set. */
+char script[512];int scriptAt=-1;bool scriptLoaded=false;
+const char* scripted_input(){
+    if(!scriptLoaded){scriptLoaded=true;const char* value=std::getenv("PS4_REACT_SCRIPT");if(value&&*value){std::snprintf(script,sizeof script,"%s",value);scriptAt=0;}}
+    if(scriptAt<0)return nullptr;
+    char* at=script;int index=0;
+    while(*at&&index<scriptAt){if(*at==',')++index;++at;}
+    if(!*at)return nullptr;
+    char* end=at;while(*end&&*end!=',')++end;
+    static char current[32];std::size_t length=static_cast<std::size_t>(end-at);if(length>=sizeof current)length=sizeof current-1;
+    std::memcpy(current,at,length);current[length]=0;++scriptAt;
+    return current[0]?current:nullptr;
+}
+}
 bool platform_open() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) return false;
     window = SDL_CreateWindow("Voidplay [BETA] - native Mac preview", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960,540, SDL_WINDOW_RESIZABLE|SDL_WINDOW_ALLOW_HIGHDPI);
@@ -28,6 +46,7 @@ bool platform_present(Canvas frame) {
 }
 const char* platform_input() {
     SDL_Event event;
+    if(const char* action=scripted_input())return action;
     while (SDL_PollEvent(&event)) {
         if (event.type==SDL_QUIT) return "exit";
         if (event.type==SDL_KEYDOWN && !event.key.repeat) {

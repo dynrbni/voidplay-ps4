@@ -56,7 +56,7 @@ int main(int argc,char** argv){
 #endif
 #ifndef PS4_REACT_NATIVE_ONLY
         if(ok)ok=runtime.tick(action);
-        if(!ok){native_frame(canvas);text(canvas,128,440,"JavaScript error - see host log",28,0xffff9090);}
+        if(!ok){native_frame(canvas);text(canvas,128,440,"JavaScript error - see host log",TextStyle{28,600,0,26},0xffff9090);}
         if(runtime.dirty||!ok){
 #ifdef __PS4__
             double cpu=platform_now()-frameStart,presentStart=platform_now();
@@ -70,7 +70,16 @@ int main(int argc,char** argv){
 #endif
         ++frame;if(frames&&frame>=frames)running=false;platform_sleep(16.667-(platform_now()-frameStart));
     }
-    if(capture)save_frame(canvas,capture);
+    if(capture){
+      save_frame(canvas,capture);
+#ifndef PS4_REACT_NATIVE_ONLY
+      char snapshot[8192],path[1024];
+      if(runtime.inspect(snapshot,sizeof snapshot)){
+        std::snprintf(path,sizeof path,"%s.layout.json",capture);FILE* output=std::fopen(path,"wb");
+        if(output){std::fwrite(snapshot,1,std::strlen(snapshot),output);std::fclose(output);}
+      }
+#endif
+    }
 #ifndef PS4_REACT_NATIVE_ONLY
     runtime.stop();
 #endif

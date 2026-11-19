@@ -5,7 +5,7 @@
 namespace ps4react {
 namespace {
 constexpr int limit=2048;
-bool same(const DrawCommand& a,const DrawCommand& b){return a.kind==b.kind&&a.x==b.x&&a.y==b.y&&a.w==b.w&&a.h==b.h&&a.size==b.size&&a.radius==b.radius&&a.color==b.color&&!std::strcmp(a.value,b.value);}
+bool same(const DrawCommand& a,const DrawCommand& b){return a.kind==b.kind&&a.x==b.x&&a.y==b.y&&a.w==b.w&&a.h==b.h&&a.size==b.size&&a.weight==b.weight&&a.wrap==b.wrap&&a.lineHeight==b.lineHeight&&a.letterSpacing==b.letterSpacing&&a.radius==b.radius&&a.color==b.color&&a.clipX==b.clipX&&a.clipY==b.clipY&&a.clipW==b.clipW&&a.clipH==b.clipH&&a.fit==b.fit&&!std::strcmp(a.value,b.value);}
 std::uint32_t interpolate(std::uint32_t a,std::uint32_t b,unsigned weight){
  unsigned inverse=256-weight;
  return 0xff000000|((((a&0xff00ff)*inverse+(b&0xff00ff)*weight)>>8)&0xff00ff)|((((a&0x00ff00)*inverse+(b&0x00ff00)*weight)>>8)&0x00ff00);
@@ -19,19 +19,25 @@ void paint(Canvas canvas,int l,int t,int r,int b,std::uint32_t background,const 
   }
   int bleed=command.kind==1?2:0;if(command.x-bleed>=r||command.y-bleed>=b||command.x+command.w<=l||command.y+command.h<=t)continue;
   int x=command.x-l,y=command.y-t;
-  if(command.kind==0)rect(damage,x,y,command.w,command.h,command.color);
-  else if(command.kind==1)text(damage,x,y,command.value,command.size,command.color);
-  else if(command.kind==2)image(damage,x,y,command.w,command.h,command.value);
-  else rounded_box(damage,x,y,command.w,command.h,command.color,command.radius);
+  Clip clip=command_clip(command);if(clipped(clip)){clip.x-=l;clip.y-=t;}
+  if(command.kind==0)rect(damage,x,y,command.w,command.h,command.color,clip);
+  else if(command.kind==1)text(damage,x,y,command.value,command_style(command),command.color,clip);
+  else if(command.kind==2)image(damage,x,y,command.w,command.h,command.value,clip,command.fit);
+  else if(command.kind==4)rounded_stroke(damage,x,y,command.w,command.h,command.size,command.color,command.radius,clip);
+  else rounded_box(damage,x,y,command.w,command.h,command.color,command.radius,clip);
  }
 }
 }
 Scene::Scene(){previous=static_cast<DrawCommand*>(std::calloc(limit,sizeof(DrawCommand)));pending=static_cast<DrawCommand*>(std::calloc(limit,sizeof(DrawCommand)));}
 Scene::~Scene(){std::free(previous);std::free(pending);std::free(before);std::free(target);}
 void Scene::begin(Canvas frame,std::uint32_t color){canvas=frame;background=color;count=0;}
-bool Scene::add(int kind,int x,int y,int w,int h,int size,int radius,std::uint32_t color,const char* value){
+bool Scene::add(int kind,int x,int y,int w,int h,int size,int radius,std::uint32_t color,const char* value,const TextStyle& style,const Clip& clip,int fit){
  if(!pending||count>=limit||!value||std::strlen(value)>2048)return false;
- auto& command=pending[count++];command.kind=kind;command.x=x;command.y=y;command.w=w;command.h=h;command.size=size;command.radius=radius;command.color=color;std::strcpy(command.value,value);return true;
+ auto& command=pending[count++];std::memset(&command,0,sizeof command);
+ command.kind=kind;command.x=x;command.y=y;command.w=w;command.h=h;command.radius=radius;command.color=color;
+ command.size=kind==1?style.size:size;command.weight=style.weight;command.wrap=style.wrap;command.lineHeight=style.lineHeight;command.letterSpacing=style.letterSpacing;
+ command.fit=fit;command.clipX=clip.x;command.clipY=clip.y;command.clipW=clip.w;command.clipH=clip.h;
+ std::strcpy(command.value,value);return true;
 }
 bool Scene::finish(double now){
  if(!previous||!pending||!canvas.valid())return false;
@@ -44,7 +50,7 @@ bool Scene::finish(double now){
  if(l<r&&t<b){
   bool transition=motion&&valid;
   tween=transition&&!animating&&previousCount==count&&background==oldBackground;
-  if(tween)for(int i=0;i<count;++i)if(previous[i].kind!=pending[i].kind||previous[i].size!=pending[i].size||std::strcmp(previous[i].value,pending[i].value)){tween=false;break;}
+  if(tween)for(int i=0;i<count;++i)if(previous[i].fit!=pending[i].fit||previous[i].kind!=pending[i].kind||previous[i].size!=pending[i].size||previous[i].weight!=pending[i].weight||previous[i].clipX!=pending[i].clipX||previous[i].clipY!=pending[i].clipY||previous[i].clipW!=pending[i].clipW||previous[i].clipH!=pending[i].clipH||std::strcmp(previous[i].value,pending[i].value)){tween=false;break;}
   if(transition&&!tween&&!before){before=static_cast<std::uint32_t*>(std::malloc(canvas.capacity*4));target=static_cast<std::uint32_t*>(std::malloc(canvas.capacity*4));}
   transition=transition&&(tween||(before&&target));
   if(transition&&!tween)for(int y=t;y<b;++y)std::memcpy(before+y*canvas.stride+l,canvas.pixels+y*canvas.stride+l,(r-l)*4);
